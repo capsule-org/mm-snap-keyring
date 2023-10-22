@@ -1,6 +1,7 @@
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
 import Grid from '@mui/material/Grid';
+import Capsule, { Environment, Button } from '@usecapsule/web-sdk';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import {
@@ -54,6 +55,17 @@ const Index = () => {
   //   useState<Pick<KeyringAccount, 'name' | 'options'>>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
+  const capsule = new Capsule(
+    Environment.SANDBOX,
+    '2f938ac0c48ef356050a79bd66042a23',
+    {
+      // offloadMPCComputationURL:
+      //   'https://partner-mpc-computation.sandbox.usecapsule.com',
+      disableWorkers: true,
+    },
+  );
+  console.log(capsule);
+
   useEffect(() => {
     /**
      * Return the current state of the snap.
@@ -86,7 +98,15 @@ const Index = () => {
   };
 
   const createAccount = async () => {
-    const newAccount = await client.createAccount();
+    console.log('create acccount try again');
+    await capsule.createUser('mmsnap3@test.usecapsule.com');
+    console.log(await capsule.verifyEmail('123456'));
+    console.log('before keyring create wallet');
+    const newAccount = await client.createAccount({
+      // @ts-ignore
+      userId: capsule.userId,
+      email: capsule.getEmail()!,
+    });
     await syncAccounts();
     return newAccount;
   };
@@ -360,6 +380,11 @@ const Index = () => {
               enabled={Boolean(state.installedSnap)}
             />
             <Divider>&nbsp;</Divider>
+            <Button
+              skipWalletCreation={true}
+              appName="Capsule"
+              capsule={capsule}
+            ></Button>
             <DividerTitle>Methods</DividerTitle>
             <Accordion items={accountManagementMethods} />
             <Divider />

@@ -46,7 +46,7 @@
     "@metamask/keyring-api": "^1.0.0-rc.1",
     "@metamask/snaps-types": "^3.0.0",
     "@metamask/utils": "^8.1.0",
-    "@usecapsule/web-sdk": "0.27.0-dev.22",
+    "@usecapsule/web-sdk": "0.27.0-dev.27",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

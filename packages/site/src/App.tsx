@@ -34,7 +34,7 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>SSK - Simple Snap Keyring</title>
+        <title>SSK - Capsule Snap Keyring</title>
       </Helmet>
       <GlobalStyle />
       <Wrapper>

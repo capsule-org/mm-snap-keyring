@@ -14,13 +14,29 @@ module.exports.onCreateWebpackConfig = ({ actions }) => {
         }
       }),
     ],
+    // resolve: {
+    //   alias: {
+    //     crypto: require.resolve('crypto-browserify'),
+    //   },
+    //   fallback: {
+    //     crypto: require.resolve('crypto-browserify'),
+    //   },
+    // },
     resolve: {
       alias: {
         crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        'object.assign/polyfill': require.resolve(
+          '../../node_modules/object.assign/polyfill',
+        ),
       },
       fallback: {
         crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        'object.assign/polyfill': require.resolve(
+          '../../node_modules/object.assign/polyfill',
+        ),
       },
-    },
+    }
   });
 };

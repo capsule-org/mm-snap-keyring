@@ -4680,6 +4680,7 @@ __metadata:
     "@types/styled-components": ^5.1.26
     "@typescript-eslint/eslint-plugin": ^5.55.0
     "@typescript-eslint/parser": ^5.55.0
+    "@usecapsule/web-sdk": 0.27.0-dev.28
     cross-env: ^7.0.3
     crypto-browserify: ^3.12.0
     depcheck: ^1.4.6
@@ -4696,6 +4697,7 @@ __metadata:
     gatsby-plugin-styled-components: ^6.12.0
     gatsby-plugin-svgr: ^3.0.0-beta.0
     gatsby-plugin-webfonts: ^2.3.2
+    object.assign: ^4.1.4
     prettier: ^2.8.4
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -4705,6 +4707,7 @@ __metadata:
     react-scripts: ^5.0.1
     rimraf: ^4.4.0
     semver: ^7.5.4
+    stream-browserify: ^3.0.0
     styled-components: 5.3.9
     typescript: ^4.9.5
     webpack: ^5.88.2
@@ -4732,7 +4735,7 @@ __metadata:
     "@types/node": ^20.6.2
     "@typescript-eslint/eslint-plugin": ^5.33.0
     "@typescript-eslint/parser": ^5.33.0
-    "@usecapsule/web-sdk": 0.27.0-dev.22
+    "@usecapsule/web-sdk": 0.27.0-dev.27
     depcheck: ^1.4.6
     eslint: ^8.21.0
     eslint-config-prettier: ^8.1.0
@@ -8117,18 +8120,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usecapsule/user-management-client@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@usecapsule/user-management-client@npm:0.18.0"
+"@usecapsule/user-management-client@npm:0.18.0-dev.3":
+  version: 0.18.0-dev.3
+  resolution: "@usecapsule/user-management-client@npm:0.18.0-dev.3"
   dependencies:
     axios: ^0.27.2
-  checksum: 22f66877263cc2349b10b344258282f82c915e5d349d73cec746782bffb971adade58de2fce6e47cc56d08d753eb6b746110172b26e99e892025f70be5d5c9ea
+  checksum: 239da03a786c485de6b2655b1b24aa8e8a03de2b578b3517c77f8af19719a85450fb5784fa02f1e496fece6ec2385db217505d823d653ef6c7043505c5caf0d9
   languageName: node
   linkType: hard
 
-"@usecapsule/web-sdk@npm:0.27.0-dev.22":
-  version: 0.27.0-dev.22
-  resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.22"
+"@usecapsule/web-sdk@npm:0.27.0-dev.27":
+  version: 0.27.0-dev.27
+  resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.27"
   dependencies:
     "@celo/utils": 3.2.0
     "@chakra-ui/icons": ^2.1.1
@@ -8140,7 +8143,7 @@ __metadata:
     "@emotion/react": ^11.10.8
     "@emotion/styled": ^11.10.8
     "@ramp-network/ramp-instant-sdk": ^4.0.2
-    "@usecapsule/user-management-client": 0.18.0
+    "@usecapsule/user-management-client": 0.18.0-dev.3
     "@wagmi/connectors": ^3.0.0
     assert: ^2.1.0
     axios: 1.4.0
@@ -8164,7 +8167,49 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: 2bc68ac60176ca0cecc29184289a9a92bf470a7cedff2cca9e279347d69c371704834f9670563e2b37358cd83ce471e5b64e9720414722831907a7afa4e6a128
+  checksum: 025d16a3c3ccb1343ab88a2674baf2641358d89cdfdd7d78071358b086c888f8ea916cd9a4d966c542db7ca2a86c7f864b30094d884cec3d402d9f652ca1abf4
+  languageName: node
+  linkType: hard
+
+"@usecapsule/web-sdk@npm:0.27.0-dev.28":
+  version: 0.27.0-dev.28
+  resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.28"
+  dependencies:
+    "@celo/utils": 3.2.0
+    "@chakra-ui/icons": ^2.1.1
+    "@chakra-ui/react": 1.8.9
+    "@cosmjs/amino": 0.31.0
+    "@cosmjs/crypto": 0.31.0
+    "@cosmjs/encoding": 0.31.0
+    "@cosmjs/proto-signing": 0.31.0
+    "@emotion/react": ^11.10.8
+    "@emotion/styled": ^11.10.8
+    "@ramp-network/ramp-instant-sdk": ^4.0.2
+    "@usecapsule/user-management-client": 0.18.0-dev.3
+    "@wagmi/connectors": ^3.0.0
+    assert: ^2.1.0
+    axios: 1.4.0
+    base64url: 3.0.1
+    buffer: 6.0.3
+    cbor-web: 8.1.0
+    cosmjs-types: 0.8.0
+    crypto-browserify: 3.12.0
+    elliptic: 6.5.4
+    ethereumjs-util: 7.1.5
+    ethers: 6.6.4
+    eventemitter3: 5.0.1
+    framer-motion: ^10.12.7
+    node-forge: 1.3.1
+    polished: ^4.2.2
+    react-qr-code: 2.0.11
+    react-use: 17.4.0
+    stream-browserify: 3.0.0
+    viem: 1.5.3
+    wagmi: ^1.4.2
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  checksum: 7979aea200d9ba7af45c91ad058446e4b0406f473502398093227cd2981ce93536c6ce7d47ca68fdaef547f9985a4d8ba90aedf966454b16010ffcae1794c66f
   languageName: node
   linkType: hard
 

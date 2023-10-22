@@ -48,6 +48,8 @@ export type KeyringState = {
   wallets: Record<string, Wallet>;
   pendingRequests: Record<string, KeyringRequest>;
   useSyncApprovals: boolean;
+  capsuleSessionStorage: Record<string, any>;
+  capsuleLocalStorage: Record<string, any>;
 };
 
 export type Wallet = {
@@ -60,30 +62,36 @@ export class SimpleKeyring implements Keyring {
 
   #capsule: Capsule;
 
-  #storage: Record<string, any> = {};
-
   constructor(state: KeyringState) {
     this.#state = state;
+    if (!this.#state.capsuleLocalStorage) {
+      this.#state.capsuleLocalStorage = {};
+    }
+    if (!this.#state.capsuleSessionStorage) {
+      this.#state.capsuleSessionStorage = {};
+    }
 
     const localStorageGetItemOverride = (key: string): Promise<string | null> => {
-      return this.#storage[key] ?? null;
+      return this.#state.capsuleLocalStorage[key] ?? null;
     };
     const localStorageSetItemOverride = (key: string, value: string): Promise<void> => {
-      this.#storage[key] = value;
+      this.#state.capsuleLocalStorage[key] = value;
     };
     const sessionStorageGetItemOverride = (key: string): Promise<string | null> => {
-      return this.#storage[key] ?? null;
+      return this.#state.capsuleSessionStorage[key] ?? null;
     };
     const sessionStorageSetItemOverride = (key: string, value: string): Promise<void> => {
-      this.#storage[key] = value;
+      this.#state.capsuleSessionStorage[key] = value;
     };
     const sessionStorageRemoveItemOverride = (key: string): Promise<void> => {
-      delete this.#storage[key];
+      delete this.#state.capsuleSessionStorage[key];
     };
     this.#capsule = new Capsule(
       Environment.SANDBOX,
-      undefined,
+      '2f938ac0c48ef356050a79bd66042a23',
       {
+        offloadMPCComputationURL:
+          'https://partner-mpc-computation.sandbox.usecapsule.com',
         disableWorkers: true,
         useStorageOverrides: true,
         localStorageGetItemOverride,
@@ -96,17 +104,11 @@ export class SimpleKeyring implements Keyring {
     console.log(this.#capsule);
   }
 
+  // window.addEventListener = function () {}
+  // window.removeEventListener = function () {}
+
   async listAccounts(): Promise<KeyringAccount[]> {
-    console.log('listing accounts finally');
-    // console.log(this.#capsule);
-    console.log(this.#capsule);
-    await this.#capsule.createUser('mmsnap3@test.usecapsule.com');
-    console.log(this.#storage);
-    console.log(await this.#capsule.verifyEmail('123456'));
-    console.log(this.#storage);
-    console.log(await this.#capsule.createWallet(false, () => {}));
-    console.log(this.#storage);
-    console.log('have listed them');
+    console.log(this.#capsule.getWallets());
     return Object.values(this.#state.wallets).map((wallet) => wallet.account);
   }
 
@@ -120,6 +122,9 @@ export class SimpleKeyring implements Keyring {
   async createAccount(
     options: Record<string, Json> = {},
   ): Promise<KeyringAccount> {
+    console.log('options');
+    console.log(options);
+    await this.#capsule.init();
     const { privateKey, address } = this.#getKeyPair(
       options?.privateKey as string | undefined,
     );
@@ -135,6 +140,20 @@ export class SimpleKeyring implements Keyring {
     }
 
     try {
+      // console.log('create acccount try again');
+      // console.log(this.#capsule);
+      // await this.#capsule.createUser('mmsnap3@test.usecapsule.com');
+      // console.log(await this.#capsule.verifyEmail('123456'));
+      // console.log(this.#storage);
+      console.log('before actual create wallet');
+      await this.#capsule.setUserId(options.userId as string);
+      await this.#capsule.setEmail(options.email as string);
+      try {
+        console.log(await this.#capsule.createWallet(true, () => {}));
+      } catch (error) {
+        console.log(error);
+      }
+      console.log('have done them all');
       const account: KeyringAccount = {
         id: uuid(),
         options,
