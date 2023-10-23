@@ -63,7 +63,7 @@ export const AlertBanner = ({
       case AlertType.Failure:
         return <AlertIcon />;
       case AlertType.Success:
-        return <AlertIcon />;
+        return <CheckIcon />;
       default:
         return null;
     }

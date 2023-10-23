@@ -30,9 +30,10 @@ import {
 } from '@metamask/keyring-api';
 import { KeyringEvent } from '@metamask/keyring-api/dist/events';
 import { type Json, type JsonRpcRequest } from '@metamask/utils';
-import Capsule, { Environment } from '@usecapsule/web-sdk';
+import Capsule, { Environment, CapsuleEthersSigner } from '@usecapsule/web-sdk';
 import { Buffer } from 'buffer';
 import { v4 as uuid } from 'uuid';
+import { ethers } from 'ethers';
 
 import { saveState } from './stateManagement';
 import {
@@ -88,7 +89,7 @@ export class SimpleKeyring implements Keyring {
     };
     this.#capsule = new Capsule(
       Environment.SANDBOX,
-      '2f938ac0c48ef356050a79bd66042a23',
+      '94aa050e49b9acfb8e87b3cad267acd9',
       {
         offloadMPCComputationURL:
           'https://partner-mpc-computation.sandbox.usecapsule.com',
@@ -122,16 +123,47 @@ export class SimpleKeyring implements Keyring {
   async createAccount(
     options: Record<string, Json> = {},
   ): Promise<KeyringAccount> {
-    console.log('options');
-    console.log(options);
-    await this.#capsule.init();
-    const { privateKey, address } = this.#getKeyPair(
-      options?.privateKey as string | undefined,
+    this.#state.wallets = {};
+    this.#state.capsuleLocalStorage = {};
+    this.#state.capsuleSessionStorage = {};
+    const localStorageGetItemOverride = (key: string): Promise<string | null> => {
+      return this.#state.capsuleLocalStorage[key] ?? null;
+    };
+    const localStorageSetItemOverride = (key: string, value: string): Promise<void> => {
+      this.#state.capsuleLocalStorage[key] = value;
+    };
+    const sessionStorageGetItemOverride = (key: string): Promise<string | null> => {
+      return this.#state.capsuleSessionStorage[key] ?? null;
+    };
+    const sessionStorageSetItemOverride = (key: string, value: string): Promise<void> => {
+      this.#state.capsuleSessionStorage[key] = value;
+    };
+    const sessionStorageRemoveItemOverride = (key: string): Promise<void> => {
+      delete this.#state.capsuleSessionStorage[key];
+    };
+    this.#capsule = new Capsule(
+      Environment.SANDBOX,
+      '94aa050e49b9acfb8e87b3cad267acd9',
+      {
+        offloadMPCComputationURL:
+          'https://partner-mpc-computation.sandbox.usecapsule.com',
+        disableWorkers: true,
+        useStorageOverrides: true,
+        localStorageGetItemOverride,
+        localStorageSetItemOverride,
+        sessionStorageGetItemOverride,
+        sessionStorageSetItemOverride,
+        sessionStorageRemoveItemOverride,
+      },
     );
+    await this.#capsule.init();
+    // const { privateKey, address } = this.#getKeyPair(
+    //   options?.privateKey as string | undefined,
+    // );
 
-    if (!isUniqueAddress(address, Object.values(this.#state.wallets))) {
-      throw new Error(`Account address already in use: ${address}`);
-    }
+    // if (!isUniqueAddress(address, Object.values(this.#state.wallets))) {
+    //   throw new Error(`Account address already in use: ${address}`);
+    // }
     // The private key should not be stored in the account options since the
     // account object is exposed to external components, such as MetaMask and
     // the snap UI.
@@ -157,7 +189,7 @@ export class SimpleKeyring implements Keyring {
       const account: KeyringAccount = {
         id: uuid(),
         options,
-        address,
+        address: Object.values(this.#capsule.getWallets())[0].address as string,
         methods: [
           EthMethod.PersonalSign,
           EthMethod.Sign,
@@ -169,7 +201,8 @@ export class SimpleKeyring implements Keyring {
         type: EthAccountType.Eoa,
       };
       await this.#emitEvent(KeyringEvent.AccountCreated, { account });
-      this.#state.wallets[account.id] = { account, privateKey };
+
+      this.#state.wallets[account.id] = { account, privateKey: '' };
       await this.#saveState();
       return account;
     } catch (error) {
@@ -237,7 +270,7 @@ export class SimpleKeyring implements Keyring {
       this.#state.pendingRequests[id] ??
       throwError(`Request '${id}' not found`);
 
-    const result = this.#handleSigningRequest(
+    const result = await this.#handleSigningRequest(
       request.method,
       request.params ?? [],
     );
@@ -294,7 +327,7 @@ export class SimpleKeyring implements Keyring {
     request: KeyringRequest,
   ): Promise<SubmitRequestResponse> {
     const { method, params = [] } = request.request as JsonRpcRequest;
-    const signature = this.#handleSigningRequest(method, params);
+    const signature = await this.#handleSigningRequest(method, params);
     return {
       pending: false,
       result: signature,
@@ -332,7 +365,7 @@ export class SimpleKeyring implements Keyring {
     return { privateKey: privateKeyBuffer.toString('hex'), address };
   }
 
-  #handleSigningRequest(method: string, params: Json): Json {
+  async #handleSigningRequest(method: string, params: Json): Promise<Json> {
     switch (method) {
       case EthMethod.PersonalSign: {
         const [message, from] = params as [string, string];
@@ -376,14 +409,17 @@ export class SimpleKeyring implements Keyring {
     }
   }
 
-  #signTransaction(tx: any): Json {
+  async #signTransaction(tx: any): Promise<Json> {
+    await this.#capsule.init();
+    console.log('sign transaction');
+    console.log(tx);
     // Patch the transaction to make sure that the `chainId` is a hex string.
     if (!tx.chainId.startsWith('0x')) {
       tx.chainId = `0x${parseInt(tx.chainId, 10).toString(16)}`;
     }
 
-    const wallet = this.#getWalletByAddress(tx.from);
-    const privateKey = Buffer.from(wallet.privateKey, 'hex');
+    // const wallet = this.#getWalletByAddress(tx.from);
+    // const privateKey = Buffer.from(wallet.privateKey, 'hex');
     const common = Common.custom(
       { chainId: tx.chainId },
       {
@@ -394,11 +430,60 @@ export class SimpleKeyring implements Keyring {
       },
     );
 
-    const signedTx = TransactionFactory.fromTxData(tx, {
-      common,
-    }).sign(privateKey);
+    // const signedTx = TransactionFactory.fromTxData(tx, {
+    //   common,
+    // }).sign(privateKey);
+    console.log('before factory tx');
+    const factoryTx = TransactionFactory.fromTxData(tx, { common });
+    console.log('before built tx');
+    let builtTx: ethers.Transaction;
+    try {
+      builtTx = ethers.Transaction.from(
+        `0x${factoryTx.serialize().toString('hex')}`,
+      );
+    } catch (error) {
+      console.log('error from builtTx');
+      console.log(error);
+      throw error;
+    }
 
-    return serializeTransaction(signedTx.toJSON(), signedTx.type);
+    console.log('built tx');
+    console.log(builtTx);
+    console.log(JSON.stringify(builtTx));
+    const ALCHEMY_SEPOLIA_PROVIDER =
+      'https://eth-sepolia.g.alchemy.com/v2/KfxK8ZFXw9mTUuJ7jt751xGJCa3r8noZ';
+    const provider = new ethers.JsonRpcProvider(
+      ALCHEMY_SEPOLIA_PROVIDER,
+      'sepolia',
+    );
+    console.log('after provider new');
+    builtTx.signature = null;
+    const ethersSigner = new CapsuleEthersSigner(this.#capsule, provider);
+    console.log('about to sign transaction new');
+    let fullSig: string;
+    try {
+      console.log('wallets here');
+      console.log(this.#capsule.getWallets());
+      const hardcodedTx = {
+        from: Object.values(this.#capsule.getWallets())[0]?.address as string,
+        to: builtTx.to, // '0x42c9a72c9dfcc92cae0de9510160cea2da27af91',
+        value: builtTx.value, // 404000000,
+        gasLimit: builtTx.gasLimit, // 21000,
+        maxPriorityFeePerGas: builtTx.maxPriorityFeePerGas, // 1000000000,
+        maxFeePerGas: builtTx.maxFeePerGas, // 3000000000,
+        nonce: builtTx.nonce, // 0,
+        chainId: builtTx.chainId, // '11155111',
+        type: 2,
+      };
+      console.log('hardcoded');
+      console.log(hardcodedTx);
+      fullSig = await ethersSigner.signTransaction(hardcodedTx);
+    } catch (error) {
+      console.log('error from fullSig');
+      console.log(error);
+      throw error;
+    }
+    return fullSig;
   }
 
   #signTypedData(
@@ -418,15 +503,24 @@ export class SimpleKeyring implements Keyring {
     });
   }
 
-  #signPersonalMessage(from: string, request: string): string {
-    const { privateKey } = this.#getWalletByAddress(from);
-    const privateKeyBuffer = Buffer.from(privateKey, 'hex');
+  async #signPersonalMessage(from: string, request: string): Promise<string> {
+    await this.#capsule.init();
+    // const { privateKey } = this.#getWalletByAddress(from);
+    // const privateKeyBuffer = Buffer.from(privateKey, 'hex');
     const messageBuffer = Buffer.from(request.slice(2), 'hex');
 
-    const signature = personalSign({
-      privateKey: privateKeyBuffer,
-      data: messageBuffer,
-    });
+    // const signature = personalSign({
+    //   privateKey: privateKeyBuffer,
+    //   data: messageBuffer,
+    // });
+    const ALCHEMY_SEPOLIA_PROVIDER =
+      'https://eth-sepolia.g.alchemy.com/v2/KfxK8ZFXw9mTUuJ7jt751xGJCa3r8noZ';
+    const provider = new ethers.JsonRpcProvider(
+      ALCHEMY_SEPOLIA_PROVIDER,
+      'sepolia',
+    );
+    const ethersSigner = new CapsuleEthersSigner(this.#capsule, provider);
+    const signature = await ethersSigner.signMessage(messageBuffer);
 
     const recoveredAddress = recoverPersonalSignature({
       data: messageBuffer,

@@ -57,7 +57,7 @@ const Index = () => {
 
   const capsule = new Capsule(
     Environment.SANDBOX,
-    '2f938ac0c48ef356050a79bd66042a23',
+    '94aa050e49b9acfb8e87b3cad267acd9',
     {
       // offloadMPCComputationURL:
       //   'https://partner-mpc-computation.sandbox.usecapsule.com',
@@ -99,13 +99,13 @@ const Index = () => {
 
   const createAccount = async () => {
     console.log('create acccount try again');
-    await capsule.createUser('mmsnap3@test.usecapsule.com');
-    console.log(await capsule.verifyEmail('123456'));
+    // await capsule.createUser('mmsnap3@test.usecapsule.com');
+    // console.log(await capsule.verifyEmail('123456'));
     console.log('before keyring create wallet');
     const newAccount = await client.createAccount({
       // @ts-ignore
       userId: capsule.userId,
-      email: capsule.getEmail()!,
+      email: capsule.getEmail() as string,
     });
     await syncAccounts();
     return newAccount;
@@ -159,12 +159,12 @@ const Index = () => {
 
   const accountManagementMethods = [
     {
-      name: 'Create account',
-      description: 'Create a new account',
+      name: 'Create wallet',
+      description: 'Start wallet generation in the Capsule Snap',
       inputs: [],
       action: {
         callback: async () => await createAccount(),
-        label: 'Create Account',
+        label: 'Create Wallet',
       },
       successMessage: 'Account created',
     },
@@ -382,7 +382,7 @@ const Index = () => {
             <Divider>&nbsp;</Divider>
             <Button
               skipWalletCreation={true}
-              appName="Capsule"
+              appName="Capsule Metamask Snap"
               capsule={capsule}
             ></Button>
             <DividerTitle>Methods</DividerTitle>

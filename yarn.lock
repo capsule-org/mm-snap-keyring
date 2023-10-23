@@ -4745,6 +4745,7 @@ __metadata:
     eslint-plugin-n: ^16.1.0
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-promise: ^6.1.1
+    ethers: 6.6.4
     prettier: ^2.2.1
     rimraf: ^3.0.2
     typescript: ^4.7.4
