@@ -7,6 +7,7 @@ module.exports = {
       extends: ['@metamask/eslint-config-typescript'],
       rules: {
         'import/no-nodejs-modules': ['error', { allow: ['buffer', 'crypto'] }],
+        '@typescript-eslint/no-non-null-assertion': 'off',
       },
     },
   ],
