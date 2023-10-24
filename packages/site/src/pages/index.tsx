@@ -99,9 +99,8 @@ const Index = () => {
     const newAccount = await client.createAccount({
       // @ts-ignore
       userId: capsule.userId,
-      // @ts-ignore
-      sessionCookie: capsule.sessionCookie,
       email: capsule.getEmail() as string,
+      sessionCookie: capsule.retrieveSessionCookie() as string,
     });
     await syncAccounts();
     return newAccount;
