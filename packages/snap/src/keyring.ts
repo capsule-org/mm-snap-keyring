@@ -1,21 +1,10 @@
 import { Common, Hardfork } from '@ethereumjs/common';
 import { TransactionFactory } from '@ethereumjs/tx';
-import {
-  Address,
-  ecsign,
-  stripHexPrefix,
-  toBuffer,
-  toChecksumAddress,
-  isValidPrivate,
-  addHexPrefix,
-} from '@ethereumjs/util';
-import type { TypedDataV1, TypedMessage } from '@metamask/eth-sig-util';
+import { stripHexPrefix } from '@ethereumjs/util';
+import type { TypedMessage } from '@metamask/eth-sig-util';
 import {
   SignTypedDataVersion,
-  concatSig,
-  personalSign,
   recoverPersonalSignature,
-  signTypedData,
 } from '@metamask/eth-sig-util';
 import type {
   Keyring,
