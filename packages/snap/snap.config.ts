@@ -4,16 +4,12 @@ const config: SnapConfig = {
   bundler: 'webpack',
   input: 'src/index.ts',
   server: { port: 8080 },
-  polyfills: true, // {
-  //   buffer: true,
-  //   stream: true,
-  //   crypto: true,
-  // },
+  polyfills: true,
   output: {
     minimize: false,
   },
   environment: {
-    DAPP_ORIGIN_PRODUCTION: 'https://metamask.github.io/snap-simple-keyring/',
+    DAPP_ORIGIN_PRODUCTION: 'https://snap.app.usecapsule.com/',
     DAPP_ORIGIN_DEVELOPMENT: 'http://localhost:8000/',
   },
   stats: {

@@ -1,18 +1,18 @@
 {
   "version": "1.1.0",
-  "description": "An example of a key management snap for a simple keyring.",
+  "description": "Capsule key management snap keyring.",
   "proposedName": "Capsule Snap Keyring",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MetaMask/snap-simple-keyring.git"
+    "url": "git+https://github.com/capsule-org/mm-snap-keyring.git"
   },
   "source": {
-    "shasum": "TBKo5/ThLlBRUgVi03I7W3rVO6mn0VnAReBFUpGEq5o=",
+    "shasum": "zmoAGtwQBJ8pARq5Rk9BM5h9oc9wEcq0jc0Xmm9gb6E=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
         "iconPath": "images/icon.svg",
-        "packageName": "@metamask/snap-simple-keyring-snap",
+        "packageName": "@usecapsule/mm-snap-keyring",
         "registry": "https://registry.npmjs.org/"
       }
     }
@@ -28,6 +28,7 @@
     "endowment:rpc": {
       "dapps": true
     },
+    "endowment:webassembly": {},
     "endowment:network-access": {},
     "snap_manageAccounts": {},
     "snap_manageState": {}

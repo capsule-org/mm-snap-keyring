@@ -30,19 +30,14 @@ import {
 } from '@metamask/keyring-api';
 import { KeyringEvent } from '@metamask/keyring-api/dist/events';
 import { type Json, type JsonRpcRequest } from '@metamask/utils';
+import type { SuccessfulSignatureRes } from '@usecapsule/web-sdk';
 import Capsule, { Environment, CapsuleEthersSigner } from '@usecapsule/web-sdk';
 import { Buffer } from 'buffer';
 import { ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';
 
 import { saveState } from './stateManagement';
-import {
-  isEvmChain,
-  serializeTransaction,
-  isUniqueAddress,
-  throwError,
-  runSensitive,
-} from './util';
+import { isEvmChain, serializeTransaction, throwError } from './util';
 import packageInfo from '../package.json';
 
 export type KeyringState = {
@@ -55,7 +50,11 @@ export type KeyringState = {
 
 export type Wallet = {
   account: KeyringAccount;
-  privateKey: string;
+};
+
+type CreateAccountOptions = {
+  userId: string;
+  email: string;
 };
 
 export class SimpleKeyring implements Keyring {
@@ -116,8 +115,14 @@ export class SimpleKeyring implements Keyring {
     );
   }
 
-  // window.addEventListener = function () {}
-  // window.removeEventListener = function () {}
+  async #getWalletIdFromAddress(address: string): Promise<string> {
+    await this.#capsule.init();
+    const wallets = this.#capsule.getWallets();
+    const currentWallet = Object.values(wallets).find(
+      (wallet) => wallet.address === address,
+    );
+    return currentWallet!.id;
+  }
 
   async listAccounts(): Promise<KeyringAccount[]> {
     console.log(this.#capsule.getWallets());
@@ -131,107 +136,32 @@ export class SimpleKeyring implements Keyring {
     );
   }
 
-  async createAccount(
-    options: Record<string, Json> = {},
-  ): Promise<KeyringAccount> {
-    this.#state.wallets = {};
-    this.#state.capsuleLocalStorage = {};
-    this.#state.capsuleSessionStorage = {};
-    const localStorageGetItemOverride = async (
-      key: string,
-    ): Promise<string | null> => {
-      return this.#state.capsuleLocalStorage[key] ?? null;
-    };
-    const localStorageSetItemOverride = async (
-      key: string,
-      value: string,
-    ): Promise<void> => {
-      this.#state.capsuleLocalStorage[key] = value;
-    };
-    const sessionStorageGetItemOverride = async (
-      key: string,
-    ): Promise<string | null> => {
-      return this.#state.capsuleSessionStorage[key] ?? null;
-    };
-    const sessionStorageSetItemOverride = async (
-      key: string,
-      value: string,
-    ): Promise<void> => {
-      this.#state.capsuleSessionStorage[key] = value;
-    };
-    const sessionStorageRemoveItemOverride = async (
-      key: string,
-    ): Promise<void> => {
-      delete this.#state.capsuleSessionStorage[key];
-    };
-    this.#capsule = new Capsule(
-      Environment.SANDBOX,
-      '94aa050e49b9acfb8e87b3cad267acd9',
-      {
-        offloadMPCComputationURL:
-          'https://partner-mpc-computation.sandbox.usecapsule.com',
-        disableWorkers: true,
-        useStorageOverrides: true,
-        localStorageGetItemOverride,
-        localStorageSetItemOverride,
-        sessionStorageGetItemOverride,
-        sessionStorageSetItemOverride,
-        sessionStorageRemoveItemOverride,
-      },
-    );
+  async createAccount(options: CreateAccountOptions): Promise<KeyringAccount> {
     await this.#capsule.init();
-    // const { privateKey, address } = this.#getKeyPair(
-    //   options?.privateKey as string | undefined,
-    // );
 
-    // if (!isUniqueAddress(address, Object.values(this.#state.wallets))) {
-    //   throw new Error(`Account address already in use: ${address}`);
-    // }
-    // The private key should not be stored in the account options since the
-    // account object is exposed to external components, such as MetaMask and
-    // the snap UI.
-    if (options?.privateKey) {
-      delete options.privateKey;
-    }
+    await this.#capsule.setUserId(options.userId);
+    await this.#capsule.setEmail(options.email);
+    const newWallet = (await this.#capsule.createWallet(false, () => {}))[0];
 
-    try {
-      // console.log('create acccount try again');
-      // console.log(this.#capsule);
-      // await this.#capsule.createUser('mmsnap3@test.usecapsule.com');
-      // console.log(await this.#capsule.verifyEmail('123456'));
-      // console.log(this.#storage);
-      console.log('before actual create wallet');
-      await this.#capsule.setUserId(options.userId as string);
-      await this.#capsule.setEmail(options.email as string);
-      try {
-        console.log(await this.#capsule.createWallet(true, () => {}));
-      } catch (error) {
-        console.log(error);
-      }
-      console.log('have done them all');
-      const account: KeyringAccount = {
-        id: uuid(),
-        options,
-        address: Object.values(this.#capsule.getWallets())[0]!
-          .address as string,
-        methods: [
-          EthMethod.PersonalSign,
-          EthMethod.Sign,
-          EthMethod.SignTransaction,
-          EthMethod.SignTypedDataV1,
-          EthMethod.SignTypedDataV3,
-          EthMethod.SignTypedDataV4,
-        ],
-        type: EthAccountType.Eoa,
-      };
-      await this.#emitEvent(KeyringEvent.AccountCreated, { account });
+    const account: KeyringAccount = {
+      id: uuid(),
+      options,
+      address: newWallet.address as string,
+      methods: [
+        EthMethod.PersonalSign,
+        EthMethod.Sign,
+        EthMethod.SignTransaction,
+        EthMethod.SignTypedDataV1,
+        EthMethod.SignTypedDataV3,
+        EthMethod.SignTypedDataV4,
+      ],
+      type: EthAccountType.Eoa,
+    };
+    await this.#emitEvent(KeyringEvent.AccountCreated, { account });
 
-      this.#state.wallets[account.id] = { account, privateKey: '' };
-      await this.#saveState();
-      return account;
-    } catch (error) {
-      throw new Error((error as Error).message);
-    }
+    this.#state.wallets[account.id] = { account };
+    await this.#saveState();
+    return account;
   }
 
   async filterAccountChains(_id: string, chains: string[]): Promise<string[]> {
@@ -263,6 +193,7 @@ export class SimpleKeyring implements Keyring {
     }
   }
 
+  // TODO: delete wallet from localstorage too
   async deleteAccount(id: string): Promise<void> {
     try {
       await this.#emitEvent(KeyringEvent.AccountDeleted, { id });
@@ -284,6 +215,11 @@ export class SimpleKeyring implements Keyring {
   }
 
   async submitRequest(request: KeyringRequest): Promise<SubmitRequestResponse> {
+    await this.#capsule.init();
+
+    if (!(await this.#capsule.isFullyLoggedIn())) {
+      return this.#asyncSubmitRequest(request);
+    }
     return this.#state.useSyncApprovals
       ? this.#syncSubmitRequest(request)
       : this.#asyncSubmitRequest(request);
@@ -342,7 +278,7 @@ export class SimpleKeyring implements Keyring {
       pending: true,
       redirect: {
         url: dappUrl,
-        message: 'Redirecting to Snap Simple Keyring to sign transaction',
+        message: 'Redirecting to Capsule Snap Keyring to sign transaction',
       },
     };
   }
@@ -356,37 +292,6 @@ export class SimpleKeyring implements Keyring {
       pending: false,
       result: signature,
     };
-  }
-
-  #getWalletByAddress(address: string): Wallet {
-    const match = Object.values(this.#state.wallets).find(
-      (wallet) =>
-        wallet.account.address.toLowerCase() === address.toLowerCase(),
-    );
-
-    return match ?? throwError(`Account '${address}' not found`);
-  }
-
-  #getKeyPair(privateKey?: string): {
-    privateKey: string;
-    address: string;
-  } {
-    const privateKeyBuffer: Buffer = runSensitive(
-      () =>
-        privateKey
-          ? toBuffer(addHexPrefix(privateKey))
-          : Buffer.from(crypto.getRandomValues(new Uint8Array(32))),
-      'Invalid private key',
-    );
-
-    if (!isValidPrivate(privateKeyBuffer)) {
-      throw new Error('Invalid private key');
-    }
-
-    const address = toChecksumAddress(
-      Address.fromPrivateKey(privateKeyBuffer).toString(),
-    );
-    return { privateKey: privateKeyBuffer.toString('hex'), address };
   }
 
   async #handleSigningRequest(method: string, params: Json): Promise<Json> {
@@ -456,6 +361,8 @@ export class SimpleKeyring implements Keyring {
     ethersTx.signature = null;
 
     const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
+    const walletId = await this.#getWalletIdFromAddress(tx.from);
+    ethersSigner.setCurrentWalletId(walletId);
     const fullSig = await ethersSigner.signTransaction(ethersTx);
 
     const signedTx = ethers.Transaction.from(fullSig);
@@ -472,21 +379,34 @@ export class SimpleKeyring implements Keyring {
     return serializeTransaction(signedFactoryTx.toJSON(), signedFactoryTx.type);
   }
 
-  #signTypedData(
+  async #signTypedData(
     from: string,
     data: Json,
     opts: { version: SignTypedDataVersion } = {
       version: SignTypedDataVersion.V1,
     },
-  ): string {
-    const { privateKey } = this.#getWalletByAddress(from);
-    const privateKeyBuffer = Buffer.from(privateKey, 'hex');
+  ): Promise<string> {
+    await this.#capsule.init();
 
-    return signTypedData({
-      privateKey: privateKeyBuffer,
-      data: data as unknown as TypedDataV1 | TypedMessage<any>,
-      version: opts.version,
-    });
+    const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
+    const walletId = await this.#getWalletIdFromAddress(from);
+    ethersSigner.setCurrentWalletId(walletId);
+    const typedData = data as unknown as TypedMessage<any>;
+    const domain = {
+      name: typedData.domain.name ?? null,
+      version: opts.version ?? typedData.domain.version ?? null,
+      chainId: typedData.domain.chainId ?? null,
+      verifyingContract: typedData.domain.verifyingContract ?? null,
+      salt: typedData.domain.salt
+        ? new Uint8Array(typedData.domain.salt)
+        : null,
+    };
+
+    return ethersSigner.signTypedData(
+      domain,
+      typedData.types,
+      typedData.message,
+    );
   }
 
   async #signPersonalMessage(from: string, request: string): Promise<string> {
@@ -494,6 +414,8 @@ export class SimpleKeyring implements Keyring {
 
     const messageBuffer = Buffer.from(request.slice(2), 'hex');
     const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
+    const walletId = await this.#getWalletIdFromAddress(from);
+    ethersSigner.setCurrentWalletId(walletId);
     const signature = await ethersSigner.signMessage(messageBuffer);
 
     const recoveredAddress = recoverPersonalSignature({
@@ -509,12 +431,16 @@ export class SimpleKeyring implements Keyring {
     return signature;
   }
 
-  #signMessage(from: string, data: string): string {
-    const { privateKey } = this.#getWalletByAddress(from);
-    const privateKeyBuffer = Buffer.from(privateKey, 'hex');
-    const message = stripHexPrefix(data);
-    const signature = ecsign(Buffer.from(message, 'hex'), privateKeyBuffer);
-    return concatSig(toBuffer(signature.v), signature.r, signature.s);
+  async #signMessage(from: string, data: string): Promise<string> {
+    await this.#capsule.init();
+
+    const base64Message = Buffer.from(stripHexPrefix(data), 'hex').toString(
+      'base64',
+    );
+    const walletId = await this.#getWalletIdFromAddress(from);
+
+    const res = await this.#capsule.signMessage(walletId, base64Message);
+    return (res as SuccessfulSignatureRes).signature;
   }
 
   async #saveState(): Promise<void> {

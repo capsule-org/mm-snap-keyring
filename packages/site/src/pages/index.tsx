@@ -58,13 +58,7 @@ const Index = () => {
   const capsule = new Capsule(
     Environment.SANDBOX,
     '94aa050e49b9acfb8e87b3cad267acd9',
-    {
-      // offloadMPCComputationURL:
-      //   'https://partner-mpc-computation.sandbox.usecapsule.com',
-      disableWorkers: true,
-    },
   );
-  console.log(capsule);
 
   useEffect(() => {
     /**
