@@ -55,6 +55,7 @@ export type Wallet = {
 type CreateAccountOptions = {
   userId: string;
   email: string;
+  sessionCookie: string;
 };
 
 export class SimpleKeyring implements Keyring {
@@ -141,6 +142,7 @@ export class SimpleKeyring implements Keyring {
 
     await this.#capsule.setUserId(options.userId);
     await this.#capsule.setEmail(options.email);
+    this.#capsule.persistSessionCookie(options.sessionCookie);
     const newWallet = (await this.#capsule.createWallet(false, () => {}))[0];
 
     const account: KeyringAccount = {
