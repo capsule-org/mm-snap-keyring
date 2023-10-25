@@ -55,10 +55,7 @@ const Index = () => {
   //   useState<Pick<KeyringAccount, 'name' | 'options'>>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
-  const capsule = new Capsule(
-    Environment.SANDBOX,
-    '94aa050e49b9acfb8e87b3cad267acd9',
-  );
+  const capsule = new Capsule(Environment.SANDBOX);
 
   useEffect(() => {
     /**

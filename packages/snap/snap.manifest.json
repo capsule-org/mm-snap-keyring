@@ -4,15 +4,15 @@
   "proposedName": "Capsule Snap Keyring",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/capsule-org/mm-snap-keyring.git"
+    "url": "git+https://github.com/MetaMask/snap-simple-keyring.git"
   },
   "source": {
-    "shasum": "zmoAGtwQBJ8pARq5Rk9BM5h9oc9wEcq0jc0Xmm9gb6E=",
+    "shasum": "SSSsymaF3ppNgkGDfOboClm6iDDGL3n87fzlilc+/24=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
         "iconPath": "images/icon.svg",
-        "packageName": "@usecapsule/mm-snap-keyring",
+        "packageName": "@metamask/snap-simple-keyring-snap",
         "registry": "https://registry.npmjs.org/"
       }
     }

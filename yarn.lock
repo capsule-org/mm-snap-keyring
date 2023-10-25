@@ -4735,7 +4735,7 @@ __metadata:
     "@types/node": ^20.6.2
     "@typescript-eslint/eslint-plugin": ^5.33.0
     "@typescript-eslint/parser": ^5.33.0
-    "@usecapsule/web-sdk": 0.27.0-dev.27
+    "@usecapsule/web-sdk": 0.27.0-dev.34
     depcheck: ^1.4.6
     eslint: ^8.21.0
     eslint-config-prettier: ^8.1.0
@@ -8130,48 +8130,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usecapsule/web-sdk@npm:0.27.0-dev.27":
-  version: 0.27.0-dev.27
-  resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.27"
-  dependencies:
-    "@celo/utils": 3.2.0
-    "@chakra-ui/icons": ^2.1.1
-    "@chakra-ui/react": 1.8.9
-    "@cosmjs/amino": 0.31.0
-    "@cosmjs/crypto": 0.31.0
-    "@cosmjs/encoding": 0.31.0
-    "@cosmjs/proto-signing": 0.31.0
-    "@emotion/react": ^11.10.8
-    "@emotion/styled": ^11.10.8
-    "@ramp-network/ramp-instant-sdk": ^4.0.2
-    "@usecapsule/user-management-client": 0.18.0-dev.3
-    "@wagmi/connectors": ^3.0.0
-    assert: ^2.1.0
-    axios: 1.4.0
-    base64url: 3.0.1
-    buffer: 6.0.3
-    cbor-web: 8.1.0
-    cosmjs-types: 0.8.0
-    crypto-browserify: 3.12.0
-    elliptic: 6.5.4
-    ethereumjs-util: 7.1.5
-    ethers: 6.6.4
-    eventemitter3: 5.0.1
-    framer-motion: ^10.12.7
-    node-forge: 1.3.1
-    polished: ^4.2.2
-    react-qr-code: 2.0.11
-    react-use: 17.4.0
-    stream-browserify: 3.0.0
-    viem: 1.5.3
-    wagmi: ^1.4.2
-  peerDependencies:
-    react: "*"
-    react-dom: "*"
-  checksum: 025d16a3c3ccb1343ab88a2674baf2641358d89cdfdd7d78071358b086c888f8ea916cd9a4d966c542db7ca2a86c7f864b30094d884cec3d402d9f652ca1abf4
-  languageName: node
-  linkType: hard
-
 "@usecapsule/web-sdk@npm:0.27.0-dev.28":
   version: 0.27.0-dev.28
   resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.28"
@@ -8211,6 +8169,48 @@ __metadata:
     react: "*"
     react-dom: "*"
   checksum: 7979aea200d9ba7af45c91ad058446e4b0406f473502398093227cd2981ce93536c6ce7d47ca68fdaef547f9985a4d8ba90aedf966454b16010ffcae1794c66f
+  languageName: node
+  linkType: hard
+
+"@usecapsule/web-sdk@npm:0.27.0-dev.34":
+  version: 0.27.0-dev.34
+  resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.34"
+  dependencies:
+    "@celo/utils": 3.2.0
+    "@chakra-ui/icons": ^2.1.1
+    "@chakra-ui/react": 1.8.9
+    "@cosmjs/amino": 0.31.0
+    "@cosmjs/crypto": 0.31.0
+    "@cosmjs/encoding": 0.31.0
+    "@cosmjs/proto-signing": 0.31.0
+    "@emotion/react": ^11.10.8
+    "@emotion/styled": ^11.10.8
+    "@ramp-network/ramp-instant-sdk": ^4.0.2
+    "@usecapsule/user-management-client": 0.18.0-dev.3
+    "@wagmi/connectors": ^3.0.0
+    assert: ^2.1.0
+    axios: 1.4.0
+    base64url: 3.0.1
+    buffer: 6.0.3
+    cbor-web: 8.1.0
+    cosmjs-types: 0.8.0
+    crypto-browserify: 3.12.0
+    elliptic: 6.5.4
+    ethereumjs-util: 7.1.5
+    ethers: 6.6.4
+    eventemitter3: 5.0.1
+    framer-motion: ^10.12.7
+    node-forge: 1.3.1
+    polished: ^4.2.2
+    react-qr-code: 2.0.11
+    react-use: 17.4.0
+    stream-browserify: 3.0.0
+    viem: 1.5.3
+    wagmi: ^1.4.2
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  checksum: ec5969fa74c30b248bfee39bc667001b517827e419a49d60de14b3cfe024e7418a11f6e5f3ac4a0c41d40ea6fc025f704116fba294e0761be6fff648ea182ee0
   languageName: node
   linkType: hard
 

@@ -44,7 +44,7 @@ export type Wallet = {
 type CreateAccountOptions = {
   userId: string;
   email: string;
-  sessionCookie: string;
+  sessionCookie?: string;
 };
 
 export class SimpleKeyring implements Keyring {
@@ -88,21 +88,16 @@ export class SimpleKeyring implements Keyring {
     ): Promise<void> => {
       delete this.#state.capsuleSessionStorage[key];
     };
-    this.#capsule = new Capsule(
-      Environment.SANDBOX,
-      '94aa050e49b9acfb8e87b3cad267acd9',
-      {
-        offloadMPCComputationURL:
-          'https://partner-mpc-computation.sandbox.usecapsule.com',
-        disableWorkers: true,
-        useStorageOverrides: true,
-        localStorageGetItemOverride,
-        localStorageSetItemOverride,
-        sessionStorageGetItemOverride,
-        sessionStorageSetItemOverride,
-        sessionStorageRemoveItemOverride,
-      },
-    );
+    this.#capsule = new Capsule(Environment.SANDBOX, undefined, {
+      disableWorkers: true,
+      useStorageOverrides: true,
+      localStorageGetItemOverride,
+      localStorageSetItemOverride,
+      sessionStorageGetItemOverride,
+      sessionStorageSetItemOverride,
+      sessionStorageRemoveItemOverride,
+      disableWebSockets: true,
+    });
   }
 
   async #getWalletIdFromAddress(address: string): Promise<string> {
@@ -131,7 +126,8 @@ export class SimpleKeyring implements Keyring {
 
     await this.#capsule.setUserId(options.userId);
     await this.#capsule.setEmail(options.email);
-    this.#capsule.persistSessionCookie(options.sessionCookie);
+    this.#capsule.persistSessionCookie(options.sessionCookie!);
+    delete options.sessionCookie;
     const newWallet = (await this.#capsule.createWallet(false, () => {}))[0];
 
     const account: KeyringAccount = {
