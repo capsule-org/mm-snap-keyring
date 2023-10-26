@@ -110,7 +110,6 @@ export class SimpleKeyring implements Keyring {
   }
 
   async listAccounts(): Promise<KeyringAccount[]> {
-    console.log(this.#capsule.getWallets());
     return Object.values(this.#state.wallets).map((wallet) => wallet.account);
   }
 

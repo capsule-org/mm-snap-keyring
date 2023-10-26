@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-unassigned-import
+import './overrides';
 import {
   MethodNotSupportedError,
   handleKeyringRequest,
