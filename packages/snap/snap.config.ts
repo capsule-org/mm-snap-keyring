@@ -1,4 +1,5 @@
 import type { SnapConfig } from '@metamask/snaps-cli';
+import { merge } from '@metamask/snaps-cli';
 
 const config: SnapConfig = {
   bundler: 'webpack',
@@ -31,6 +32,28 @@ const config: SnapConfig = {
   experimental: {
     wasm: true,
   },
+  customizeWebpackConfig: (webpackConfig) =>
+    merge(webpackConfig, {
+      module: {
+        rules: [
+          {
+            test: /\.css$/,
+            use: ['style-loader', 'css-loader'],
+          },
+          // {
+          //   test: /\.(png|jpe?g|gif|svg)$/,
+          //   use: [
+          //     {
+          //       loader: 'file-loader',
+          //       options: {
+          //         name: '[path][name].[ext]',
+          //       },
+          //     },
+          //   ],
+          // },
+        ],
+      },
+    }),
 };
 
 export default config;

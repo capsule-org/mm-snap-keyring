@@ -1,6 +1,7 @@
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
 import Grid from '@mui/material/Grid';
+import type { CoreCapsule } from '@usecapsule/web-sdk';
 import Capsule, { Environment, Button } from '@usecapsule/web-sdk';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -64,12 +65,16 @@ const Index = () => {
      * @returns The current state of the snap.
      */
     async function getState() {
+      console.log('getState');
+      console.log(state);
       if (!state.installedSnap) {
         return;
       }
       const accounts = await client.listAccounts();
       const pendingRequests = await client.listRequests();
       const isSynchronous = await isSynchronousMode();
+      console.log('retrieved accounts');
+      console.log(accounts);
       setSnapState({
         accounts,
         pendingRequests,
@@ -340,8 +345,92 @@ const Index = () => {
     },
   ];
 
+  async function createWalletOverride(
+    modalCapsule: Capsule | CoreCapsule,
+  ): Promise<string> {
+    const newAccount = await client.createAccount({
+      // @ts-ignore
+      userId: modalCapsule.userId,
+      email: modalCapsule.getEmail() as string,
+      sessionCookie: modalCapsule.retrieveSessionCookie() as string,
+    });
+    const { recovery } = newAccount.options;
+    delete newAccount.options.recovery;
+
+    const fetchedWallets = await modalCapsule.fetchWallets();
+    const walletsMap: Record<string, any> = {};
+    fetchedWallets.forEach((wallet) => {
+      walletsMap[wallet.id] = {
+        id: wallet.id,
+        address: wallet.address,
+      };
+    });
+    await modalCapsule.setWallets(walletsMap);
+
+    await syncAccounts();
+    return recovery as string;
+  }
+
+  async function loginTransitionOverride(
+    modalCapsule: Capsule | CoreCapsule,
+  ): Promise<string> {
+    // const currentAccount = (snapState.accounts ||
+    //   (await client.listAccounts()))[0];
+    const allAccounts = snapState.accounts || (await client.listAccounts());
+    const currentAccount = allAccounts.find(
+      (account) => account.options.email === modalCapsule.getEmail(),
+    );
+    console.log('snap state');
+    console.log(snapState);
+    const currentOptions = currentAccount?.options;
+
+    console.log('before update account');
+    await client.updateAccount({
+      ...currentAccount,
+      options: {
+        ...currentOptions,
+        // @ts-ignore
+        userId: modalCapsule.userId,
+        email: modalCapsule.getEmail() as string,
+        sessionCookie: modalCapsule.retrieveSessionCookie() as string,
+        loginEncryptionKeyPair: JSON.stringify(
+          modalCapsule.loginEncryptionKeyPair,
+        ),
+      },
+    } as any);
+    console.log('after site update');
+    const accounts = await client.listAccounts();
+    const updatedAccount = accounts.find(
+      (account) => account.id === currentAccount!.id,
+    );
+    console.log(updatedAccount);
+    await modalCapsule.setUserId(updatedAccount!.options.userId as string);
+    await modalCapsule.setEmail(updatedAccount!.options.email as string);
+    modalCapsule.persistSessionCookie(
+      updatedAccount!.options.sessionCookie as string,
+    );
+
+    const fetchedWallets = await modalCapsule.fetchWallets();
+    const walletsMap: Record<string, any> = {};
+    fetchedWallets.forEach((wallet) => {
+      walletsMap[wallet.id] = {
+        id: wallet.id,
+        address: wallet.address,
+      };
+    });
+    await modalCapsule.setWallets(walletsMap);
+
+    return updatedAccount!.options.sessionCookie as string;
+  }
+
   return (
     <Container>
+      <Button
+        appName="Capsule Metamask Snap"
+        capsule={capsule}
+        createWalletOverride={createWalletOverride}
+        loginTransitionOverride={loginTransitionOverride}
+      ></Button>
       <CardContainer>
         {!state.installedSnap && (
           <Card
@@ -372,11 +461,6 @@ const Index = () => {
               enabled={Boolean(state.installedSnap)}
             />
             <Divider>&nbsp;</Divider>
-            <Button
-              skipWalletCreation={true}
-              appName="Capsule Metamask Snap"
-              capsule={capsule}
-            ></Button>
             <DividerTitle>Methods</DividerTitle>
             <Accordion items={accountManagementMethods} />
             <Divider />

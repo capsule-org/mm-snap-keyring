@@ -4659,125 +4659,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/snap-simple-keyring-site@workspace:packages/site":
-  version: 0.0.0-use.local
-  resolution: "@metamask/snap-simple-keyring-site@workspace:packages/site"
-  dependencies:
-    "@emotion/react": ^11.11.1
-    "@emotion/styled": ^11.11.0
-    "@metamask/auto-changelog": ^3.3.0
-    "@metamask/eslint-config": ^12.2.0
-    "@metamask/eslint-config-jest": ^12.1.0
-    "@metamask/eslint-config-nodejs": ^12.1.0
-    "@metamask/eslint-config-typescript": ^12.1.0
-    "@metamask/keyring-api": ^1.0.0-rc.1
-    "@metamask/providers": ^13.0.0
-    "@mui/icons-material": ^5.14.0
-    "@mui/material": ^5.14.0
-    "@svgr/webpack": ^6.5.1
-    "@types/react": ^18.0.28
-    "@types/react-helmet": ^6.1.6
-    "@types/styled-components": ^5.1.26
-    "@typescript-eslint/eslint-plugin": ^5.55.0
-    "@typescript-eslint/parser": ^5.55.0
-    "@usecapsule/web-sdk": 0.27.0-dev.28
-    cross-env: ^7.0.3
-    crypto-browserify: ^3.12.0
-    depcheck: ^1.4.6
-    eslint: ^8.36.0
-    eslint-config-prettier: ^8.7.0
-    eslint-plugin-import: ^2.27.5
-    eslint-plugin-jest: ^27.2.1
-    eslint-plugin-jsdoc: ^40.0.3
-    eslint-plugin-n: ^16.1.0
-    eslint-plugin-prettier: ^4.2.1
-    eslint-plugin-promise: ^6.1.1
-    gatsby: ^5.12.4
-    gatsby-plugin-manifest: ^5.12.0
-    gatsby-plugin-styled-components: ^6.12.0
-    gatsby-plugin-svgr: ^3.0.0-beta.0
-    gatsby-plugin-webfonts: ^2.3.2
-    object.assign: ^4.1.4
-    prettier: ^2.8.4
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-helmet: ^6.1.0
-    react-icons: ^4.8.0
-    react-is: ^18.2.0
-    react-scripts: ^5.0.1
-    rimraf: ^4.4.0
-    semver: ^7.5.4
-    stream-browserify: ^3.0.0
-    styled-components: 5.3.9
-    typescript: ^4.9.5
-    webpack: ^5.88.2
-  languageName: unknown
-  linkType: soft
-
-"@metamask/snap-simple-keyring-snap@workspace:packages/snap":
-  version: 0.0.0-use.local
-  resolution: "@metamask/snap-simple-keyring-snap@workspace:packages/snap"
-  dependencies:
-    "@ethereumjs/common": ^3.1.2
-    "@ethereumjs/tx": ^4.1.2
-    "@ethereumjs/util": ^8.0.5
-    "@lavamoat/allow-scripts": ^2.0.3
-    "@metamask/auto-changelog": ^3.3.0
-    "@metamask/eslint-config": ^12.2.0
-    "@metamask/eslint-config-jest": ^12.1.0
-    "@metamask/eslint-config-nodejs": ^12.1.0
-    "@metamask/eslint-config-typescript": ^12.1.0
-    "@metamask/eth-sig-util": ^7.0.0
-    "@metamask/keyring-api": ^1.0.0-rc.1
-    "@metamask/snaps-cli": ^3.0.0
-    "@metamask/snaps-types": ^3.0.0
-    "@metamask/utils": ^8.1.0
-    "@types/node": ^20.6.2
-    "@typescript-eslint/eslint-plugin": ^5.33.0
-    "@typescript-eslint/parser": ^5.33.0
-    "@usecapsule/web-sdk": 0.27.0-dev.34
-    depcheck: ^1.4.6
-    eslint: ^8.21.0
-    eslint-config-prettier: ^8.1.0
-    eslint-plugin-import: ^2.26.0
-    eslint-plugin-jest: ^26.8.2
-    eslint-plugin-jsdoc: ^39.2.9
-    eslint-plugin-n: ^16.1.0
-    eslint-plugin-prettier: ^4.2.1
-    eslint-plugin-promise: ^6.1.1
-    ethers: 6.6.4
-    prettier: ^2.2.1
-    rimraf: ^3.0.2
-    typescript: ^4.7.4
-    uuid: ^9.0.0
-  languageName: unknown
-  linkType: soft
-
-"@metamask/snap-simple-keyring@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@metamask/snap-simple-keyring@workspace:."
-  dependencies:
-    "@metamask/eslint-config": ^12.2.0
-    "@metamask/eslint-config-jest": ^12.1.0
-    "@metamask/eslint-config-nodejs": ^12.1.0
-    "@metamask/eslint-config-typescript": ^12.1.0
-    "@metamask/snaps-cli": ^3.0.0
-    "@typescript-eslint/eslint-plugin": ^5.55.0
-    "@typescript-eslint/parser": ^5.55.0
-    depcheck: ^1.4.6
-    eslint: ^8.36.0
-    eslint-config-prettier: ^8.7.0
-    eslint-plugin-import: ^2.27.5
-    eslint-plugin-jest: ^27.2.1
-    eslint-plugin-jsdoc: ^40.0.3
-    eslint-plugin-n: ^16.1.0
-    eslint-plugin-prettier: ^4.2.1
-    eslint-plugin-promise: ^6.1.1
-    prettier: ^2.8.4
-    typescript: ^4.9.5
-  languageName: unknown
-  linkType: soft
-
 "@metamask/snaps-cli@npm:^3.0.0":
   version: 3.0.0
   resolution: "@metamask/snaps-cli@npm:3.0.0"
@@ -8121,6 +8002,126 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@usecapsule/mm-snap-keyring-site@workspace:packages/site":
+  version: 0.0.0-use.local
+  resolution: "@usecapsule/mm-snap-keyring-site@workspace:packages/site"
+  dependencies:
+    "@emotion/react": ^11.11.1
+    "@emotion/styled": ^11.11.0
+    "@metamask/auto-changelog": ^3.3.0
+    "@metamask/eslint-config": ^12.2.0
+    "@metamask/eslint-config-jest": ^12.1.0
+    "@metamask/eslint-config-nodejs": ^12.1.0
+    "@metamask/eslint-config-typescript": ^12.1.0
+    "@metamask/keyring-api": ^1.0.0-rc.1
+    "@metamask/providers": ^13.0.0
+    "@mui/icons-material": ^5.14.0
+    "@mui/material": ^5.14.0
+    "@svgr/webpack": ^6.5.1
+    "@types/react": ^18.0.28
+    "@types/react-helmet": ^6.1.6
+    "@types/styled-components": ^5.1.26
+    "@typescript-eslint/eslint-plugin": ^5.55.0
+    "@typescript-eslint/parser": ^5.55.0
+    "@usecapsule/web-sdk": 0.27.0-dev.42
+    cross-env: ^7.0.3
+    crypto-browserify: ^3.12.0
+    depcheck: ^1.4.6
+    eslint: ^8.36.0
+    eslint-config-prettier: ^8.7.0
+    eslint-plugin-import: ^2.27.5
+    eslint-plugin-jest: ^27.2.1
+    eslint-plugin-jsdoc: ^40.0.3
+    eslint-plugin-n: ^16.1.0
+    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-promise: ^6.1.1
+    gatsby: ^5.12.4
+    gatsby-plugin-manifest: ^5.12.0
+    gatsby-plugin-styled-components: ^6.12.0
+    gatsby-plugin-svgr: ^3.0.0-beta.0
+    gatsby-plugin-webfonts: ^2.3.2
+    object.assign: ^4.1.4
+    prettier: ^2.8.4
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-helmet: ^6.1.0
+    react-icons: ^4.8.0
+    react-is: ^18.2.0
+    react-scripts: ^5.0.1
+    rimraf: ^4.4.0
+    semver: ^7.5.4
+    stream-browserify: ^3.0.0
+    styled-components: 5.3.9
+    typescript: ^4.9.5
+    webpack: ^5.88.2
+  languageName: unknown
+  linkType: soft
+
+"@usecapsule/mm-snap-keyring@workspace:packages/snap":
+  version: 0.0.0-use.local
+  resolution: "@usecapsule/mm-snap-keyring@workspace:packages/snap"
+  dependencies:
+    "@ethereumjs/common": ^3.1.2
+    "@ethereumjs/tx": ^4.1.2
+    "@ethereumjs/util": ^8.0.5
+    "@lavamoat/allow-scripts": ^2.0.3
+    "@metamask/auto-changelog": ^3.3.0
+    "@metamask/eslint-config": ^12.2.0
+    "@metamask/eslint-config-jest": ^12.1.0
+    "@metamask/eslint-config-nodejs": ^12.1.0
+    "@metamask/eslint-config-typescript": ^12.1.0
+    "@metamask/eth-sig-util": ^7.0.0
+    "@metamask/keyring-api": ^1.0.0-rc.1
+    "@metamask/snaps-cli": ^3.0.0
+    "@metamask/snaps-types": ^3.0.0
+    "@metamask/utils": ^8.1.0
+    "@types/node": ^20.6.2
+    "@typescript-eslint/eslint-plugin": ^5.33.0
+    "@typescript-eslint/parser": ^5.33.0
+    "@usecapsule/web-sdk": 0.27.0-dev.43
+    depcheck: ^1.4.6
+    eslint: ^8.21.0
+    eslint-config-prettier: ^8.1.0
+    eslint-plugin-import: ^2.26.0
+    eslint-plugin-jest: ^26.8.2
+    eslint-plugin-jsdoc: ^39.2.9
+    eslint-plugin-n: ^16.1.0
+    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-promise: ^6.1.1
+    ethers: 6.6.4
+    file-loader: ^6.2.0
+    prettier: ^2.2.1
+    rimraf: ^3.0.2
+    typescript: ^4.7.4
+    uuid: ^9.0.0
+  languageName: unknown
+  linkType: soft
+
+"@usecapsule/mm-snap@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@usecapsule/mm-snap@workspace:."
+  dependencies:
+    "@metamask/eslint-config": ^12.2.0
+    "@metamask/eslint-config-jest": ^12.1.0
+    "@metamask/eslint-config-nodejs": ^12.1.0
+    "@metamask/eslint-config-typescript": ^12.1.0
+    "@metamask/snaps-cli": ^3.0.0
+    "@typescript-eslint/eslint-plugin": ^5.55.0
+    "@typescript-eslint/parser": ^5.55.0
+    depcheck: ^1.4.6
+    eslint: ^8.36.0
+    eslint-config-prettier: ^8.7.0
+    eslint-plugin-import: ^2.27.5
+    eslint-plugin-jest: ^27.2.1
+    eslint-plugin-jsdoc: ^40.0.3
+    eslint-plugin-n: ^16.1.0
+    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-promise: ^6.1.1
+    prettier: ^2.8.4
+    typescript: ^4.9.5
+  languageName: unknown
+  linkType: soft
+
 "@usecapsule/user-management-client@npm:0.18.0-dev.3":
   version: 0.18.0-dev.3
   resolution: "@usecapsule/user-management-client@npm:0.18.0-dev.3"
@@ -8130,9 +8131,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usecapsule/web-sdk@npm:0.27.0-dev.28":
-  version: 0.27.0-dev.28
-  resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.28"
+"@usecapsule/web-sdk@npm:0.27.0-dev.42":
+  version: 0.27.0-dev.42
+  resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.42"
   dependencies:
     "@celo/utils": 3.2.0
     "@chakra-ui/icons": ^2.1.1
@@ -8168,13 +8169,13 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: 7979aea200d9ba7af45c91ad058446e4b0406f473502398093227cd2981ce93536c6ce7d47ca68fdaef547f9985a4d8ba90aedf966454b16010ffcae1794c66f
+  checksum: e7aaa8359bc15c0b47fac431619d5239f331cc6561549a694e65e7680c136c67c54c66c85bbb2fd4961eb76c8d39289746cb2018586e5c45e0fa22ad3f9d87ec
   languageName: node
   linkType: hard
 
-"@usecapsule/web-sdk@npm:0.27.0-dev.34":
-  version: 0.27.0-dev.34
-  resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.34"
+"@usecapsule/web-sdk@npm:0.27.0-dev.43":
+  version: 0.27.0-dev.43
+  resolution: "@usecapsule/web-sdk@npm:0.27.0-dev.43"
   dependencies:
     "@celo/utils": 3.2.0
     "@chakra-ui/icons": ^2.1.1
@@ -8210,7 +8211,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: ec5969fa74c30b248bfee39bc667001b517827e419a49d60de14b3cfe024e7418a11f6e5f3ac4a0c41d40ea6fc025f704116fba294e0761be6fff648ea182ee0
+  checksum: 95eea0d601f8276e05cead75ea84d9f700e7fa508c84b5396a0dfb72449a7a9a2891cfeeaf1a2eaea69c3a27b3fe1444ba47c91d2a7db0d3b1df1dbb3fac167e
   languageName: node
   linkType: hard
 

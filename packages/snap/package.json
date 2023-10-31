@@ -1,5 +1,5 @@
 {
-  "name": "@metamask/snap-simple-keyring-snap",
+  "name": "@usecapsule/mm-snap-keyring",
   "version": "1.1.0",
   "description": "A simple keyring snap that integrates with MetaMask accounts.",
   "keywords": [
@@ -8,13 +8,13 @@
     "keyring",
     "account"
   ],
-  "homepage": "https://github.com/MetaMask/snap-simple-keyring#readme",
+  "homepage": "https://github.com/usecapsule/mm-snap-keyring#readme",
   "bugs": {
-    "url": "https://github.com/MetaMask/snap-simple-keyring/issues"
+    "url": "https://github.com/usecapsule/mm-snap-keyring/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MetaMask/snap-simple-keyring.git"
+    "url": "git+https://github.com/usecapsule/mm-snap-keyring.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "main": "dist/bundle.js",
@@ -36,7 +36,7 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' '!snap.manifest.json' --check",
     "lint:types": "tsc --noEmit",
     "serve": "mm-snap serve",
-    "start": "NODE_ENV='development' mm-snap serve"
+    "start": "NODE_ENV='development' mm-snap watch"
   },
   "dependencies": {
     "@ethereumjs/common": "^3.1.2",
@@ -46,7 +46,7 @@
     "@metamask/keyring-api": "^1.0.0-rc.1",
     "@metamask/snaps-types": "^3.0.0",
     "@metamask/utils": "^8.1.0",
-    "@usecapsule/web-sdk": "0.27.0-dev.34",
+    "@usecapsule/web-sdk": "0.27.0-dev.43",
     "ethers": "6.6.4",
     "uuid": "^9.0.0"
   },
@@ -70,6 +70,7 @@
     "eslint-plugin-n": "^16.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
+    "file-loader": "^6.2.0",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "typescript": "^4.7.4"

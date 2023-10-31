@@ -1,10 +1,12 @@
 import { Common, Hardfork } from '@ethereumjs/common';
 import { TransactionFactory } from '@ethereumjs/tx';
 import { stripHexPrefix } from '@ethereumjs/util';
-import type { TypedMessage } from '@metamask/eth-sig-util';
+import type { TypedDataV1, TypedMessage } from '@metamask/eth-sig-util';
 import {
   SignTypedDataVersion,
   recoverPersonalSignature,
+  TypedDataUtils,
+  typedSignatureHash,
 } from '@metamask/eth-sig-util';
 import type {
   Keyring,
@@ -20,7 +22,11 @@ import {
 import { KeyringEvent } from '@metamask/keyring-api/dist/events';
 import { type Json, type JsonRpcRequest } from '@metamask/utils';
 import type { SuccessfulSignatureRes } from '@usecapsule/web-sdk';
-import Capsule, { Environment, CapsuleEthersSigner } from '@usecapsule/web-sdk';
+import {
+  CapsuleWeb,
+  Environment,
+  CapsuleEthersSigner,
+} from '@usecapsule/web-sdk';
 import { Buffer } from 'buffer';
 import { ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';
@@ -50,7 +56,7 @@ type CreateAccountOptions = {
 export class SimpleKeyring implements Keyring {
   #state: KeyringState;
 
-  #capsule: Capsule;
+  #capsule: CapsuleWeb;
 
   constructor(state: KeyringState) {
     this.#state = state;
@@ -88,7 +94,7 @@ export class SimpleKeyring implements Keyring {
     ): Promise<void> => {
       delete this.#state.capsuleSessionStorage[key];
     };
-    this.#capsule = new Capsule(Environment.SANDBOX, undefined, {
+    this.#capsule = new CapsuleWeb(Environment.SANDBOX, undefined, {
       disableWorkers: true,
       useStorageOverrides: true,
       localStorageGetItemOverride,
@@ -110,8 +116,28 @@ export class SimpleKeyring implements Keyring {
   }
 
   async listAccounts(): Promise<KeyringAccount[]> {
-    return Object.values(this.#state.wallets).map((wallet) => wallet.account);
+    await this.#capsule.init();
+    const isLoggedIn = Boolean(await this.#capsule.isFullyLoggedIn());
+    console.log('list accounts state');
+    console.log(this.#state.wallets);
+    const res = Object.values(this.#state.wallets).map((wallet) => {
+      delete wallet.account.options.loginEncryptionKeyPair;
+      return {
+        ...wallet.account,
+        options: {
+          ...wallet.account.options,
+          isLoggedIn,
+        },
+      };
+    });
+    console.log(res);
+    console.log(JSON.stringify(res, null, 2));
+    return res;
   }
+
+  // async listAccounts(): Promise<KeyringAccount[]> {
+  //   return Object.values(this.#state.wallets).map((wallet) => wallet.account);
+  // }
 
   async getAccount(id: string): Promise<KeyringAccount> {
     return (
@@ -126,12 +152,17 @@ export class SimpleKeyring implements Keyring {
     await this.#capsule.setUserId(options.userId);
     await this.#capsule.setEmail(options.email);
     this.#capsule.persistSessionCookie(options.sessionCookie!);
+    const [newWallet, recovery] = await this.#capsule.createWallet();
     delete options.sessionCookie;
-    const newWallet = (await this.#capsule.createWallet(false, () => {}))[0];
 
+    const sessionCookie = this.#capsule.retrieveSessionCookie() as string;
     const account: KeyringAccount = {
       id: uuid(),
-      options,
+      options: {
+        ...options,
+        sessionCookie,
+        recovery,
+      },
       address: newWallet.address as string,
       methods: [
         EthMethod.PersonalSign,
@@ -157,6 +188,29 @@ export class SimpleKeyring implements Keyring {
   }
 
   async updateAccount(account: KeyringAccount): Promise<void> {
+    const { options } = account;
+    if (options.sessionCookie) {
+      console.log('sessionCookie update');
+      console.log(options);
+      await this.#capsule.setLoginEncryptionKeyPair(
+        JSON.parse(options.loginEncryptionKeyPair as string),
+      );
+      console.log('after setLoginEncryptionKeyPair');
+      await this.#capsule.init();
+
+      await this.#capsule.setEmail(options.email as string);
+      this.#capsule.persistSessionCookie(options.sessionCookie as string);
+
+      console.log('before wait');
+      await this.#capsule.waitForLoginAndSetup(true);
+      console.log('after login and setup');
+      console.log(await this.#capsule.isFullyLoggedIn());
+      options.sessionCookie = this.#capsule.retrieveSessionCookie() as string;
+      delete options.loginEncryptionKeyPair;
+      // await this.#saveState();
+      // return;
+    }
+
     const wallet =
       this.#state.wallets[account.id] ??
       throwError(`Account '${account.id}' not found`);
@@ -164,6 +218,10 @@ export class SimpleKeyring implements Keyring {
     const newAccount: KeyringAccount = {
       ...wallet.account,
       ...account,
+      options: {
+        ...wallet.account.options,
+        ...options,
+      },
       // Restore read-only properties.
       address: wallet.account.address,
     };
@@ -179,7 +237,6 @@ export class SimpleKeyring implements Keyring {
     }
   }
 
-  // TODO: delete wallet from localstorage too
   async deleteAccount(id: string): Promise<void> {
     try {
       await this.#emitEvent(KeyringEvent.AccountDeleted, { id });
@@ -202,6 +259,10 @@ export class SimpleKeyring implements Keyring {
 
   async submitRequest(request: KeyringRequest): Promise<SubmitRequestResponse> {
     await this.#capsule.init();
+    console.log('login check');
+    console.log(await this.#capsule.isSessionActive());
+    console.log(await this.#capsule.isFullyLoggedIn());
+    console.log(this.#capsule.getWallets());
 
     if (!(await this.#capsule.isFullyLoggedIn())) {
       return this.#asyncSubmitRequest(request);
@@ -373,26 +434,97 @@ export class SimpleKeyring implements Keyring {
     },
   ): Promise<string> {
     await this.#capsule.init();
-
-    const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
+    console.log('signTypedData');
+    console.log(from);
+    console.log(JSON.stringify(data, null, 2));
+    console.log(JSON.stringify(opts, null, 2));
     const walletId = await this.#getWalletIdFromAddress(from);
-    ethersSigner.setCurrentWalletId(walletId);
-    const typedData = data as unknown as TypedMessage<any>;
-    const domain = {
-      name: typedData.domain.name ?? null,
-      version: opts.version ?? typedData.domain.version ?? null,
-      chainId: typedData.domain.chainId ?? null,
-      verifyingContract: typedData.domain.verifyingContract ?? null,
-      salt: typedData.domain.salt
-        ? new Uint8Array(typedData.domain.salt)
-        : null,
-    };
+    const hashedTypedData =
+      opts.version === SignTypedDataVersion.V1
+        ? Buffer.from(
+            typedSignatureHash(data as TypedDataV1).substring(2),
+            'hex',
+          )
+        : TypedDataUtils.eip712Hash(
+            data as unknown as TypedMessage<any>,
+            opts.version,
+          );
 
-    return ethersSigner.signTypedData(
-      domain,
-      typedData.types,
-      typedData.message,
+    // const hashedTypedData = TypedDataUtils.eip712Hash(
+    //   data as unknown as TypedMessage<any>,
+    //   opts.version as any,
+    // );
+
+    const res = await this.#capsule.signMessage(
+      walletId,
+      Buffer.from(hashedTypedData).toString('base64'),
     );
+    console.log('after populated');
+    const { signature } = res as SuccessfulSignatureRes;
+    console.log(signature);
+    // const recoveredAddress = ethers.verifyTypedData(
+    //   domain,
+    //   typedData.types,
+    //   typedData.message,
+    //   `0x${signature}`,
+    // );
+    // console.log('recovered address');
+    // console.log(recoveredAddress);
+    return `0x${signature}`;
+
+    // const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
+    // const walletId = await this.#getWalletIdFromAddress(from);
+    // ethersSigner.setCurrentWalletId(walletId);
+    // const typedData = data as unknown as TypedMessage<any>;
+    // const domain = {
+    //   name: typedData.domain.name ?? null,
+    //   version: opts.version ?? typedData.domain.version ?? null,
+    //   chainId: typedData.domain.chainId ?? null,
+    //   verifyingContract: typedData.domain.verifyingContract ?? null,
+    //   salt: typedData.domain.salt
+    //     ? new Uint8Array(typedData.domain.salt)
+    //     : null,
+    // };
+
+    // console.log('before populated 6');
+
+    // // const validTypes = {
+    // //   ...typedData.types,
+    // //   EIP712Domain: undefined,
+    // // };
+    // // delete validTypes.EIP712Domain;
+    // delete typedData.types.EIP712Domain;
+    // delete typedData.types.Group;
+
+    // const res = await this.#capsule.signMessage(
+    //   walletId,
+    //   hexStringToBase64(
+    //     ethers.TypedDataEncoder.hash(
+    //       domain,
+    //       typedData.types,
+    //       typedData.message,
+    //     ),
+    //   ),
+    // );
+    // console.log('after populated');
+    // const { signature } = res as SuccessfulSignatureRes;
+    // console.log(signature);
+    // const recoveredAddress = ethers.verifyTypedData(
+    //   domain,
+    //   typedData.types,
+    //   typedData.message,
+    //   `0x${signature}`,
+    // );
+    // console.log('recovered address');
+    // console.log(recoveredAddress);
+    // return `0x${signature}`;
+
+    // console.log(typedData.types);
+    // return ethersSigner.signTypedData(
+    //   domain, // populated.domain,
+    //   typedData.types,
+    //   typedData.message, // populated.value,
+    // );
   }
 
   async #signPersonalMessage(from: string, request: string): Promise<string> {

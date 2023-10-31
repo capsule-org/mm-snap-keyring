@@ -1,5 +1,5 @@
 {
-  "name": "@metamask/snap-simple-keyring-site",
+  "name": "@usecapsule/mm-snap-keyring-site",
   "version": "1.1.0",
   "private": true,
   "license": "(MIT-0 OR Apache-2.0)",
@@ -34,7 +34,7 @@
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.14.0",
     "@types/react-helmet": "^6.1.6",
-    "@usecapsule/web-sdk": "0.27.0-dev.28",
+    "@usecapsule/web-sdk": "0.27.0-dev.42",
     "crypto-browserify": "^3.12.0",
     "object.assign": "^4.1.4",
     "react": "^18.2.0",
