@@ -12,12 +12,19 @@ const Wrapper = styled.div`
   width: 100%;
   min-height: 100vh;
   max-width: 100vw;
+  padding-top: 25px;
+  padding-left: 15%;
+  padding-right: 15%;
 `;
 
-const BannerWrapper = styled.div`
-  padding-top: 25px;
-  padding-left: 5%;
-  padding-right: 5%;
+const SubjectDiv = styled.div`
+  font-size: 28px;
+  padding-bottom: 18px;
+`;
+
+const DescriptionDiv = styled.div`
+  font-size: 16px;
+  padding-bottom: 14px;
 `;
 
 export type AppProps = {
@@ -38,14 +45,23 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
       </Helmet>
       {/* <GlobalStyle /> */}
       <Wrapper>
-        <BannerWrapper>
-          <AlertBanner
-            title={
-              "This is a developer tool for testing purposes. Don't use it to store real assets. Use with caution."
-            }
-            alertType={AlertType.Failure}
-          />
-        </BannerWrapper>
+        <SubjectDiv>Welcome to the Capsule Account Snap!</SubjectDiv>
+        <DescriptionDiv>
+          <u>Capsule</u> is a signing solution that you can use to create
+          secure, embedded <u>MPC wallets</u> with just an email or a social
+          login. Capsule-enabled wallets are portable across applications,
+          recoverable, and programmable, so you get the best of an embedded
+          experience without needing to create different signers or contract
+          accounts for every application you use.
+        </DescriptionDiv>
+        <DescriptionDiv>
+          The Capsule Account Snap is an easy way for you to create a new
+          Capsule wallet, log in with an existing wallet, and in the future even
+          set permissions and automations.
+        </DescriptionDiv>
+        <DescriptionDiv>
+          To learn more about Capsule, check out usecapsule.com
+        </DescriptionDiv>
         <Header />
         {children}
         <Footer />
