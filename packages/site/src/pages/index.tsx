@@ -65,16 +65,12 @@ const Index = () => {
      * @returns The current state of the snap.
      */
     async function getState() {
-      console.log('getState');
-      console.log(state);
       if (!state.installedSnap) {
         return;
       }
       const accounts = await client.listAccounts();
       const pendingRequests = await client.listRequests();
       const isSynchronous = await isSynchronousMode();
-      console.log('retrieved accounts');
-      console.log(accounts);
       setSnapState({
         accounts,
         pendingRequests,
@@ -94,10 +90,6 @@ const Index = () => {
   };
 
   const createAccount = async () => {
-    console.log('create acccount try again');
-    // await capsule.createUser('mmsnap3@test.usecapsule.com');
-    // console.log(await capsule.verifyEmail('123456'));
-    console.log('before keyring create wallet');
     const newAccount = await client.createAccount({
       // @ts-ignore
       userId: capsule.userId,
@@ -354,8 +346,9 @@ const Index = () => {
       email: modalCapsule.getEmail() as string,
       sessionCookie: modalCapsule.retrieveSessionCookie() as string,
     });
-    const { recovery } = newAccount.options;
+    const { recovery, sessionCookie } = newAccount.options;
     delete newAccount.options.recovery;
+    modalCapsule.persistSessionCookie(sessionCookie as string);
 
     const fetchedWallets = await modalCapsule.fetchWallets();
     const walletsMap: Record<string, any> = {};
@@ -374,38 +367,34 @@ const Index = () => {
   async function loginTransitionOverride(
     modalCapsule: Capsule | CoreCapsule,
   ): Promise<string> {
-    // const currentAccount = (snapState.accounts ||
-    //   (await client.listAccounts()))[0];
     const allAccounts = snapState.accounts || (await client.listAccounts());
     const currentAccount = allAccounts.find(
       (account) => account.options.email === modalCapsule.getEmail(),
     );
-    console.log('snap state');
-    console.log(snapState);
-    const currentOptions = currentAccount?.options;
 
-    console.log('before update account');
+    if (!currentAccount) {
+      throw new Error('Account not found');
+    }
+
     await client.updateAccount({
       ...currentAccount,
       options: {
-        ...currentOptions,
+        ...currentAccount.options,
         // @ts-ignore
         userId: modalCapsule.userId,
-        email: modalCapsule.getEmail() as string,
-        sessionCookie: modalCapsule.retrieveSessionCookie() as string,
+        email: modalCapsule.getEmail()!,
+        sessionCookie: modalCapsule.retrieveSessionCookie()!,
         loginEncryptionKeyPair: JSON.stringify(
           modalCapsule.loginEncryptionKeyPair,
         ),
       },
-    } as any);
-    console.log('after site update');
+    });
+
     const accounts = await client.listAccounts();
     const updatedAccount = accounts.find(
-      (account) => account.id === currentAccount!.id,
+      (account) => account.id === currentAccount.id,
     );
-    console.log(updatedAccount);
     await modalCapsule.setUserId(updatedAccount!.options.userId as string);
-    await modalCapsule.setEmail(updatedAccount!.options.email as string);
     modalCapsule.persistSessionCookie(
       updatedAccount!.options.sessionCookie as string,
     );

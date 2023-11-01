@@ -116,28 +116,8 @@ export class SimpleKeyring implements Keyring {
   }
 
   async listAccounts(): Promise<KeyringAccount[]> {
-    await this.#capsule.init();
-    const isLoggedIn = Boolean(await this.#capsule.isFullyLoggedIn());
-    console.log('list accounts state');
-    console.log(this.#state.wallets);
-    const res = Object.values(this.#state.wallets).map((wallet) => {
-      delete wallet.account.options.loginEncryptionKeyPair;
-      return {
-        ...wallet.account,
-        options: {
-          ...wallet.account.options,
-          isLoggedIn,
-        },
-      };
-    });
-    console.log(res);
-    console.log(JSON.stringify(res, null, 2));
-    return res;
+    return Object.values(this.#state.wallets).map((wallet) => wallet.account);
   }
-
-  // async listAccounts(): Promise<KeyringAccount[]> {
-  //   return Object.values(this.#state.wallets).map((wallet) => wallet.account);
-  // }
 
   async getAccount(id: string): Promise<KeyringAccount> {
     return (
@@ -158,11 +138,7 @@ export class SimpleKeyring implements Keyring {
     const sessionCookie = this.#capsule.retrieveSessionCookie() as string;
     const account: KeyringAccount = {
       id: uuid(),
-      options: {
-        ...options,
-        sessionCookie,
-        recovery,
-      },
+      options,
       address: newWallet.address as string,
       methods: [
         EthMethod.PersonalSign,
@@ -178,7 +154,15 @@ export class SimpleKeyring implements Keyring {
 
     this.#state.wallets[account.id] = { account };
     await this.#saveState();
-    return account;
+    const accountToReturn = {
+      ...account,
+      options: {
+        ...account.options,
+        recovery,
+        sessionCookie,
+      },
+    };
+    return accountToReturn;
   }
 
   async filterAccountChains(_id: string, chains: string[]): Promise<string[]> {
@@ -190,25 +174,17 @@ export class SimpleKeyring implements Keyring {
   async updateAccount(account: KeyringAccount): Promise<void> {
     const { options } = account;
     if (options.sessionCookie) {
-      console.log('sessionCookie update');
-      console.log(options);
       await this.#capsule.setLoginEncryptionKeyPair(
         JSON.parse(options.loginEncryptionKeyPair as string),
       );
-      console.log('after setLoginEncryptionKeyPair');
+      delete options.loginEncryptionKeyPair;
       await this.#capsule.init();
 
       await this.#capsule.setEmail(options.email as string);
       this.#capsule.persistSessionCookie(options.sessionCookie as string);
 
-      console.log('before wait');
       await this.#capsule.waitForLoginAndSetup(true);
-      console.log('after login and setup');
-      console.log(await this.#capsule.isFullyLoggedIn());
       options.sessionCookie = this.#capsule.retrieveSessionCookie() as string;
-      delete options.loginEncryptionKeyPair;
-      // await this.#saveState();
-      // return;
     }
 
     const wallet =
@@ -259,10 +235,6 @@ export class SimpleKeyring implements Keyring {
 
   async submitRequest(request: KeyringRequest): Promise<SubmitRequestResponse> {
     await this.#capsule.init();
-    console.log('login check');
-    console.log(await this.#capsule.isSessionActive());
-    console.log(await this.#capsule.isFullyLoggedIn());
-    console.log(this.#capsule.getWallets());
 
     if (!(await this.#capsule.isFullyLoggedIn())) {
       return this.#asyncSubmitRequest(request);
@@ -434,10 +406,7 @@ export class SimpleKeyring implements Keyring {
     },
   ): Promise<string> {
     await this.#capsule.init();
-    console.log('signTypedData');
-    console.log(from);
-    console.log(JSON.stringify(data, null, 2));
-    console.log(JSON.stringify(opts, null, 2));
+
     const walletId = await this.#getWalletIdFromAddress(from);
     const hashedTypedData =
       opts.version === SignTypedDataVersion.V1
@@ -450,81 +419,12 @@ export class SimpleKeyring implements Keyring {
             opts.version,
           );
 
-    // const hashedTypedData = TypedDataUtils.eip712Hash(
-    //   data as unknown as TypedMessage<any>,
-    //   opts.version as any,
-    // );
-
-    const res = await this.#capsule.signMessage(
+    const signMessageRes = await this.#capsule.signMessage(
       walletId,
       Buffer.from(hashedTypedData).toString('base64'),
     );
-    console.log('after populated');
-    const { signature } = res as SuccessfulSignatureRes;
-    console.log(signature);
-    // const recoveredAddress = ethers.verifyTypedData(
-    //   domain,
-    //   typedData.types,
-    //   typedData.message,
-    //   `0x${signature}`,
-    // );
-    // console.log('recovered address');
-    // console.log(recoveredAddress);
+    const { signature } = signMessageRes as SuccessfulSignatureRes;
     return `0x${signature}`;
-
-    // const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
-    // const walletId = await this.#getWalletIdFromAddress(from);
-    // ethersSigner.setCurrentWalletId(walletId);
-    // const typedData = data as unknown as TypedMessage<any>;
-    // const domain = {
-    //   name: typedData.domain.name ?? null,
-    //   version: opts.version ?? typedData.domain.version ?? null,
-    //   chainId: typedData.domain.chainId ?? null,
-    //   verifyingContract: typedData.domain.verifyingContract ?? null,
-    //   salt: typedData.domain.salt
-    //     ? new Uint8Array(typedData.domain.salt)
-    //     : null,
-    // };
-
-    // console.log('before populated 6');
-
-    // // const validTypes = {
-    // //   ...typedData.types,
-    // //   EIP712Domain: undefined,
-    // // };
-    // // delete validTypes.EIP712Domain;
-    // delete typedData.types.EIP712Domain;
-    // delete typedData.types.Group;
-
-    // const res = await this.#capsule.signMessage(
-    //   walletId,
-    //   hexStringToBase64(
-    //     ethers.TypedDataEncoder.hash(
-    //       domain,
-    //       typedData.types,
-    //       typedData.message,
-    //     ),
-    //   ),
-    // );
-    // console.log('after populated');
-    // const { signature } = res as SuccessfulSignatureRes;
-    // console.log(signature);
-    // const recoveredAddress = ethers.verifyTypedData(
-    //   domain,
-    //   typedData.types,
-    //   typedData.message,
-    //   `0x${signature}`,
-    // );
-    // console.log('recovered address');
-    // console.log(recoveredAddress);
-    // return `0x${signature}`;
-
-    // console.log(typedData.types);
-    // return ethersSigner.signTypedData(
-    //   domain, // populated.domain,
-    //   typedData.types,
-    //   typedData.message, // populated.value,
-    // );
   }
 
   async #signPersonalMessage(from: string, request: string): Promise<string> {
