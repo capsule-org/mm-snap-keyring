@@ -26,7 +26,7 @@ const initialState: {
 };
 
 const Index = () => {
-  const [state, dispatch] = useContext(MetaMaskContext);
+  const [state] = useContext(MetaMaskContext);
   const [snapState, setSnapState] = useState<KeyringState>(initialState);
 
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
