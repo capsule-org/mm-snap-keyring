@@ -9,9 +9,9 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import { Container } from '../components/styledComponents';
 import { defaultSnapOrigin } from '../config';
-import { MetaMaskContext, MetamaskActions } from '../hooks';
+import { MetaMaskContext } from '../hooks';
 import type { KeyringState } from '../utils';
-import { connectSnap, getSnap, isSynchronousMode } from '../utils';
+import { isSynchronousMode } from '../utils';
 
 const snapId = defaultSnapOrigin;
 
@@ -62,21 +62,6 @@ const Index = () => {
       ...snapState,
       accounts,
     });
-  };
-
-  const handleConnectClick = async () => {
-    try {
-      await connectSnap();
-      const installedSnap = await getSnap();
-
-      dispatch({
-        type: MetamaskActions.SetInstalled,
-        payload: installedSnap,
-      });
-    } catch (error) {
-      console.error(error);
-      dispatch({ type: MetamaskActions.SetError, payload: error });
-    }
   };
 
   async function createWalletOverride(
