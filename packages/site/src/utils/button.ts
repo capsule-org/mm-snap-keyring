@@ -1,5 +1,6 @@
 import { isLocalSnap } from './snap';
+import { hideReconnectButton } from '../config/snap';
 import type { Snap } from '../types';
 
 export const shouldDisplayReconnectButton = (installedSnap?: Snap) =>
-  installedSnap && isLocalSnap(installedSnap?.id);
+  !hideReconnectButton && installedSnap && isLocalSnap(installedSnap?.id);

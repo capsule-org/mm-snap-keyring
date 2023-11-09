@@ -94,16 +94,21 @@ export class SimpleKeyring implements Keyring {
     ): Promise<void> => {
       delete this.#state.capsuleSessionStorage[key];
     };
-    this.#capsule = new CapsuleWeb(Environment.SANDBOX, undefined, {
-      disableWorkers: true,
-      useStorageOverrides: true,
-      localStorageGetItemOverride,
-      localStorageSetItemOverride,
-      sessionStorageGetItemOverride,
-      sessionStorageSetItemOverride,
-      sessionStorageRemoveItemOverride,
-      disableWebSockets: true,
-    });
+    // TODO: get mm specific api key
+    this.#capsule = new CapsuleWeb(
+      Environment.SANDBOX,
+      '2f938ac0c48ef356050a79bd66042a23',
+      {
+        disableWorkers: true,
+        useStorageOverrides: true,
+        localStorageGetItemOverride,
+        localStorageSetItemOverride,
+        sessionStorageGetItemOverride,
+        sessionStorageSetItemOverride,
+        sessionStorageRemoveItemOverride,
+        disableWebSockets: true,
+      },
+    );
   }
 
   async #getWalletIdFromAddress(address: string): Promise<string> {

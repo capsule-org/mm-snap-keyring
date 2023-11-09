@@ -1,5 +1,6 @@
 import type { SnapConfig } from '@metamask/snaps-cli';
 import { merge } from '@metamask/snaps-cli';
+import * as webpack from 'webpack';
 
 const config: SnapConfig = {
   bundler: 'webpack',
@@ -40,6 +41,13 @@ const config: SnapConfig = {
             test: /\.css$/,
             use: ['style-loader', 'css-loader'],
           },
+          {
+            test: /\.(woff(2)?|eot|ttf|otf|svg)$/,
+            type: 'asset/resource',
+            generator: {
+              filename: 'fonts/[name][ext][query]',
+            },
+          },
           // {
           //   test: /\.(png|jpe?g|gif|svg)$/,
           //   use: [
@@ -53,6 +61,15 @@ const config: SnapConfig = {
           // },
         ],
       },
+      plugins: [
+        // Add the IgnorePlugin to ignore all CSS files within node_modules
+        // @ts-ignore
+        new webpack.IgnorePlugin({
+          resourceRegExp: /\.css$/,
+          contextRegExp: /node_modules/,
+        }),
+        // Other plugins...
+      ],
     }),
 };
 
