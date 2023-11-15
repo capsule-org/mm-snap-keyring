@@ -48,9 +48,11 @@ export type Wallet = {
 };
 
 type CreateAccountOptions = {
-  userId: string;
+  userId?: string;
   email: string;
   sessionCookie?: string;
+  isExistingUser?: boolean;
+  loginEncryptionKeyPair?: any;
 };
 
 export class SimpleKeyring implements Keyring {
@@ -134,17 +136,37 @@ export class SimpleKeyring implements Keyring {
   async createAccount(options: CreateAccountOptions): Promise<KeyringAccount> {
     await this.#capsule.init();
 
-    await this.#capsule.setUserId(options.userId);
-    await this.#capsule.setEmail(options.email);
-    this.#capsule.persistSessionCookie(options.sessionCookie!);
-    const [newWallet, recovery] = await this.#capsule.createWallet();
-    delete options.sessionCookie;
+    let wallet: any;
+    let recovery: string | null = '';
+    let sessionCookie: string;
+    if (options.isExistingUser) {
+      await this.#capsule.setLoginEncryptionKeyPair(
+        JSON.parse(options.loginEncryptionKeyPair as string),
+      );
+      delete options.loginEncryptionKeyPair;
+      await this.#capsule.init();
 
-    const sessionCookie = this.#capsule.retrieveSessionCookie() as string;
+      await this.#capsule.setEmail(options.email);
+      this.#capsule.persistSessionCookie(options.sessionCookie!);
+
+      await this.#capsule.waitForLoginAndSetup(true);
+      // eslint-disable-next-line require-atomic-updates
+      sessionCookie = this.#capsule.retrieveSessionCookie()!;
+      wallet = this.#capsule.getWallets()[0];
+    } else {
+      await this.#capsule.setUserId(options.userId!);
+      await this.#capsule.setEmail(options.email);
+      this.#capsule.persistSessionCookie(options.sessionCookie!);
+      [wallet, recovery] = await this.#capsule.createWallet();
+      delete options.sessionCookie;
+
+      sessionCookie = this.#capsule.retrieveSessionCookie() as string;
+    }
+
     const account: KeyringAccount = {
       id: uuid(),
       options,
-      address: newWallet.address as string,
+      address: wallet.address as string,
       methods: [
         EthMethod.PersonalSign,
         EthMethod.Sign,

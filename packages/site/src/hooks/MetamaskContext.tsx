@@ -8,6 +8,8 @@ export type MetamaskState = {
   hasMetaMask: boolean;
   installedSnap?: Snap;
   error?: Error;
+  setInstalledCalled?: boolean;
+  setMetaMaskDetectedCalled?: boolean;
 };
 
 const initialState: MetamaskState = {
@@ -37,12 +39,14 @@ const reducer: Reducer<MetamaskState, MetamaskDispatch> = (state, action) => {
       return {
         ...state,
         installedSnap: action.payload,
+        setInstalledCalled: true,
       };
 
     case MetamaskActions.SetMetaMaskDetected:
       return {
         ...state,
         hasMetaMask: action.payload,
+        setMetaMaskDetectedCalled: true,
       };
 
     case MetamaskActions.SetError:

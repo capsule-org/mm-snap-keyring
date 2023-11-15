@@ -1,6 +1,7 @@
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
 import type { CoreCapsule } from '@usecapsule/web-sdk';
+import type Capsule from '@usecapsule/web-sdk';
 import {
   Environment,
   Button as CapsuleButton,
@@ -71,6 +72,8 @@ const Index = () => {
   const [buttonOnClickOverride, setButtonOnClickOverride] = useState<{
     func: React.MouseEventHandler<HTMLButtonElement> | undefined;
   }>();
+  const [snapStateUseEffectDoneAt, setSnapStateUseEffectDoneAt] =
+    useState<Date>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
   // TODO: get mm specific api key
@@ -81,11 +84,12 @@ const Index = () => {
 
   useEffect(() => {
     async function setButtonOverrides() {
+      if (!snapStateUseEffectDoneAt) {
+        return;
+      }
       const { displayOverride, onClickOverride, extraDisplayOverride } =
         await getButtonOverrides();
-      setButtonOnClickOverride({ func: onClickOverride });
-      setButtonDisplayOverride(displayOverride);
-      setExtraButtonDisplayOverride(extraDisplayOverride);
+
       if (snapState.accounts.length > 0) {
         if (snapState.accounts[0]!.options.email) {
           await capsule.setEmail(
@@ -93,9 +97,13 @@ const Index = () => {
           );
         }
       }
+
+      setButtonOnClickOverride({ func: onClickOverride });
+      setExtraButtonDisplayOverride(extraDisplayOverride);
+      setButtonDisplayOverride(displayOverride);
     }
     setButtonOverrides().catch((error) => console.error(error));
-  }, [isLoggedIn, state, snapState]);
+  }, [isLoggedIn, state, snapStateUseEffectDoneAt]);
 
   useEffect(() => {
     /**
@@ -104,7 +112,11 @@ const Index = () => {
      * @returns The current state of the snap.
      */
     async function getState() {
+      if (!(state.setInstalledCalled && state.setMetaMaskDetectedCalled)) {
+        return;
+      }
       if (!state.installedSnap) {
+        setSnapStateUseEffectDoneAt(new Date());
         return;
       }
       const accounts = await client.listAccounts();
@@ -115,10 +127,11 @@ const Index = () => {
         pendingRequests,
         useSynchronousApprovals: isSynchronous,
       });
+      setSnapStateUseEffectDoneAt(new Date());
     }
 
     getState().catch((error) => console.error(error));
-  }, [state.installedSnap]);
+  }, [state.setInstalledCalled, state.setMetaMaskDetectedCalled]);
 
   const syncAccounts = async () => {
     const accounts = await client.listAccounts();
@@ -160,31 +173,41 @@ const Index = () => {
     modalCapsule: Capsule | CoreCapsule,
   ): Promise<void> {
     const allAccounts = snapState.accounts || (await client.listAccounts());
-    const currentAccount = allAccounts.find(
+    let currentAccount = allAccounts.find(
       (account) => account.options.email === modalCapsule.getEmail(),
     );
 
-    if (!currentAccount) {
-      throw new Error('Account not found');
-    }
-
-    await client.updateAccount({
-      ...currentAccount,
-      options: {
-        ...currentAccount.options,
+    if (currentAccount) {
+      await client.updateAccount({
+        ...currentAccount,
+        options: {
+          ...currentAccount.options,
+          // @ts-ignore
+          userId: modalCapsule.userId,
+          email: modalCapsule.getEmail()!,
+          sessionCookie: modalCapsule.retrieveSessionCookie()!,
+          loginEncryptionKeyPair: JSON.stringify(
+            modalCapsule.loginEncryptionKeyPair,
+          ),
+        },
+      });
+    } else {
+      // eslint-disable-next-line require-atomic-updates
+      currentAccount = await client.createAccount({
         // @ts-ignore
         userId: modalCapsule.userId,
-        email: modalCapsule.getEmail()!,
-        sessionCookie: modalCapsule.retrieveSessionCookie()!,
+        email: modalCapsule.getEmail() as string,
+        sessionCookie: modalCapsule.retrieveSessionCookie() as string,
+        isExistingUser: true,
         loginEncryptionKeyPair: JSON.stringify(
           modalCapsule.loginEncryptionKeyPair,
         ),
-      },
-    });
+      });
+    }
 
     const accounts = await client.listAccounts();
     const updatedAccount = accounts.find(
-      (account) => account.id === currentAccount.id,
+      (account) => account.id === currentAccount!.id,
     );
     await modalCapsule.setUserId(updatedAccount!.options.userId as string);
     modalCapsule.persistSessionCookie(
@@ -193,7 +216,7 @@ const Index = () => {
 
     const fetchedWallets = await modalCapsule.fetchWallets();
     const walletsMap: Record<string, any> = {};
-    fetchedWallets.forEach((wallet) => {
+    fetchedWallets.forEach((wallet: { id: string; address: string }) => {
       walletsMap[wallet.id] = {
         id: wallet.id,
         address: wallet.address,
