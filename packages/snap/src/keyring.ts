@@ -152,7 +152,9 @@ export class SimpleKeyring implements Keyring {
       await this.#capsule.waitForLoginAndSetup(true);
       // eslint-disable-next-line require-atomic-updates
       sessionCookie = this.#capsule.retrieveSessionCookie()!;
-      wallet = this.#capsule.getWallets()[0];
+      wallet = Object.values(this.#capsule.getWallets())[0];
+      // eslint-disable-next-line require-atomic-updates
+      options.userId = this.#capsule.getUserId()!;
     } else {
       await this.#capsule.setUserId(options.userId!);
       await this.#capsule.setEmail(options.email);

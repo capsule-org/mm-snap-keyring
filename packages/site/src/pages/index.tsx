@@ -181,7 +181,6 @@ const Index = () => {
     let currentAccount = allAccounts.find(
       (account) => account.options.email === modalCapsule.getEmail(),
     );
-
     if (currentAccount) {
       await client.updateAccount({
         ...currentAccount,
@@ -197,10 +196,14 @@ const Index = () => {
         },
       });
     } else {
+      for (let i = 0; i < 10; i++) {
+        if (capsule.loginEncryptionKeyPair) {
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
       // eslint-disable-next-line require-atomic-updates
       currentAccount = await client.createAccount({
-        // @ts-ignore
-        userId: modalCapsule.userId,
         email: modalCapsule.getEmail() as string,
         sessionCookie: modalCapsule.retrieveSessionCookie() as string,
         isExistingUser: true,
@@ -208,6 +211,7 @@ const Index = () => {
           modalCapsule.loginEncryptionKeyPair,
         ),
       });
+      await syncAccounts();
     }
 
     const accounts = await client.listAccounts();

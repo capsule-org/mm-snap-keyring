@@ -7,7 +7,7 @@
     "url": "git+https://github.com/usecapsule/mm-snap-keyring.git"
   },
   "source": {
-    "shasum": "2TYexBOPT566DUx/Be+70j8m4wdL29QIpAZToh7VDdw=",
+    "shasum": "R54gliZsvT4ZrLB4x+6OK8trERparDbDigrdJRaHqio=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
