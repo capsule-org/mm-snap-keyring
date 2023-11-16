@@ -72,8 +72,8 @@ const Index = () => {
   const [buttonOnClickOverride, setButtonOnClickOverride] = useState<{
     func: React.MouseEventHandler<HTMLButtonElement> | undefined;
   }>();
-  const [snapStateUseEffectDoneAt, setSnapStateUseEffectDoneAt] =
-    useState<Date>();
+  const [preserveButtonOnClick, setPreserveButtonOnClick] = useState(false);
+  const [triggerButtonOverrides, setTriggerButtonOverrides] = useState<Date>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
   // TODO: get mm specific api key
@@ -84,11 +84,15 @@ const Index = () => {
 
   useEffect(() => {
     async function setButtonOverrides() {
-      if (!snapStateUseEffectDoneAt) {
+      if (!triggerButtonOverrides) {
         return;
       }
-      const { displayOverride, onClickOverride, extraDisplayOverride } =
-        await getButtonOverrides();
+      const {
+        displayOverride,
+        onClickOverride,
+        extraDisplayOverride,
+        preserveOnClickFunctionality,
+      } = await getButtonOverrides();
 
       if (snapState.accounts.length > 0) {
         if (snapState.accounts[0]!.options.email) {
@@ -98,12 +102,13 @@ const Index = () => {
         }
       }
 
+      setPreserveButtonOnClick(Boolean(preserveOnClickFunctionality));
       setButtonOnClickOverride({ func: onClickOverride });
       setExtraButtonDisplayOverride(extraDisplayOverride);
       setButtonDisplayOverride(displayOverride);
     }
     setButtonOverrides().catch((error) => console.error(error));
-  }, [isLoggedIn, state, snapStateUseEffectDoneAt]);
+  }, [isLoggedIn, state, triggerButtonOverrides]);
 
   useEffect(() => {
     /**
@@ -116,7 +121,7 @@ const Index = () => {
         return;
       }
       if (!state.installedSnap) {
-        setSnapStateUseEffectDoneAt(new Date());
+        setTriggerButtonOverrides(new Date());
         return;
       }
       const accounts = await client.listAccounts();
@@ -127,7 +132,7 @@ const Index = () => {
         pendingRequests,
         useSynchronousApprovals: isSynchronous,
       });
-      setSnapStateUseEffectDoneAt(new Date());
+      setTriggerButtonOverrides(new Date());
     }
 
     getState().catch((error) => console.error(error));
@@ -241,10 +246,17 @@ const Index = () => {
     }
   };
 
+  const handleLogoutClick: unknown = async () => {
+    await capsule.logout();
+    setIsLoggedIn(false);
+    setTriggerButtonOverrides(new Date());
+  };
+
   async function getButtonOverrides(): Promise<{
     displayOverride: ReactNode;
     extraDisplayOverride?: ReactNode;
     onClickOverride?: React.MouseEventHandler<HTMLButtonElement>;
+    preserveOnClickFunctionality?: boolean;
   }> {
     if (!state.hasMetaMask && !state.installedSnap) {
       return {
@@ -280,6 +292,9 @@ const Index = () => {
       setIsLoggedIn(true);
       return {
         displayOverride: 'Logout',
+        onClickOverride:
+          handleLogoutClick as MouseEventHandler<HTMLButtonElement>,
+        preserveOnClickFunctionality: true,
       };
     }
 
@@ -330,6 +345,7 @@ const Index = () => {
           loginTransitionOverride={loginTransitionOverride}
           displayOverride={buttonDisplayOverride}
           onClickOverride={buttonOnClickOverride?.func}
+          preserveOnClickFunctionality={preserveButtonOnClick}
         />
         {extraButtonDisplayOverride ? (
           <ExtraButtonContainer>
