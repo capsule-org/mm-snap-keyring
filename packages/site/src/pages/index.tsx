@@ -64,6 +64,7 @@ const ExtraButtonContainer = styled.div`
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
   const [snapState, setSnapState] = useState<KeyringState>(initialState);
+  const [isReconnect, setIsReconnect] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
   const [buttonDisplayOverride, setButtonDisplayOverride] =
     useState<ReactNode>();
@@ -87,13 +88,6 @@ const Index = () => {
       if (!triggerButtonOverrides) {
         return;
       }
-      const {
-        displayOverride,
-        onClickOverride,
-        extraDisplayOverride,
-        preserveOnClickFunctionality,
-      } = await getButtonOverrides();
-
       if (snapState.accounts.length > 0) {
         if (snapState.accounts[0]!.options.email) {
           await capsule.setEmail(
@@ -101,6 +95,13 @@ const Index = () => {
           );
         }
       }
+
+      const {
+        displayOverride,
+        onClickOverride,
+        extraDisplayOverride,
+        preserveOnClickFunctionality,
+      } = await getButtonOverrides();
 
       setPreserveButtonOnClick(Boolean(preserveOnClickFunctionality));
       setButtonOnClickOverride({ func: onClickOverride });
@@ -235,7 +236,7 @@ const Index = () => {
     setIsLoggedIn(true);
   }
 
-  const handleConnectClick: unknown = async () => {
+  const handleInstallSnapClick: unknown = async () => {
     try {
       await connectSnap();
       const installedSnap = await getSnap();
@@ -256,10 +257,17 @@ const Index = () => {
     setTriggerButtonOverrides(new Date());
   };
 
+  const handleConnectClick: unknown = async () => {
+    const loginUrl = await capsule.initiateUserLogin(capsule.getEmail()!);
+    window.open(loginUrl, 'popup', 'popup=true,width=400,height=500');
+    await loginTransitionOverride(capsule);
+    setIsReconnect(true);
+  };
+
   async function getButtonOverrides(): Promise<{
     displayOverride: ReactNode;
     extraDisplayOverride?: ReactNode;
-    onClickOverride?: React.MouseEventHandler<HTMLButtonElement>;
+    onClickOverride?: React.MouseEventHandler<HTMLButtonElement> | undefined;
     preserveOnClickFunctionality?: boolean;
   }> {
     if (!state.hasMetaMask && !state.installedSnap) {
@@ -275,7 +283,7 @@ const Index = () => {
       return {
         displayOverride: 'Sign in with Metamask',
         onClickOverride:
-          handleConnectClick as MouseEventHandler<HTMLButtonElement>,
+          handleInstallSnapClick as MouseEventHandler<HTMLButtonElement>,
       };
     }
 
@@ -288,7 +296,7 @@ const Index = () => {
       return {
         displayOverride: 'Sign in with Metamask',
         onClickOverride:
-          handleConnectClick as MouseEventHandler<HTMLButtonElement>,
+          handleInstallSnapClick as MouseEventHandler<HTMLButtonElement>,
       };
     }
 
@@ -298,7 +306,7 @@ const Index = () => {
         displayOverride: 'Logout',
         onClickOverride:
           handleLogoutClick as MouseEventHandler<HTMLButtonElement>,
-        preserveOnClickFunctionality: true,
+        preserveOnClickFunctionality: !isReconnect,
       };
     }
 
@@ -306,6 +314,9 @@ const Index = () => {
     if (snapState.accounts[0]?.address) {
       return {
         displayOverride: 'Connect',
+        onClickOverride: capsule.getEmail()
+          ? (handleConnectClick as MouseEventHandler<HTMLButtonElement>)
+          : undefined,
       };
     }
 
@@ -327,7 +338,9 @@ const Index = () => {
       {shouldDisplayReconnectButton(state.installedSnap) ? (
         <ReconnectContainer>
           <ReconnectButton
-            onClick={handleConnectClick as MouseEventHandler<HTMLButtonElement>}
+            onClick={
+              handleInstallSnapClick as MouseEventHandler<HTMLButtonElement>
+            }
           />
         </ReconnectContainer>
       ) : undefined}
