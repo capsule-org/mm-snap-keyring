@@ -65,12 +65,18 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
             Capsule Account Snap!
           </SubjectDiv>
           <DescriptionDiv>
-            <u>Capsule</u> is a signing solution that you can use to create
-            secure, embedded <u>MPC wallets</u> with just an email or a social
-            login. Capsule-enabled wallets are portable across applications,
-            recoverable, and programmable, so you get the best of an embedded
-            experience without needing to create different signers or contract
-            accounts for every application you use.
+            <a target="_blank" href="https://usecapsule.com">
+              <u>Capsule</u>
+            </a>{' '}
+            is a signing solution that you can use to create secure, embedded{' '}
+            <a target="_blank" href="https://blog.usecapsule.com/what-is-mpc">
+              <u>MPC wallets</u>
+            </a>{' '}
+            with just an email or a social login. Capsule-enabled wallets are
+            portable across applications, recoverable, and programmable, so you
+            get the best of an embedded experience without needing to create
+            different signers or contract accounts for every application you
+            use.
           </DescriptionDiv>
           <DescriptionDiv>
             The Capsule Account Snap is an easy way for you to create a new
@@ -78,7 +84,10 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
             even set permissions and automations.
           </DescriptionDiv>
           <DescriptionDiv>
-            To learn more about Capsule, check out usecapsule.com
+            To learn more about Capsule, check out{' '}
+            <a target="_blank" href="https://usecapsule.com">
+              usecapsule.com
+            </a>
           </DescriptionDiv>
           <ChildrenDiv>{children}</ChildrenDiv>
         </LeftColumnContainer>
