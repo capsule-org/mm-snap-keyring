@@ -13,6 +13,8 @@ import semver from 'semver';
 import styled from 'styled-components';
 
 import snapPackageInfo from '../../../snap/package.json';
+import { ReactComponent as GreenCheckBox } from '../assets/green_circle_check.svg';
+import { ReactComponent as RedX } from '../assets/red_x.svg';
 import { ReconnectButton } from '../components';
 import { defaultSnapOrigin } from '../config';
 import { MetaMaskContext, MetamaskActions } from '../hooks';
@@ -37,6 +39,12 @@ const initialState: {
 };
 
 const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const SessionStatusContainer = styled.div`
+  margin-left: -10px;
   display: flex;
   flex-direction: row;
 `;
@@ -350,9 +358,16 @@ const Index = () => {
             <WalletAddressContainer>
               My Wallet: {addressDisplay}
             </WalletAddressContainer>
-            <SessionInfoContainer>
-              {isLoggedIn ? 'Session: Active' : 'Session: Inactive'}
-            </SessionInfoContainer>
+            <SessionStatusContainer>
+              {isLoggedIn ? (
+                <GreenCheckBox viewBox="-10 0 45 45" />
+              ) : (
+                <RedX viewBox="-10 0 45 45" />
+              )}
+              <SessionInfoContainer>
+                {isLoggedIn ? 'Session: Active' : 'Session: Inactive'}
+              </SessionInfoContainer>
+            </SessionStatusContainer>
           </WalletInfoContainer>
         ) : undefined}
         <CapsuleButton
