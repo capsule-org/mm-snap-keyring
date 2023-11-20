@@ -225,7 +225,7 @@ const Index = () => {
 
     const accounts = await client.listAccounts();
     const updatedAccount = accounts.find(
-      (account) => account.id === currentAccount!.id,
+      (account) => account.id === currentAccount.id,
     );
     await modalCapsule.setUserId(updatedAccount!.options.userId as string);
     modalCapsule.persistSessionCookie(
