@@ -5,4 +5,4 @@
 export const defaultSnapOrigin =
   process.env.SNAP_ORIGIN ?? `local:http://localhost:8080`;
 
-export const hideReconnectButton = process.env.GATSBY_HIDE_RECONNECT === 'true';
+export const hideReconnectButton = process.env.GATSBY_HIDE_RECONNECT !== 'true';
