@@ -13,8 +13,8 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --check",
     "lint:types": "tsc --noEmit",
     "start": "rimraf .cache && cross-env GATSBY_TELEMETRY_DISABLED=1 gatsby develop",
-    "deploy-s3": "aws s3 sync public/ s3://capsule-sandbox-mm-snap-ui --acl public-read --profile $REACT_APP_ENV",
-    "deploy-sandbox": "REACT_APP_ENV=sandbox yarn deploy-s3"
+    "deploy-s3": "aws s3 sync public/ s3://$REACT_BUCKET_NAME --acl public-read --profile $REACT_APP_ENV",
+    "deploy-sandbox": "REACT_APP_ENV=sandbox REACT_BUCKET_NAME=capsule-sandbox-mm-snap-ui yarn deploy-s3"
   },
   "browserslist": {
     "production": [

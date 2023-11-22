@@ -2,12 +2,6 @@
   "name": "@usecapsule/mm-snap-keyring",
   "version": "1.1.0",
   "description": "A simple keyring snap that integrates with MetaMask accounts.",
-  "keywords": [
-    "metamask",
-    "snap",
-    "keyring",
-    "account"
-  ],
   "homepage": "https://github.com/usecapsule/mm-snap-keyring#readme",
   "bugs": {
     "url": "https://github.com/usecapsule/mm-snap-keyring/issues"
@@ -25,6 +19,9 @@
   ],
   "scripts": {
     "build": "mm-snap build",
+    "build-sandbox": "DAPP_ENV=SANDBOX yarn build",
+    "build-beta": "DAPP_ENV=BETA yarn build",
+    "build-prod": "DAPP_ENV=PROD yarn build",
     "eval": "mm-snap eval",
     "fix-shasum": "mm-snap manifest --fix",
     "build:clean": "yarn clean && yarn build",

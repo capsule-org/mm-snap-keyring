@@ -12,6 +12,8 @@ const config: SnapConfig = {
   },
   environment: {
     DAPP_ORIGIN_PRODUCTION: 'https://snap.app.usecapsule.com/',
+    DAPP_ORIGIN_BETA: 'https://snap.beta.app.usecapsule.com/',
+    DAPP_ORIGIN_SANDBOX: 'https://snap.sandbox.app.usecapsule.com/',
     DAPP_ORIGIN_DEVELOPMENT: 'http://localhost:8000/',
   },
   stats: {

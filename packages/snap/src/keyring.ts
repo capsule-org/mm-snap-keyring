@@ -24,13 +24,14 @@ import { type Json, type JsonRpcRequest } from '@metamask/utils';
 import type { SuccessfulSignatureRes } from '@usecapsule/web-sdk';
 import {
   CapsuleWeb,
-  Environment,
+  Environment as CapsuleEnvironment,
   CapsuleEthersSigner,
 } from '@usecapsule/web-sdk';
 import { Buffer } from 'buffer';
 import { ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';
 
+import { Environment } from './definitions';
 import { saveState } from './stateManagement';
 import { isEvmChain, serializeTransaction, throwError } from './util';
 import packageInfo from '../package.json';
@@ -98,7 +99,7 @@ export class SimpleKeyring implements Keyring {
     };
     // TODO: get mm specific api key
     this.#capsule = new CapsuleWeb(
-      Environment.SANDBOX,
+      CapsuleEnvironment.SANDBOX,
       '2f938ac0c48ef356050a79bd66042a23',
       {
         disableWorkers: true,
@@ -274,6 +275,7 @@ export class SimpleKeyring implements Keyring {
   }
 
   async approveRequest(id: string): Promise<void> {
+    console.log('approveRequest called');
     const { request } =
       this.#state.pendingRequests[id] ??
       throwError(`Request '${id}' not found`);
@@ -302,10 +304,20 @@ export class SimpleKeyring implements Keyring {
   }
 
   #getCurrentUrl(): string {
-    const dappUrlPrefix =
-      process.env.NODE_ENV === 'production'
-        ? process.env.DAPP_ORIGIN_PRODUCTION
-        : process.env.DAPP_ORIGIN_DEVELOPMENT;
+    let dappUrlPrefix: string | undefined;
+    switch (process.env.DAPP_ENV) {
+      case Environment.SANDBOX:
+        dappUrlPrefix = process.env.DAPP_ORIGIN_SANDBOX;
+        break;
+      case Environment.BETA:
+        dappUrlPrefix = process.env.DAPP_ORIGIN_BETA;
+        break;
+      case Environment.PROD:
+        dappUrlPrefix = process.env.DAPP_ORIGIN_PRODUCTION;
+        break;
+      default:
+        dappUrlPrefix = process.env.DAPP_ORIGIN_DEVELOPMENT;
+    }
     const dappVersion: string = packageInfo.version;
 
     // Ensuring that both dappUrlPrefix and dappVersion are truthy
