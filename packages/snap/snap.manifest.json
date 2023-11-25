@@ -1,13 +1,9 @@
 {
-  "version": "1.1.0",
+  "version": "0.1.0",
   "description": "Capsule key management snap keyring.",
   "proposedName": "Capsule Snap Keyring",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/usecapsule/mm-snap-keyring.git"
-  },
   "source": {
-    "shasum": "KvTkbv+ppgNHU4DGBRtcBjQl+LTOo5i4x9c3g1I9I6s=",
+    "shasum": "Ysu9K0bI59HgMqxjaexQHaqwZ/rgOFvE5zA7ICfrmNY=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -21,7 +17,7 @@
     "snap_dialog": {},
     "endowment:keyring": {
       "allowedOrigins": [
-        "https://metamask.github.io",
+        "https://snap.app.sandbox.usecapsule.com",
         "http://localhost:8000"
       ]
     },
