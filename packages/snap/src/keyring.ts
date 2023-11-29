@@ -304,20 +304,10 @@ export class SimpleKeyring implements Keyring {
   }
 
   #getCurrentUrl(): string {
-    let dappUrlPrefix: string | undefined;
-    switch (process.env.DAPP_ENV) {
-      case Environment.SANDBOX:
-        dappUrlPrefix = process.env.DAPP_ORIGIN_SANDBOX;
-        break;
-      case Environment.BETA:
-        dappUrlPrefix = process.env.DAPP_ORIGIN_BETA;
-        break;
-      case Environment.PROD:
-        dappUrlPrefix = process.env.DAPP_ORIGIN_PRODUCTION;
-        break;
-      default:
-        dappUrlPrefix = process.env.DAPP_ORIGIN_DEVELOPMENT;
-    }
+    const dappUrlPrefix =
+      process.env.NODE_ENV === 'production'
+        ? process.env.DAPP_ORIGIN_PRODUCTION
+        : process.env.DAPP_ORIGIN_DEVELOPMENT;
     const dappVersion: string = packageInfo.version;
 
     // Ensuring that both dappUrlPrefix and dappVersion are truthy

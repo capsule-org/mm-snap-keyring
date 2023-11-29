@@ -1,6 +1,6 @@
 {
   "name": "@usecapsule/mm-snap-keyring",
-  "version": "0.1.0",
+  "version": "0.10.0",
   "main": "dist/bundle.js",
   "files": [
     "dist/",
@@ -9,9 +9,6 @@
   ],
   "scripts": {
     "build": "mm-snap build",
-    "build-sandbox": "DAPP_ENV=SANDBOX yarn build",
-    "build-beta": "DAPP_ENV=BETA yarn build",
-    "build-prod": "DAPP_ENV=PROD yarn build",
     "eval": "mm-snap eval",
     "fix-shasum": "mm-snap manifest --fix",
     "build:clean": "yarn clean && yarn build",
@@ -67,7 +64,7 @@
     "node": ">=18.0.0"
   },
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   }
 }

@@ -92,16 +92,14 @@ const RawIndex = () => {
   );
 
   useEffect(() => {
+    // maybe put this in same useEffect as original below?
     async function setButtonOverrides() {
       if (!triggerButtonOverrides) {
         return;
       }
-      if (snapState.accounts.length > 0) {
-        if (snapState.accounts[0]!.options.email) {
-          await capsule.setEmail(
-            snapState.accounts[0]!.options.email as string,
-          );
-        }
+      const snapEmail = snapState.accounts[0]?.options?.email;
+      if (snapEmail && snapEmail !== capsule.getEmail()) {
+        await capsule.setEmail(snapEmail as string);
       }
 
       const {
