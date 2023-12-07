@@ -69,7 +69,8 @@ const ExtraButtonContainer = styled.div`
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
   const [snapState, setSnapState] = useState<KeyringState>(initialState);
-  const [isReconnect, setIsReconnect] = useState<boolean>(false);
+  const [shouldPreserveOnClick, setShouldPreserveOnClick] =
+    useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
   const [modalJustClosed, setModalJustClosed] = useState<boolean>();
   const [buttonDisplayOverride, setButtonDisplayOverride] =
@@ -267,6 +268,7 @@ const Index = () => {
 
   const handleLogoutClick = async () => {
     await capsule.logout();
+
     setIsLoggedIn(false);
     setTriggerButtonOverrides(new Date());
     setModalJustClosed(false);
@@ -276,7 +278,7 @@ const Index = () => {
     const loginUrl = await capsule.initiateUserLogin(capsule.getEmail()!);
     window.open(loginUrl, 'popup', 'popup=true,width=400,height=500');
     await loginTransitionOverride(capsule);
-    setIsReconnect(true);
+    setShouldPreserveOnClick(true);
     setTriggerButtonOverrides(new Date());
     setModalJustClosed(false);
   };
@@ -330,7 +332,7 @@ const Index = () => {
         displayOverride: 'Logout',
         onClickOverride:
           handleLogoutClick as MouseEventHandler<HTMLButtonElement>,
-        preserveOnClickFunctionality: !isReconnect,
+        preserveOnClickFunctionality: !shouldPreserveOnClick,
       };
     }
 
@@ -350,6 +352,10 @@ const Index = () => {
       buttonProps: {
         width: '120px',
       },
+      onClickOverride: () => {
+        setShouldPreserveOnClick(true);
+      },
+      preserveOnClickFunctionality: true,
     };
   }
 
@@ -404,6 +410,7 @@ const Index = () => {
               loginTransitionOverride={loginTransitionOverride}
               displayOverride={extraButtonDisplayOverride}
               onClickOverride={buttonOnClickOverride?.func}
+              preserveOnClickFunctionality={preserveButtonOnClick}
               onCloseOverride={() => {
                 setModalJustClosed(true);
               }}
