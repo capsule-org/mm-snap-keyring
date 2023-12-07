@@ -9,7 +9,7 @@ const config: SnapConfig = {
   server: { port: 8080 },
   polyfills: true,
   output: {
-    minimize: false,
+    minimize: true,
   },
   environment: {
     DAPP_ORIGIN_PRODUCTION: 'https://snap.app.sandbox.usecapsule.com/',
