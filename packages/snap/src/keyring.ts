@@ -22,11 +22,7 @@ import {
 import { KeyringEvent } from '@metamask/keyring-api/dist/events';
 import { type Json, type JsonRpcRequest } from '@metamask/utils';
 import type { SuccessfulSignatureRes } from '@usecapsule/web-sdk';
-import {
-  CapsuleWeb,
-  Environment,
-  CapsuleEthersSigner,
-} from '@usecapsule/web-sdk';
+import Capsule, { Environment, CapsuleEthersSigner } from '@usecapsule/web-sdk';
 import { Buffer } from 'buffer';
 import { ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';
@@ -58,7 +54,7 @@ type CreateAccountOptions = {
 export class SimpleKeyring implements Keyring {
   #state: KeyringState;
 
-  #capsule: CapsuleWeb;
+  #capsule: Capsule;
 
   constructor(state: KeyringState) {
     this.#state = state;
@@ -97,9 +93,9 @@ export class SimpleKeyring implements Keyring {
       delete this.#state.capsuleSessionStorage[key];
     };
     // TODO: get mm specific api key
-    this.#capsule = new CapsuleWeb(
+    this.#capsule = new Capsule(
       Environment.SANDBOX,
-      '2f938ac0c48ef356050a79bd66042a23',
+      '94aa050e49b9acfb8e87b3cad267acd9',
       {
         disableWorkers: true,
         useStorageOverrides: true,
@@ -119,18 +115,15 @@ export class SimpleKeyring implements Keyring {
     const currentWallet = Object.values(wallets).find(
       (wallet) => wallet.address === address,
     );
-    return currentWallet!.id;
+    return currentWallet.id;
   }
 
   async listAccounts(): Promise<KeyringAccount[]> {
     return Object.values(this.#state.wallets).map((wallet) => wallet.account);
   }
 
-  async getAccount(id: string): Promise<KeyringAccount> {
-    return (
-      this.#state.wallets[id]?.account ??
-      throwError(`Account '${id}' not found`)
-    );
+  async getAccount(id: string): Promise<KeyringAccount | undefined> {
+    return this.#state.wallets[id]?.account;
   }
 
   async createAccount(options: CreateAccountOptions): Promise<KeyringAccount> {

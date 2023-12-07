@@ -9,7 +9,7 @@ const config: SnapConfig = {
   server: { port: 8080 },
   polyfills: true,
   output: {
-    minimize: true,
+    minimize: process.env.NODE_ENV !== 'development',
   },
   environment: {
     DAPP_ORIGIN_PRODUCTION: 'https://snap.app.sandbox.usecapsule.com/',
@@ -55,10 +55,7 @@ const config: SnapConfig = {
           {
             test: /\.jsx?$/, // for JavaScript and JSX files
             use: [
-              path.resolve(
-                __dirname,
-                '../snap/loaders/removeCSSImportLoader.js',
-              ),
+              path.resolve(__dirname, './loaders/removeCSSImportLoader.js'),
             ],
           },
         ],

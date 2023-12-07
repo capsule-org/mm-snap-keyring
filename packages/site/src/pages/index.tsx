@@ -1,11 +1,8 @@
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
-import type { CoreCapsule } from '@usecapsule/web-sdk';
-import type Capsule from '@usecapsule/web-sdk';
-import {
+import Capsule, {
   Environment,
   Button as CapsuleButton,
-  CapsuleWeb,
 } from '@usecapsule/web-sdk';
 import type { MouseEventHandler, ReactNode } from 'react';
 import React, { useContext, useEffect, useState } from 'react';
@@ -90,7 +87,7 @@ const Index = () => {
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
   // TODO: get mm specific api key
-  const capsule = new CapsuleWeb(
+  const capsule = new Capsule(
     Environment.SANDBOX,
     '94aa050e49b9acfb8e87b3cad267acd9',
   );
@@ -168,9 +165,7 @@ const Index = () => {
     });
   };
 
-  async function createWalletOverride(
-    modalCapsule: Capsule | CoreCapsule,
-  ): Promise<string> {
+  async function createWalletOverride(modalCapsule: Capsule): Promise<string> {
     const newAccount = await client.createAccount({
       // @ts-ignore
       userId: modalCapsule.userId,
@@ -196,9 +191,7 @@ const Index = () => {
     return recovery as string;
   }
 
-  async function loginTransitionOverride(
-    modalCapsule: Capsule | CoreCapsule,
-  ): Promise<void> {
+  async function loginTransitionOverride(modalCapsule: Capsule): Promise<void> {
     const allAccounts = snapState.accounts || (await client.listAccounts());
     let currentAccount = allAccounts.find(
       (account) => account.options.email === modalCapsule.getEmail(),
