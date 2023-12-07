@@ -21,7 +21,7 @@ export const originPermissions = new Map<string, string[]>([
     ],
   ],
   [
-    (process.env.DAPP_ORIGIN_PRODUCTION as string).slice(0, -1),
+    (process.env.DAPP_ORIGIN_DEVELOPMENT as string).slice(0, -1),
     [
       // Keyring methods
       KeyringRpcMethod.ListAccounts,

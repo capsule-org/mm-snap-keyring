@@ -1,20 +1,22 @@
 import React from 'react';
 
-const ClientSideOnlyLazy = React.lazy(
-  async () => import('../components/RawIndex'),
-);
-const WrappedIndex = () => {
-  const isSSR = typeof window === 'undefined';
+import RawIndex from '../components/RawIndex';
 
-  return (
-    <>
-      {!isSSR && (
-        <React.Suspense fallback={<div />}>
-          <ClientSideOnlyLazy />
-        </React.Suspense>
-      )}
-    </>
-  );
-};
+// const ClientSideOnlyLazy = React.lazy(
+//   async () => import('../components/RawIndex'),
+// );
+// const WrappedIndex = () => {
+//   const isSSR = typeof window === 'undefined';
 
-export default WrappedIndex;
+//   return (
+//     <>
+//       {!isSSR && (
+//         <React.Suspense fallback={<div />}>
+//           <ClientSideOnlyLazy />
+//         </React.Suspense>
+//       )}
+//     </>
+//   );
+// };
+
+export default RawIndex;

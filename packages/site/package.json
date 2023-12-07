@@ -36,7 +36,7 @@
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.14.0",
     "@types/react-helmet": "^6.1.6",
-    "@usecapsule/web-sdk": "0.29.0-dev.3",
+    "@usecapsule/web-sdk": "0.29.4-dev.13",
     "crypto-browserify": "^3.12.0",
     "object.assign": "^4.1.4",
     "react": "^18.2.0",

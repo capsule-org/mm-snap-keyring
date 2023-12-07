@@ -1,5 +1,6 @@
 import type { SnapConfig } from '@metamask/snaps-cli';
 import { merge } from '@metamask/snaps-cli';
+import * as path from 'path';
 import * as webpack from 'webpack';
 
 const config: SnapConfig = {
@@ -8,11 +9,14 @@ const config: SnapConfig = {
   server: { port: 8080 },
   polyfills: true,
   output: {
-    minimize: true,
+    minimize: false,
   },
   environment: {
     DAPP_ORIGIN_PRODUCTION: 'https://snap.app.sandbox.usecapsule.com/',
     DAPP_ORIGIN_DEVELOPMENT: 'http://localhost:8000/',
+    WASM_HASH_HEX:
+      'a0a7622e5d4433257f42ed1202318af84ab8fe3b6ecbe3e30b0127bd91971133',
+    WASM_PATH: 'static/js/main.wasm',
   },
   stats: {
     builtIns: {
@@ -33,8 +37,8 @@ const config: SnapConfig = {
   experimental: {
     wasm: true,
   },
-  customizeWebpackConfig: (webpackConfig) =>
-    merge(webpackConfig, {
+  customizeWebpackConfig: (webpackConfig) => {
+    return merge(webpackConfig, {
       module: {
         rules: [
           {
@@ -48,29 +52,26 @@ const config: SnapConfig = {
               filename: 'fonts/[name][ext][query]',
             },
           },
-          // {
-          //   test: /\.(png|jpe?g|gif|svg)$/,
-          //   use: [
-          //     {
-          //       loader: 'file-loader',
-          //       options: {
-          //         name: '[path][name].[ext]',
-          //       },
-          //     },
-          //   ],
-          // },
+          {
+            test: /\.jsx?$/, // for JavaScript and JSX files
+            use: [
+              path.resolve(
+                __dirname,
+                '../snap/loaders/removeCSSImportLoader.js',
+              ),
+            ],
+          },
         ],
       },
       plugins: [
-        // Add the IgnorePlugin to ignore all CSS files within node_modules
         // @ts-ignore
         new webpack.IgnorePlugin({
           resourceRegExp: /\.css$/,
           contextRegExp: /node_modules/,
         }),
-        // Other plugins...
       ],
-    }),
+    });
+  },
 };
 
 export default config;

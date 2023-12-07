@@ -1,6 +1,6 @@
 {
   "name": "@usecapsule/mm-snap-keyring",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "main": "dist/bundle.js",
   "files": [
     "dist/",
@@ -30,7 +30,7 @@
     "@metamask/keyring-api": "^1.0.0-rc.1",
     "@metamask/snaps-types": "^3.0.0",
     "@metamask/utils": "^8.1.0",
-    "@usecapsule/web-sdk": "0.29.0-dev.5",
+    "@usecapsule/web-sdk": "0.29.4-dev.12",
     "ethers": "6.6.4",
     "uuid": "^9.0.0",
     "webpack": "^5.89.0"
@@ -46,6 +46,7 @@
     "@types/node": "^20.6.2",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
+    "copy-webpack-plugin": "^11.0.0",
     "depcheck": "^1.4.6",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.1.0",

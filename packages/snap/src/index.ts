@@ -11,11 +11,7 @@ import type {
 
 import { SimpleKeyring } from './keyring';
 import { logger } from './logger';
-import {
-  InternalMethod,
-  originPermissions,
-  initializePermissions,
-} from './permissions';
+import { InternalMethod, originPermissions } from './permissions';
 import { getState } from './stateManagement';
 
 let keyring: SimpleKeyring;
@@ -41,9 +37,6 @@ async function getKeyring(): Promise<SimpleKeyring> {
  * @returns True if the caller is allowed to call the method, false otherwise.
  */
 function hasPermission(origin: string, method: string): boolean {
-  if (originPermissions.size === 0) {
-    initializePermissions();
-  }
   return originPermissions.get(origin)?.includes(method) ?? false;
 }
 

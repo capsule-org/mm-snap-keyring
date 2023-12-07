@@ -74,6 +74,7 @@ const RawIndex = () => {
   const [snapState, setSnapState] = useState<KeyringState>(initialState);
   const [isReconnect, setIsReconnect] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
+  const [modalJustClosed, setModalJustClosed] = useState<boolean>();
   const [buttonDisplayOverride, setButtonDisplayOverride] =
     useState<ReactNode>();
   const [extraButtonDisplayOverride, setExtraButtonDisplayOverride] =
@@ -81,6 +82,9 @@ const RawIndex = () => {
   const [buttonOnClickOverride, setButtonOnClickOverride] = useState<{
     func: React.MouseEventHandler<HTMLButtonElement> | undefined;
   }>();
+  const [buttonPropsState, setButtonPropsState] =
+    useState<Record<string, any>>();
+  const [addressDisplay, setAddressDisplay] = useState<string>();
   const [preserveButtonOnClick, setPreserveButtonOnClick] = useState(false);
   const [triggerButtonOverrides, setTriggerButtonOverrides] = useState<Date>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
@@ -88,7 +92,7 @@ const RawIndex = () => {
   // TODO: get mm specific api key
   const capsule = new CapsuleWeb(
     Environment.SANDBOX,
-    '2f938ac0c48ef356050a79bd66042a23',
+    '94aa050e49b9acfb8e87b3cad267acd9',
   );
 
   useEffect(() => {
@@ -107,15 +111,26 @@ const RawIndex = () => {
         onClickOverride,
         extraDisplayOverride,
         preserveOnClickFunctionality,
+        buttonProps,
       } = await getButtonOverrides();
+
+      const address = snapState.accounts[0]?.address;
+      setAddressDisplay(
+        address &&
+          `${address.substring(0, 6)}.......${address.substring(
+            address.length - 4,
+            address.length,
+          )}`,
+      );
 
       setPreserveButtonOnClick(Boolean(preserveOnClickFunctionality));
       setButtonOnClickOverride({ func: onClickOverride });
       setExtraButtonDisplayOverride(extraDisplayOverride);
       setButtonDisplayOverride(displayOverride);
+      setButtonPropsState(buttonProps);
     }
     setButtonOverrides().catch((error) => console.error(error));
-  }, [isLoggedIn, state, triggerButtonOverrides]);
+  }, [modalJustClosed, state, triggerButtonOverrides]);
 
   useEffect(() => {
     /**
@@ -257,10 +272,14 @@ const RawIndex = () => {
     }
   };
 
-  const handleLogoutClick: unknown = async () => {
-    await capsule.logout();
+  const handleLogoutClick = (isReconnectSet: boolean) => async () => {
+    if (isReconnectSet) {
+      await capsule.logout();
+    }
+
     setIsLoggedIn(false);
     setTriggerButtonOverrides(new Date());
+    setModalJustClosed(false);
   };
 
   const handleConnectClick: unknown = async () => {
@@ -268,6 +287,8 @@ const RawIndex = () => {
     window.open(loginUrl, 'popup', 'popup=true,width=400,height=500');
     await loginTransitionOverride(capsule);
     setIsReconnect(true);
+    setTriggerButtonOverrides(new Date());
+    setModalJustClosed(false);
   };
 
   async function getButtonOverrides(): Promise<{
@@ -275,6 +296,7 @@ const RawIndex = () => {
     extraDisplayOverride?: ReactNode;
     onClickOverride?: React.MouseEventHandler<HTMLButtonElement> | undefined;
     preserveOnClickFunctionality?: boolean;
+    buttonProps?: Record<string, any>;
   }> {
     if (!state.hasMetaMask && !state.installedSnap) {
       return {
@@ -290,6 +312,9 @@ const RawIndex = () => {
         displayOverride: 'Sign in with Metamask',
         onClickOverride:
           handleInstallSnapClick as MouseEventHandler<HTMLButtonElement>,
+        buttonProps: {
+          width: '200px',
+        },
       };
     }
 
@@ -303,6 +328,9 @@ const RawIndex = () => {
         displayOverride: 'Sign in with Metamask',
         onClickOverride:
           handleInstallSnapClick as MouseEventHandler<HTMLButtonElement>,
+        buttonProps: {
+          width: '200px',
+        },
       };
     }
 
@@ -310,8 +338,9 @@ const RawIndex = () => {
       setIsLoggedIn(true);
       return {
         displayOverride: 'Logout',
-        onClickOverride:
-          handleLogoutClick as MouseEventHandler<HTMLButtonElement>,
+        onClickOverride: handleLogoutClick(
+          isReconnect,
+        ) as MouseEventHandler<HTMLButtonElement>,
         preserveOnClickFunctionality: !isReconnect,
       };
     }
@@ -329,16 +358,12 @@ const RawIndex = () => {
     return {
       displayOverride: 'Login',
       extraDisplayOverride: 'Create Wallet',
+      buttonProps: {
+        width: '120px',
+      },
     };
   }
 
-  const address = snapState.accounts[0]?.address;
-  const addressDisplay =
-    address &&
-    `${address.substring(0, 6)}.......${address.substring(
-      address.length - 4,
-      address.length,
-    )}`;
   return buttonDisplayOverride ? (
     <>
       {shouldDisplayReconnectButton(state.installedSnap) ? (
@@ -351,7 +376,7 @@ const RawIndex = () => {
         </ReconnectContainer>
       ) : undefined}
       <Container>
-        {address ? (
+        {addressDisplay ? (
           <WalletInfoContainer>
             <WalletAddressContainer>
               My Wallet: {addressDisplay}
@@ -376,6 +401,10 @@ const RawIndex = () => {
           displayOverride={buttonDisplayOverride}
           onClickOverride={buttonOnClickOverride?.func}
           preserveOnClickFunctionality={preserveButtonOnClick}
+          onCloseOverride={() => {
+            setModalJustClosed(true);
+          }}
+          buttonProps={buttonPropsState}
         />
         {extraButtonDisplayOverride ? (
           <ExtraButtonContainer>
@@ -386,6 +415,9 @@ const RawIndex = () => {
               loginTransitionOverride={loginTransitionOverride}
               displayOverride={extraButtonDisplayOverride}
               onClickOverride={buttonOnClickOverride?.func}
+              onCloseOverride={() => {
+                setModalJustClosed(true);
+              }}
             />
           </ExtraButtonContainer>
         ) : undefined}

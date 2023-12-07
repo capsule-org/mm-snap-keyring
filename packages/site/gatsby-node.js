@@ -1,3 +1,4 @@
+const path = require('path');
 const webpack = require('webpack');
 
 module.exports.onCreateWebpackConfig = ({ actions }) => {
@@ -12,6 +13,10 @@ module.exports.onCreateWebpackConfig = ({ actions }) => {
           default:
             throw new Error(`Not found ${mod}`);
         }
+      }),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /\wasm_exec.js$/,
+        contextRegExp: /node_modules/,
       }),
     ],
     resolve: {
@@ -29,6 +34,19 @@ module.exports.onCreateWebpackConfig = ({ actions }) => {
           '../../node_modules/object.assign/polyfill',
         ),
       },
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?$/, // for JavaScript and JSX files
+          use: [
+            path.resolve(
+              __dirname,
+              '../site/src/loaders/removeWasmExecImportLoader.js',
+            ),
+          ],
+        },
+      ],
     },
   });
 };

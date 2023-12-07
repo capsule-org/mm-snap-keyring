@@ -24,14 +24,13 @@ import { type Json, type JsonRpcRequest } from '@metamask/utils';
 import type { SuccessfulSignatureRes } from '@usecapsule/web-sdk';
 import {
   CapsuleWeb,
-  Environment as CapsuleEnvironment,
+  Environment,
   CapsuleEthersSigner,
 } from '@usecapsule/web-sdk';
 import { Buffer } from 'buffer';
 import { ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';
 
-import { Environment } from './definitions';
 import { saveState } from './stateManagement';
 import { isEvmChain, serializeTransaction, throwError } from './util';
 import packageInfo from '../package.json';
@@ -99,7 +98,7 @@ export class SimpleKeyring implements Keyring {
     };
     // TODO: get mm specific api key
     this.#capsule = new CapsuleWeb(
-      CapsuleEnvironment.SANDBOX,
+      Environment.SANDBOX,
       '2f938ac0c48ef356050a79bd66042a23',
       {
         disableWorkers: true,
@@ -136,6 +135,7 @@ export class SimpleKeyring implements Keyring {
 
   async createAccount(options: CreateAccountOptions): Promise<KeyringAccount> {
     await this.#capsule.init();
+    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
 
     let wallet: any;
     let recovery: string | null = '';
@@ -145,7 +145,6 @@ export class SimpleKeyring implements Keyring {
         JSON.parse(options.loginEncryptionKeyPair as string),
       );
       delete options.loginEncryptionKeyPair;
-      await this.#capsule.init();
 
       await this.#capsule.setEmail(options.email);
       this.#capsule.persistSessionCookie(options.sessionCookie!);
@@ -275,7 +274,6 @@ export class SimpleKeyring implements Keyring {
   }
 
   async approveRequest(id: string): Promise<void> {
-    console.log('approveRequest called');
     const { request } =
       this.#state.pendingRequests[id] ??
       throwError(`Request '${id}' not found`);
@@ -390,6 +388,7 @@ export class SimpleKeyring implements Keyring {
 
   async #signTransaction(tx: any): Promise<Json> {
     await this.#capsule.init();
+    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
 
     // Patch the transaction to make sure that the `chainId` is a hex string.
     if (!tx.chainId.startsWith('0x')) {
@@ -429,6 +428,43 @@ export class SimpleKeyring implements Keyring {
     return serializeTransaction(signedFactoryTx.toJSON(), signedFactoryTx.type);
   }
 
+  #getPortalBaseURL() {
+    const { env } = this.#capsule.ctx;
+    switch (env) {
+      case Environment.SANDBOX:
+        return `https://app.sandbox.usecapsule.com`;
+      case Environment.BETA:
+        return `https://app.beta.usecapsule.com`;
+      case Environment.PROD:
+        return `https://app.usecapsule.com`;
+      default:
+        throw new Error(`env: ${env} not supported`);
+    }
+  }
+
+  async #fetchWasm(): Promise<ArrayBuffer> {
+    const response = await fetch(
+      `${this.#getPortalBaseURL()}/${process.env.WASM_PATH!}`,
+      {
+        mode: 'cors',
+      },
+    );
+    const wasmArrayBuffer = await response.arrayBuffer();
+    const byteArray = new Uint8Array(wasmArrayBuffer);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', byteArray);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+    if (hashHex !== process.env.WASM_HASH_HEX) {
+      throw new Error(
+        `WASM hash mismatch: expected ${process.env
+          .WASM_HASH_HEX!}, got ${hashHex}`,
+      );
+    }
+    return wasmArrayBuffer;
+  }
+
   async #signTypedData(
     from: string,
     data: Json,
@@ -437,6 +473,7 @@ export class SimpleKeyring implements Keyring {
     },
   ): Promise<string> {
     await this.#capsule.init();
+    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
 
     const walletId = await this.#getWalletIdFromAddress(from);
     const hashedTypedData =
@@ -460,6 +497,7 @@ export class SimpleKeyring implements Keyring {
 
   async #signPersonalMessage(from: string, request: string): Promise<string> {
     await this.#capsule.init();
+    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
 
     const messageBuffer = Buffer.from(request.slice(2), 'hex');
     const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
@@ -482,6 +520,7 @@ export class SimpleKeyring implements Keyring {
 
   async #signMessage(from: string, data: string): Promise<string> {
     await this.#capsule.init();
+    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
 
     const base64Message = Buffer.from(stripHexPrefix(data), 'hex').toString(
       'base64',

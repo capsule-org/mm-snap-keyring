@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-unassigned-import
+import './utils/overrides';
 import type { FunctionComponent, ReactNode } from 'react';
 import React from 'react';
 import { Helmet } from 'react-helmet';
