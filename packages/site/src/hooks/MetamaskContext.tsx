@@ -103,6 +103,11 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
 
       if (state.hasMetaMask) {
         await detectSnapInstalled();
+      } else {
+        dispatch({
+          type: MetamaskActions.SetInstalled,
+          payload: undefined,
+        });
       }
     };
 
