@@ -1,5 +1,6 @@
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
+import type { DeprecatedCapsule } from '@usecapsule/web-sdk';
 import Capsule, {
   Environment,
   Button as CapsuleButton,
@@ -166,7 +167,9 @@ const Index = () => {
     });
   };
 
-  async function createWalletOverride(modalCapsule: Capsule): Promise<string> {
+  async function createWalletOverride(
+    modalCapsule: Capsule | DeprecatedCapsule,
+  ): Promise<string> {
     const newAccount = await client.createAccount({
       // @ts-ignore
       userId: modalCapsule.userId,
@@ -192,7 +195,9 @@ const Index = () => {
     return recovery as string;
   }
 
-  async function loginTransitionOverride(modalCapsule: Capsule): Promise<void> {
+  async function loginTransitionOverride(
+    modalCapsule: Capsule | DeprecatedCapsule,
+  ): Promise<void> {
     const allAccounts = snapState.accounts || (await client.listAccounts());
     let currentAccount = allAccounts.find(
       (account) => account.options.email === modalCapsule.getEmail(),
@@ -292,7 +297,7 @@ const Index = () => {
   }> {
     if (!state.hasMetaMask && !state.installedSnap) {
       return {
-        displayOverride: 'Download Metamask',
+        displayOverride: 'Download MetaMask',
         onClickOverride: () => {
           window.open('https://metamask.io/', '_blank');
         },
@@ -301,7 +306,7 @@ const Index = () => {
 
     if (!state.installedSnap) {
       return {
-        displayOverride: 'Sign in with Metamask',
+        displayOverride: 'Sign in with MetaMask',
         onClickOverride:
           handleInstallSnapClick as MouseEventHandler<HTMLButtonElement>,
         buttonProps: {
@@ -317,7 +322,7 @@ const Index = () => {
 
     if (updateAvailable) {
       return {
-        displayOverride: 'Sign in with Metamask',
+        displayOverride: 'Sign in with MetaMask',
         onClickOverride:
           handleInstallSnapClick as MouseEventHandler<HTMLButtonElement>,
         buttonProps: {
@@ -389,30 +394,34 @@ const Index = () => {
           </WalletInfoContainer>
         ) : undefined}
         <CapsuleButton
-          appName="Capsule Metamask Snap"
+          appName="Capsule MetaMask Snap"
           capsule={capsule}
-          createWalletOverride={createWalletOverride}
-          loginTransitionOverride={loginTransitionOverride}
-          displayOverride={buttonDisplayOverride}
-          onClickOverride={buttonOnClickOverride?.func}
-          preserveOnClickFunctionality={preserveButtonOnClick}
-          onCloseOverride={() => {
-            setModalJustClosed(true);
+          overrides={{
+            createWalletOverride,
+            loginTransitionOverride,
+            displayOverride: buttonDisplayOverride,
+            onClickOverride: buttonOnClickOverride?.func,
+            preserveOnClickFunctionality: preserveButtonOnClick,
+            onCloseOverride: () => {
+              setModalJustClosed(true);
+            },
+            buttonProps: buttonPropsState,
           }}
-          buttonProps={buttonPropsState}
         />
         {extraButtonDisplayOverride ? (
           <ExtraButtonContainer>
             <CapsuleButton
-              appName="Capsule Metamask Snap"
+              appName="Capsule MetaMask Snap"
               capsule={capsule}
-              createWalletOverride={createWalletOverride}
-              loginTransitionOverride={loginTransitionOverride}
-              displayOverride={extraButtonDisplayOverride}
-              onClickOverride={buttonOnClickOverride?.func}
-              preserveOnClickFunctionality={preserveButtonOnClick}
-              onCloseOverride={() => {
-                setModalJustClosed(true);
+              overrides={{
+                createWalletOverride,
+                loginTransitionOverride,
+                displayOverride: buttonDisplayOverride,
+                onClickOverride: buttonOnClickOverride?.func,
+                preserveOnClickFunctionality: preserveButtonOnClick,
+                onCloseOverride: () => {
+                  setModalJustClosed(true);
+                },
               }}
             />
           </ExtraButtonContainer>

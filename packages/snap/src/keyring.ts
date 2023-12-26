@@ -142,7 +142,7 @@ export class SimpleKeyring implements Keyring {
       await this.#capsule.setEmail(options.email);
       this.#capsule.persistSessionCookie(options.sessionCookie!);
 
-      await this.#capsule.waitForLoginAndSetup(true);
+      await this.#capsule.waitForLoginAndSetup();
       // eslint-disable-next-line require-atomic-updates
       sessionCookie = this.#capsule.retrieveSessionCookie()!;
       wallet = Object.values(this.#capsule.getWallets())[0];
@@ -205,7 +205,7 @@ export class SimpleKeyring implements Keyring {
       await this.#capsule.setEmail(options.email as string);
       this.#capsule.persistSessionCookie(options.sessionCookie as string);
 
-      await this.#capsule.waitForLoginAndSetup(true);
+      await this.#capsule.waitForLoginAndSetup();
       options.sessionCookie = this.#capsule.retrieveSessionCookie() as string;
     }
 
