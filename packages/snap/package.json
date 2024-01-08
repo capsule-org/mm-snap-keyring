@@ -1,6 +1,6 @@
 {
   "name": "@usecapsule/mm-snap-keyring",
-  "version": "0.12.0",
+  "version": "0.12.3",
   "main": "dist/bundle.js",
   "files": [
     "dist/",
@@ -26,11 +26,11 @@
     "@ethereumjs/common": "^3.1.2",
     "@ethereumjs/tx": "^4.1.2",
     "@ethereumjs/util": "^8.0.5",
-    "@metamask/eth-sig-util": "^7.0.0",
+    "@metamask/eth-sig-util": "^7.0.1",
     "@metamask/keyring-api": "^1.0.0-rc.1",
     "@metamask/snaps-types": "^3.0.0",
     "@metamask/utils": "^8.1.0",
-    "@usecapsule/web-sdk": "0.29.4-dev.17",
+    "@usecapsule/web-sdk": "0.29.4-dev.26",
     "ethers": "6.6.4",
     "uuid": "^9.0.0",
     "webpack": "^5.89.0"

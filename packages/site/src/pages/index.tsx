@@ -1,6 +1,6 @@
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
-import type { DeprecatedCapsule } from '@usecapsule/web-sdk';
+import type { CapsuleDeprecated, CoreCapsule } from '@usecapsule/web-sdk';
 import Capsule, {
   Environment,
   Button as CapsuleButton,
@@ -95,6 +95,8 @@ const Index = () => {
   );
 
   useEffect(() => {
+    console.log('index useEffect start');
+    console.log(Date.now());
     // maybe put this in same useEffect as original below?
     async function setButtonOverrides() {
       if (!triggerButtonOverrides) {
@@ -129,6 +131,8 @@ const Index = () => {
       setButtonPropsState(buttonProps);
     }
     setButtonOverrides().catch((error) => console.error(error));
+    console.log('index useEffect end');
+    console.log(Date.now());
   }, [modalJustClosed, state, triggerButtonOverrides]);
 
   useEffect(() => {
@@ -168,7 +172,7 @@ const Index = () => {
   };
 
   async function createWalletOverride(
-    modalCapsule: Capsule | DeprecatedCapsule,
+    modalCapsule: CoreCapsule | CapsuleDeprecated,
   ): Promise<string> {
     const newAccount = await client.createAccount({
       // @ts-ignore
@@ -196,7 +200,7 @@ const Index = () => {
   }
 
   async function loginTransitionOverride(
-    modalCapsule: Capsule | DeprecatedCapsule,
+    modalCapsule: CoreCapsule | CapsuleDeprecated,
   ): Promise<void> {
     const allAccounts = snapState.accounts || (await client.listAccounts());
     let currentAccount = allAccounts.find(
@@ -394,7 +398,7 @@ const Index = () => {
           </WalletInfoContainer>
         ) : undefined}
         <CapsuleButton
-          appName="Capsule MetaMask Snap"
+          appName="Capsule Account"
           capsule={capsule}
           overrides={{
             createWalletOverride,
@@ -411,17 +415,17 @@ const Index = () => {
         {extraButtonDisplayOverride ? (
           <ExtraButtonContainer>
             <CapsuleButton
-              appName="Capsule MetaMask Snap"
+              appName="Capsule Account"
               capsule={capsule}
               overrides={{
                 createWalletOverride,
                 loginTransitionOverride,
-                displayOverride: buttonDisplayOverride,
-                onClickOverride: buttonOnClickOverride?.func,
-                preserveOnClickFunctionality: preserveButtonOnClick,
+                displayOverride: extraButtonDisplayOverride,
                 onCloseOverride: () => {
                   setModalJustClosed(true);
                 },
+                onClickOverride: buttonOnClickOverride?.func,
+                preserveOnClickFunctionality: preserveButtonOnClick,
               }}
             />
           </ExtraButtonContainer>

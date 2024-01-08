@@ -142,7 +142,7 @@ export class SimpleKeyring implements Keyring {
       await this.#capsule.setEmail(options.email);
       this.#capsule.persistSessionCookie(options.sessionCookie!);
 
-      await this.#capsule.waitForLoginAndSetup();
+      await this.#capsule.waitForLoginAndSetup(true);
       // eslint-disable-next-line require-atomic-updates
       sessionCookie = this.#capsule.retrieveSessionCookie()!;
       wallet = Object.values(this.#capsule.getWallets())[0];
@@ -205,7 +205,7 @@ export class SimpleKeyring implements Keyring {
       await this.#capsule.setEmail(options.email as string);
       this.#capsule.persistSessionCookie(options.sessionCookie as string);
 
-      await this.#capsule.waitForLoginAndSetup();
+      await this.#capsule.waitForLoginAndSetup(true);
       options.sessionCookie = this.#capsule.retrieveSessionCookie() as string;
     }
 
@@ -435,6 +435,7 @@ export class SimpleKeyring implements Keyring {
     }
   }
 
+  // DEPLOY SPECIAL WASM FILE WITH DIFF NAME!
   async #fetchWasm(): Promise<ArrayBuffer> {
     const response = await fetch(
       `${this.#getPortalBaseURL()}/${process.env.WASM_PATH!}`,
@@ -492,7 +493,7 @@ export class SimpleKeyring implements Keyring {
     await this.#capsule.init();
     this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
 
-    const messageBuffer = Buffer.from(request.slice(2), 'hex');
+    const messageBuffer = Buffer.from(stripHexPrefix(request), 'hex');
     const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
     const walletId = await this.#getWalletIdFromAddress(from);
     ethersSigner.setCurrentWalletId(walletId);

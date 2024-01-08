@@ -75,17 +75,20 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
+    console.log('mm context useeffect start');
+    console.log(Date.now());
     const detectInstallation = async () => {
       /**
        * Detect if MetaMask is installed.
        */
-      async function detectMetaMask() {
+      async function detectMetaMask(): Promise<boolean> {
         const isMetaMaskDetected = await hasMetaMask();
 
         dispatch({
           type: MetamaskActions.SetMetaMaskDetected,
           payload: isMetaMaskDetected,
         });
+        return isMetaMaskDetected;
       }
 
       /**
@@ -99,9 +102,9 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
         });
       }
 
-      await detectMetaMask();
+      const mmDetected = await detectMetaMask();
 
-      if (state.hasMetaMask) {
+      if (mmDetected) {
         await detectSnapInstalled();
       } else {
         dispatch({
@@ -112,7 +115,9 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
     };
 
     detectInstallation().catch(console.error);
-  }, [state.hasMetaMask, window.ethereum]);
+    console.log('mm context useeffect end');
+    console.log(Date.now());
+  }, [window.ethereum]);
 
   useEffect(() => {
     let timeoutId: number;

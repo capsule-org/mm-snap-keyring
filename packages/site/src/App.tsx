@@ -40,6 +40,10 @@ const DescriptionDiv = styled.div`
   padding-bottom: 14px;
 `;
 
+const DescriptionListDiv = styled.div`
+  margin-left: 16px;
+`;
+
 const ChildrenDiv = styled.div`
   padding-top: 50px;
 `;
@@ -67,6 +71,7 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
             Capsule Account Snap!
           </SubjectDiv>
           <DescriptionDiv>
+            <br />
             <a target="_blank" href="https://usecapsule.com">
               <u>Capsule</u>
             </a>{' '}
@@ -74,21 +79,31 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
             <a target="_blank" href="https://blog.usecapsule.com/what-is-mpc">
               <u>MPC wallets</u>
             </a>{' '}
-            with just an email or a social login. Capsule-enabled wallets are
-            portable across applications, recoverable, and programmable, so you
-            get the best of an embedded experience without needing to create
-            different signers or contract accounts for every application you
-            use.
+            with just an email or a social login.
           </DescriptionDiv>
           <DescriptionDiv>
-            The Capsule Account Snap is an easy way for you to create a new
-            Capsule wallet, log in with an existing wallet, and in the future
-            even set permissions and automations.
+            It's easy to use your Capsule wallet to sign anywhere you can use
+            MetaMask! Getting started is easy:
           </DescriptionDiv>
           <DescriptionDiv>
-            To learn more about Capsule, check out{' '}
-            <a target="_blank" href="https://usecapsule.com">
-              usecapsule.com
+            <DescriptionListDiv>
+              <ol>
+                <li>Log in with your Capsule Wallet below.</li>
+                <li>
+                  Connect to MetaMask and accept permissions to add the{' '}
+                  <strong>Capsule</strong> Snap Account.
+                </li>
+                <li>
+                  Sign transactions easily! Come back to this page to manage
+                  your session or check your address.
+                </li>
+              </ol>
+            </DescriptionListDiv>
+          </DescriptionDiv>
+          <DescriptionDiv>
+            To learn more, check out the{' '}
+            <a target="_blank" href="https://docs.usecapsule.com/metamask">
+              <u>Capsule Snap FAQ</u>
             </a>
           </DescriptionDiv>
           <ChildrenDiv>{children}</ChildrenDiv>
