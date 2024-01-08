@@ -1,0 +1,33 @@
+{
+  "version": "0.12.3",
+  "description": "Capsule key management snap keyring.",
+  "proposedName": "Capsule Snap Keyring",
+  "source": {
+    "shasum": "H4wexZqxIR7svKWoa2a7eolctWDeSvDXleUwcG2Ev/k=",
+    "location": {
+      "npm": {
+        "filePath": "dist/bundle.js",
+        "iconPath": "images/icon.svg",
+        "packageName": "@usecapsule/mm-snap-keyring",
+        "registry": "https://registry.npmjs.org/"
+      }
+    }
+  },
+  "initialPermissions": {
+    "snap_dialog": {},
+    "endowment:keyring": {
+      "allowedOrigins": [
+        "https://snap.app.sandbox.usecapsule.com",
+        "http://localhost:8000"
+      ]
+    },
+    "endowment:rpc": {
+      "dapps": true
+    },
+    "endowment:webassembly": {},
+    "endowment:network-access": {},
+    "snap_manageAccounts": {},
+    "snap_manageState": {}
+  },
+  "manifestVersion": "0.1"
+}
