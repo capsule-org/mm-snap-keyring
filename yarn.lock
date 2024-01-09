@@ -8091,7 +8091,7 @@ __metadata:
     "@types/styled-components": ^5.1.26
     "@typescript-eslint/eslint-plugin": ^5.55.0
     "@typescript-eslint/parser": ^5.55.0
-    "@usecapsule/web-sdk": 0.29.4-dev.42
+    "@usecapsule/web-sdk": 0.30.0
     cross-env: ^7.0.3
     crypto-browserify: ^3.12.0
     depcheck: ^1.4.6
@@ -8146,7 +8146,7 @@ __metadata:
     "@types/node": ^20.6.2
     "@typescript-eslint/eslint-plugin": ^5.33.0
     "@typescript-eslint/parser": ^5.33.0
-    "@usecapsule/web-sdk": 0.29.4-dev.42
+    "@usecapsule/web-sdk": 0.30.0
     copy-webpack-plugin: ^11.0.0
     depcheck: ^1.4.6
     eslint: ^8.21.0
@@ -8176,9 +8176,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usecapsule/web-sdk@npm:0.29.4-dev.42":
-  version: 0.29.4-dev.42
-  resolution: "@usecapsule/web-sdk@npm:0.29.4-dev.42"
+"@usecapsule/web-sdk@npm:0.30.0":
+  version: 0.30.0
+  resolution: "@usecapsule/web-sdk@npm:0.30.0"
   dependencies:
     "@celo/utils": 3.2.0
     "@chakra-ui/icons": ^2.1.1
@@ -8212,7 +8212,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: ea6b3a442d901ece7209c5fb15448fd5436df4461f85cb4425341d7a6d4c797d0abcc36d9de3099cfffd722925b4fefd582bdab761a9c1c88edad1d11bc142c2
+  checksum: 06a696e2fb536538288181237f23b7f7cb7b4d8a13cf1afdb4946ff23703e8671c093ee81d5b76044ea14204f851eea39be46c574db9fd2b232d1480ea3995f0
   languageName: node
   linkType: hard
 
