@@ -136,6 +136,8 @@ export class SimpleKeyring implements Keyring {
       await this.#capsule.setLoginEncryptionKeyPair(
         JSON.parse(options.loginEncryptionKeyPair as string),
       );
+      // second init needed so encryption key pair can be used properly
+      await this.#capsule.init();
       delete options.loginEncryptionKeyPair;
 
       await this.#capsule.setEmail(options.email);

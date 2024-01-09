@@ -25,8 +25,8 @@ const config: SnapConfig = {
       // dependencies, but are not required by this snap.
       ignore: [
         'events',
-        // 'http',
-        // 'https',
+        'http',
+        'https',
         'zlib',
         'util',
         'url',

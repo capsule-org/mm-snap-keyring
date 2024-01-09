@@ -8091,7 +8091,7 @@ __metadata:
     "@types/styled-components": ^5.1.26
     "@typescript-eslint/eslint-plugin": ^5.55.0
     "@typescript-eslint/parser": ^5.55.0
-    "@usecapsule/web-sdk": 0.29.4-dev.37
+    "@usecapsule/web-sdk": 0.29.4-dev.42
     cross-env: ^7.0.3
     crypto-browserify: ^3.12.0
     depcheck: ^1.4.6
@@ -8146,7 +8146,7 @@ __metadata:
     "@types/node": ^20.6.2
     "@typescript-eslint/eslint-plugin": ^5.33.0
     "@typescript-eslint/parser": ^5.33.0
-    "@usecapsule/web-sdk": 0.29.4-dev.37
+    "@usecapsule/web-sdk": 0.29.4-dev.42
     copy-webpack-plugin: ^11.0.0
     depcheck: ^1.4.6
     eslint: ^8.21.0
@@ -8167,18 +8167,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@usecapsule/user-management-client@npm:0.20.0":
-  version: 0.20.0
-  resolution: "@usecapsule/user-management-client@npm:0.20.0"
+"@usecapsule/user-management-client@npm:0.18.0":
+  version: 0.18.0
+  resolution: "@usecapsule/user-management-client@npm:0.18.0"
   dependencies:
-    axios: ^1.6.3
-  checksum: 6f3ae80f6b4c9c674cac50ce112f8632c76700f2b7d38773b1ecd00605314a3daabeb1a6a0b5ec3e182b2bb2ce6b1003ddc1f2e88cf695fd47cc96238022107c
+    axios: ^0.27.2
+  checksum: 22f66877263cc2349b10b344258282f82c915e5d349d73cec746782bffb971adade58de2fce6e47cc56d08d753eb6b746110172b26e99e892025f70be5d5c9ea
   languageName: node
   linkType: hard
 
-"@usecapsule/web-sdk@npm:0.29.4-dev.37":
-  version: 0.29.4-dev.37
-  resolution: "@usecapsule/web-sdk@npm:0.29.4-dev.37"
+"@usecapsule/web-sdk@npm:0.29.4-dev.42":
+  version: 0.29.4-dev.42
+  resolution: "@usecapsule/web-sdk@npm:0.29.4-dev.42"
   dependencies:
     "@celo/utils": 3.2.0
     "@chakra-ui/icons": ^2.1.1
@@ -8190,7 +8190,7 @@ __metadata:
     "@emotion/react": ^11.10.8
     "@emotion/styled": ^11.10.8
     "@ramp-network/ramp-instant-sdk": ^4.0.2
-    "@usecapsule/user-management-client": 0.20.0
+    "@usecapsule/user-management-client": 0.18.0
     "@wagmi/chains": ^1.8.0
     "@wagmi/connectors": ^3.0.0
     assert: ^2.1.0
@@ -8212,7 +8212,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: 37c78718df906231c6401c6c77fc8c7891e4dc2783495186eafc615a293d953df5fee305745d8ed1abe3cf29be15169cbc4792cf6d05620f61e39dcbe1440d6c
+  checksum: ea6b3a442d901ece7209c5fb15448fd5436df4461f85cb4425341d7a6d4c797d0abcc36d9de3099cfffd722925b4fefd582bdab761a9c1c88edad1d11bc142c2
   languageName: node
   linkType: hard
 
@@ -9929,6 +9929,16 @@ __metadata:
   dependencies:
     follow-redirects: ^1.14.0
   checksum: 44245f24ac971e7458f3120c92f9d66d1fc695e8b97019139de5b0cc65d9b8104647db01e5f46917728edfc0cfd88eb30fc4c55e6053eef4ace76768ce95ff3c
+  languageName: node
+  linkType: hard
+
+"axios@npm:^0.27.2":
+  version: 0.27.2
+  resolution: "axios@npm:0.27.2"
+  dependencies:
+    follow-redirects: ^1.14.9
+    form-data: ^4.0.0
+  checksum: 38cb7540465fe8c4102850c4368053c21683af85c5fdf0ea619f9628abbcb59415d1e22ebc8a6390d2bbc9b58a9806c874f139767389c862ec9b772235f06854
   languageName: node
   linkType: hard
 
@@ -15091,7 +15101,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.4":
+"follow-redirects@npm:^1.14.9, follow-redirects@npm:^1.15.4":
   version: 1.15.4
   resolution: "follow-redirects@npm:1.15.4"
   peerDependenciesMeta:
