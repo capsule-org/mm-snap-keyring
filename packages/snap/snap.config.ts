@@ -11,7 +11,7 @@ const config: SnapConfig = {
   output: {
     minimize: false,
   },
-  sourceMap: true,
+  sourceMap: false,
   environment: {
     DAPP_ORIGIN_PRODUCTION: 'https://snap.app.usecapsule.com/',
     DAPP_ORIGIN_DEVELOPMENT: 'http://localhost:8000/',
@@ -25,8 +25,8 @@ const config: SnapConfig = {
       // dependencies, but are not required by this snap.
       ignore: [
         'events',
-        'http',
-        'https',
+        // 'http',
+        // 'https',
         'zlib',
         'util',
         'url',

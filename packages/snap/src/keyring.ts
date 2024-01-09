@@ -92,7 +92,6 @@ export class SimpleKeyring implements Keyring {
     ): Promise<void> => {
       delete this.#state.capsuleSessionStorage[key];
     };
-    // TODO: get mm specific api key
     this.#capsule = new Capsule(
       Environment.PROD,
       'f959fcec60c4a3c0b96d8a1b5df169ea',
