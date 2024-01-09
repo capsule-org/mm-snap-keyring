@@ -88,15 +88,12 @@ const Index = () => {
   const [triggerButtonOverrides, setTriggerButtonOverrides] = useState<Date>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
-  // TODO: get mm specific api key
   const capsule = new Capsule(
     Environment.PROD,
     'f959fcec60c4a3c0b96d8a1b5df169ea',
   );
 
   useEffect(() => {
-    console.log('index useEffect start');
-    console.log(Date.now());
     // maybe put this in same useEffect as original below?
     async function setButtonOverrides() {
       if (!triggerButtonOverrides) {
@@ -131,8 +128,6 @@ const Index = () => {
       setButtonPropsState(buttonProps);
     }
     setButtonOverrides().catch((error) => console.error(error));
-    console.log('index useEffect end');
-    console.log(Date.now());
   }, [modalJustClosed, state, triggerButtonOverrides]);
 
   useEffect(() => {
@@ -176,7 +171,7 @@ const Index = () => {
   ): Promise<string> {
     const newAccount = await client.createAccount({
       // @ts-ignore
-      userId: modalCapsule.userId,
+      userId: modalCapsule.getUserId(),
       email: modalCapsule.getEmail() as string,
       sessionCookie: modalCapsule.retrieveSessionCookie() as string,
     });

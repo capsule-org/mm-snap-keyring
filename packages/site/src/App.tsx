@@ -5,7 +5,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
 
-// import SnapImage from './assets/snap_image.png';
+import SnapImage from './assets/snap_image.png';
 // eslint-disable-next-line import/no-unassigned-import
 import './css/site.css';
 
@@ -109,7 +109,7 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
           <ChildrenDiv>{children}</ChildrenDiv>
         </LeftColumnContainer>
         <RighColumnContainer>
-          {/* <img src={SnapImage} /> */}
+          <img src={SnapImage} />
         </RighColumnContainer>
       </Container>
     </>

@@ -75,8 +75,6 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    console.log('mm context useeffect start');
-    console.log(Date.now());
     const detectInstallation = async () => {
       /**
        * Detect if MetaMask is installed.
@@ -115,8 +113,6 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
     };
 
     detectInstallation().catch(console.error);
-    console.log('mm context useeffect end');
-    console.log(Date.now());
   }, [window.ethereum]);
 
   useEffect(() => {
