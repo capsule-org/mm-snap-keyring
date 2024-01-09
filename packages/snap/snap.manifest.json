@@ -18,7 +18,6 @@
     "endowment:keyring": {
       "allowedOrigins": [
         "https://snap.app.usecapsule.com",
-        "https://snap.app.sandbox.usecapsule.com",
         "http://localhost:8000"
       ]
     },
