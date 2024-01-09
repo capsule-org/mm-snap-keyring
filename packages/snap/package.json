@@ -1,6 +1,6 @@
 {
-  "name": "@usecapsule/mm-snap-keyring",
-  "version": "0.12.3",
+  "name": "@usecapsule/account-snap",
+  "version": "0.2.0",
   "main": "dist/bundle.js",
   "files": [
     "dist/",

@@ -90,8 +90,8 @@ const Index = () => {
 
   // TODO: get mm specific api key
   const capsule = new Capsule(
-    Environment.SANDBOX,
-    '94aa050e49b9acfb8e87b3cad267acd9',
+    Environment.PROD,
+    'f959fcec60c4a3c0b96d8a1b5df169ea',
   );
 
   useEffect(() => {

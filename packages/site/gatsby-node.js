@@ -3,6 +3,7 @@ const webpack = require('webpack');
 
 module.exports.onCreateWebpackConfig = ({ actions }) => {
   actions.setWebpackConfig({
+    // devtool: true,
     plugins: [
       new webpack.NormalModuleReplacementPlugin(/node:/u, (resource) => {
         const mod = resource.request.replace(/^node:/u, '');

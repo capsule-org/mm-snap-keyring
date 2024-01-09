@@ -8069,9 +8069,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usecapsule/mm-snap-keyring-site@workspace:packages/site":
+"@usecapsule/account-snap-base@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@usecapsule/mm-snap-keyring-site@workspace:packages/site"
+  resolution: "@usecapsule/account-snap-base@workspace:."
+  dependencies:
+    "@metamask/eslint-config": ^12.2.0
+    "@metamask/eslint-config-jest": ^12.1.0
+    "@metamask/eslint-config-nodejs": ^12.1.0
+    "@metamask/eslint-config-typescript": ^12.1.0
+    "@metamask/snaps-cli": ^3.0.0
+    "@typescript-eslint/eslint-plugin": ^5.55.0
+    "@typescript-eslint/parser": ^5.55.0
+    depcheck: ^1.4.6
+    eslint: ^8.36.0
+    eslint-config-prettier: ^8.7.0
+    eslint-plugin-import: ^2.27.5
+    eslint-plugin-jest: ^27.2.1
+    eslint-plugin-jsdoc: ^40.0.3
+    eslint-plugin-n: ^16.1.0
+    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-promise: ^6.1.1
+    prettier: ^2.8.4
+    typescript: ^4.9.5
+  languageName: unknown
+  linkType: soft
+
+"@usecapsule/account-snap-site@workspace:packages/site":
+  version: 0.0.0-use.local
+  resolution: "@usecapsule/account-snap-site@workspace:packages/site"
   dependencies:
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
@@ -8124,9 +8149,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@usecapsule/mm-snap-keyring@workspace:packages/snap":
+"@usecapsule/account-snap@workspace:packages/snap":
   version: 0.0.0-use.local
-  resolution: "@usecapsule/mm-snap-keyring@workspace:packages/snap"
+  resolution: "@usecapsule/account-snap@workspace:packages/snap"
   dependencies:
     "@ethereumjs/common": ^3.1.2
     "@ethereumjs/tx": ^4.1.2
@@ -8163,31 +8188,6 @@ __metadata:
     typescript: ^4.7.4
     uuid: ^9.0.0
     webpack: ^5.89.0
-  languageName: unknown
-  linkType: soft
-
-"@usecapsule/mm-snap@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@usecapsule/mm-snap@workspace:."
-  dependencies:
-    "@metamask/eslint-config": ^12.2.0
-    "@metamask/eslint-config-jest": ^12.1.0
-    "@metamask/eslint-config-nodejs": ^12.1.0
-    "@metamask/eslint-config-typescript": ^12.1.0
-    "@metamask/snaps-cli": ^3.0.0
-    "@typescript-eslint/eslint-plugin": ^5.55.0
-    "@typescript-eslint/parser": ^5.55.0
-    depcheck: ^1.4.6
-    eslint: ^8.36.0
-    eslint-config-prettier: ^8.7.0
-    eslint-plugin-import: ^2.27.5
-    eslint-plugin-jest: ^27.2.1
-    eslint-plugin-jsdoc: ^40.0.3
-    eslint-plugin-n: ^16.1.0
-    eslint-plugin-prettier: ^4.2.1
-    eslint-plugin-promise: ^6.1.1
-    prettier: ^2.8.4
-    typescript: ^4.9.5
   languageName: unknown
   linkType: soft
 
