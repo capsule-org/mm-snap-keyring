@@ -5,7 +5,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
 
-import { ReactComponent as BalanceSuccess } from './assets/balance_success.svg';
+import SnapImage from './assets/snap_image.png';
 // eslint-disable-next-line import/no-unassigned-import
 import './css/site.css';
 
@@ -58,7 +58,7 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
     return null;
   }
 
-  return (
+  return children ? (
     <>
       <Helmet>
         <meta charSet="utf-8" />
@@ -109,9 +109,9 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
           <ChildrenDiv>{children}</ChildrenDiv>
         </LeftColumnContainer>
         <RighColumnContainer>
-          <BalanceSuccess />
+          <img src={SnapImage} />
         </RighColumnContainer>
       </Container>
     </>
-  );
+  ) : undefined;
 };

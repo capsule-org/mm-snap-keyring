@@ -3264,15 +3264,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethereumjs/rlp@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "@ethereumjs/rlp@npm:5.0.1"
-  bin:
-    rlp: bin/rlp.cjs
-  checksum: eddff08718c3b8312007ef51a951dff6b2c1152f9f9ea6fb9eec65d50caf3fa53f5894d79d6d450eef70a5ef3b0688be044912096aa8d263345a0d9debb4d477
-  languageName: node
-  linkType: hard
-
 "@ethereumjs/tx@npm:^4.1.2":
   version: 4.2.0
   resolution: "@ethereumjs/tx@npm:4.2.0"
@@ -3293,21 +3284,6 @@ __metadata:
     ethereum-cryptography: ^2.0.0
     micro-ftch: ^0.3.1
   checksum: 9ae5dee8f12b0faf81cd83f06a41560e79b0ba96a48262771d897a510ecae605eb6d84f687da001ab8ccffd50f612ae50f988ef76e6312c752897f462f3ac08d
-  languageName: node
-  linkType: hard
-
-"@ethereumjs/util@npm:^9.0.1":
-  version: 9.0.1
-  resolution: "@ethereumjs/util@npm:9.0.1"
-  dependencies:
-    "@ethereumjs/rlp": ^5.0.1
-    ethereum-cryptography: ^2.1.2
-  peerDependencies:
-    c-kzg: ^2.1.2
-  peerDependenciesMeta:
-    c-kzg:
-      optional: true
-  checksum: 3569dcc0106f5e962e62811be66b5f49529c9d1a29671908568528b2b45d6cae03cb497fc755a1ae4144170f749133308494be42255ac98b61c930d143ed26f4
   languageName: node
   linkType: hard
 
@@ -8069,9 +8045,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usecapsule/mm-snap-keyring-site@workspace:packages/site":
+"@usecapsule/account-snap-base@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@usecapsule/mm-snap-keyring-site@workspace:packages/site"
+  resolution: "@usecapsule/account-snap-base@workspace:."
+  dependencies:
+    "@metamask/eslint-config": ^12.2.0
+    "@metamask/eslint-config-jest": ^12.1.0
+    "@metamask/eslint-config-nodejs": ^12.1.0
+    "@metamask/eslint-config-typescript": ^12.1.0
+    "@metamask/snaps-cli": ^3.0.0
+    "@typescript-eslint/eslint-plugin": ^5.55.0
+    "@typescript-eslint/parser": ^5.55.0
+    depcheck: ^1.4.6
+    eslint: ^8.36.0
+    eslint-config-prettier: ^8.7.0
+    eslint-plugin-import: ^2.27.5
+    eslint-plugin-jest: ^27.2.1
+    eslint-plugin-jsdoc: ^40.0.3
+    eslint-plugin-n: ^16.1.0
+    eslint-plugin-prettier: ^4.2.1
+    eslint-plugin-promise: ^6.1.1
+    prettier: ^2.8.4
+    typescript: ^4.9.5
+  languageName: unknown
+  linkType: soft
+
+"@usecapsule/account-snap-site@workspace:packages/site":
+  version: 0.0.0-use.local
+  resolution: "@usecapsule/account-snap-site@workspace:packages/site"
   dependencies:
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
@@ -8090,7 +8091,7 @@ __metadata:
     "@types/styled-components": ^5.1.26
     "@typescript-eslint/eslint-plugin": ^5.55.0
     "@typescript-eslint/parser": ^5.55.0
-    "@usecapsule/web-sdk": 0.29.4-dev.25
+    "@usecapsule/web-sdk": 0.30.0
     cross-env: ^7.0.3
     crypto-browserify: ^3.12.0
     depcheck: ^1.4.6
@@ -8124,9 +8125,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@usecapsule/mm-snap-keyring@workspace:packages/snap":
+"@usecapsule/account-snap@workspace:packages/snap":
   version: 0.0.0-use.local
-  resolution: "@usecapsule/mm-snap-keyring@workspace:packages/snap"
+  resolution: "@usecapsule/account-snap@workspace:packages/snap"
   dependencies:
     "@ethereumjs/common": ^3.1.2
     "@ethereumjs/tx": ^4.1.2
@@ -8145,7 +8146,7 @@ __metadata:
     "@types/node": ^20.6.2
     "@typescript-eslint/eslint-plugin": ^5.33.0
     "@typescript-eslint/parser": ^5.33.0
-    "@usecapsule/web-sdk": 0.29.4-dev.26
+    "@usecapsule/web-sdk": 0.30.0
     copy-webpack-plugin: ^11.0.0
     depcheck: ^1.4.6
     eslint: ^8.21.0
@@ -8166,31 +8167,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@usecapsule/mm-snap@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@usecapsule/mm-snap@workspace:."
-  dependencies:
-    "@metamask/eslint-config": ^12.2.0
-    "@metamask/eslint-config-jest": ^12.1.0
-    "@metamask/eslint-config-nodejs": ^12.1.0
-    "@metamask/eslint-config-typescript": ^12.1.0
-    "@metamask/snaps-cli": ^3.0.0
-    "@typescript-eslint/eslint-plugin": ^5.55.0
-    "@typescript-eslint/parser": ^5.55.0
-    depcheck: ^1.4.6
-    eslint: ^8.36.0
-    eslint-config-prettier: ^8.7.0
-    eslint-plugin-import: ^2.27.5
-    eslint-plugin-jest: ^27.2.1
-    eslint-plugin-jsdoc: ^40.0.3
-    eslint-plugin-n: ^16.1.0
-    eslint-plugin-prettier: ^4.2.1
-    eslint-plugin-promise: ^6.1.1
-    prettier: ^2.8.4
-    typescript: ^4.9.5
-  languageName: unknown
-  linkType: soft
-
 "@usecapsule/user-management-client@npm:0.18.0":
   version: 0.18.0
   resolution: "@usecapsule/user-management-client@npm:0.18.0"
@@ -8200,9 +8176,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@usecapsule/web-sdk@npm:0.29.4-dev.25":
-  version: 0.29.4-dev.25
-  resolution: "@usecapsule/web-sdk@npm:0.29.4-dev.25"
+"@usecapsule/web-sdk@npm:0.30.0":
+  version: 0.30.0
+  resolution: "@usecapsule/web-sdk@npm:0.30.0"
   dependencies:
     "@celo/utils": 3.2.0
     "@chakra-ui/icons": ^2.1.1
@@ -8213,7 +8189,6 @@ __metadata:
     "@cosmjs/proto-signing": 0.31.0
     "@emotion/react": ^11.10.8
     "@emotion/styled": ^11.10.8
-    "@ethereumjs/util": ^9.0.1
     "@ramp-network/ramp-instant-sdk": ^4.0.2
     "@usecapsule/user-management-client": 0.18.0
     "@wagmi/chains": ^1.8.0
@@ -8224,6 +8199,7 @@ __metadata:
     buffer: 6.0.3
     cbor-web: 8.1.0
     cosmjs-types: 0.8.0
+    ethereumjs-util: 7.1.5
     ethers: 6.6.4
     eventemitter3: 5.0.1
     framer-motion: ^10.12.7
@@ -8236,47 +8212,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: b4c7825a92cc3857992ffd1905e58957d973e0125e5c2ee89446571226562bbd528f92e0b6c26c34acebc860e1f1c7a47d8d7a388f845fedd40db19c384b7fde
-  languageName: node
-  linkType: hard
-
-"@usecapsule/web-sdk@npm:0.29.4-dev.26":
-  version: 0.29.4-dev.26
-  resolution: "@usecapsule/web-sdk@npm:0.29.4-dev.26"
-  dependencies:
-    "@celo/utils": 3.2.0
-    "@chakra-ui/icons": ^2.1.1
-    "@chakra-ui/react": 1.8.9
-    "@cosmjs/amino": 0.31.0
-    "@cosmjs/crypto": 0.31.0
-    "@cosmjs/encoding": 0.31.0
-    "@cosmjs/proto-signing": 0.31.0
-    "@emotion/react": ^11.10.8
-    "@emotion/styled": ^11.10.8
-    "@ethereumjs/util": ^9.0.1
-    "@ramp-network/ramp-instant-sdk": ^4.0.2
-    "@usecapsule/user-management-client": 0.18.0
-    "@wagmi/chains": ^1.8.0
-    "@wagmi/connectors": ^3.0.0
-    assert: ^2.1.0
-    axios: ^1.6.3
-    base64url: 3.0.1
-    buffer: 6.0.3
-    cbor-web: 8.1.0
-    cosmjs-types: 0.8.0
-    ethers: 6.6.4
-    eventemitter3: 5.0.1
-    framer-motion: ^10.12.7
-    node-forge: 1.3.1
-    polished: ^4.2.2
-    react-qr-code: 2.0.11
-    react-use: 17.4.0
-    viem: 1.5.3
-    wagmi: ^1.4.12
-  peerDependencies:
-    react: "*"
-    react-dom: "*"
-  checksum: 44221dc08516ee998255618668fa0cf441e24cdfd4f88152c00ae4d8213def67f81a5380ae05f23d3795ff343343416496e468962065cc4395b28a73ff1b3719
+  checksum: 06a696e2fb536538288181237f23b7f7cb7b4d8a13cf1afdb4946ff23703e8671c093ee81d5b76044ea14204f851eea39be46c574db9fd2b232d1480ea3995f0
   languageName: node
   linkType: hard
 
@@ -14523,6 +14459,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ethereumjs-util@npm:7.1.5, ethereumjs-util@npm:^7.0.10":
+  version: 7.1.5
+  resolution: "ethereumjs-util@npm:7.1.5"
+  dependencies:
+    "@types/bn.js": ^5.1.0
+    bn.js: ^5.1.2
+    create-hash: ^1.1.2
+    ethereum-cryptography: ^0.1.3
+    rlp: ^2.2.4
+  checksum: 27a3c79d6e06b2df34b80d478ce465b371c8458b58f5afc14d91c8564c13363ad336e6e83f57eb0bd719fde94d10ee5697ceef78b5aa932087150c5287b286d1
+  languageName: node
+  linkType: hard
+
 "ethereumjs-util@npm:^5.2.0":
   version: 5.2.1
   resolution: "ethereumjs-util@npm:5.2.1"
@@ -14535,19 +14484,6 @@ __metadata:
     rlp: ^2.0.0
     safe-buffer: ^5.1.1
   checksum: 20db6c639d92b35739fd5f7a71e64a92e85442ea0d176b59b5cd5828265b6cf42bd4868cf81a9b20a83738db1ffa7a2f778f1d850d663627a1a5209f7904b44f
-  languageName: node
-  linkType: hard
-
-"ethereumjs-util@npm:^7.0.10":
-  version: 7.1.5
-  resolution: "ethereumjs-util@npm:7.1.5"
-  dependencies:
-    "@types/bn.js": ^5.1.0
-    bn.js: ^5.1.2
-    create-hash: ^1.1.2
-    ethereum-cryptography: ^0.1.3
-    rlp: ^2.2.4
-  checksum: 27a3c79d6e06b2df34b80d478ce465b371c8458b58f5afc14d91c8564c13363ad336e6e83f57eb0bd719fde94d10ee5697ceef78b5aa932087150c5287b286d1
   languageName: node
   linkType: hard
 

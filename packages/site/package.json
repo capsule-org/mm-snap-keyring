@@ -1,10 +1,11 @@
 {
-  "name": "@usecapsule/mm-snap-keyring-site",
+  "name": "@usecapsule/account-snap-site",
   "version": "1.1.0",
   "private": true,
   "license": "(MIT-0 OR Apache-2.0)",
   "scripts": {
-    "build": "rimraf .cache && cross-env GATSBY_TELEMETRY_DISABLED=1 gatsby build --prefix-paths",
+    "build": "rm -rf public && rimraf .cache && cross-env GATSBY_TELEMETRY_DISABLED=1 gatsby build --prefix-paths",
+    "serve": "gatsby serve --prefix-paths",
     "clean": "rimraf public .cache",
     "lint": "yarn lint:eslint && yarn lint:misc && yarn lint:deps && yarn lint:types",
     "lint:deps": "depcheck",
@@ -13,8 +14,9 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --check",
     "lint:types": "tsc --noEmit",
     "start": "rimraf .cache && cross-env GATSBY_TELEMETRY_DISABLED=1 gatsby develop",
-    "deploy-s3": "aws s3 sync public/ s3://$REACT_BUCKET_NAME --acl public-read --profile $REACT_APP_ENV",
-    "deploy-sandbox": "REACT_APP_ENV=sandbox REACT_BUCKET_NAME=capsule-sandbox-mm-snap-ui yarn deploy-s3"
+    "deploy-s3": "aws s3 sync public/ s3://$REACT_BUCKET_NAME --acl public-read --profile $REACT_APP_ENV --delete",
+    "deploy-sandbox": "REACT_APP_ENV=sandbox REACT_BUCKET_NAME=capsule-sandbox-mm-snap-ui yarn deploy-s3",
+    "deploy-prod": "REACT_APP_ENV=prod REACT_BUCKET_NAME=capsule-prod-mm-snap-ui yarn deploy-s3"
   },
   "browserslist": {
     "production": [
@@ -36,7 +38,7 @@
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.14.0",
     "@types/react-helmet": "^6.1.6",
-    "@usecapsule/web-sdk": "0.29.4-dev.25",
+    "@usecapsule/web-sdk": "0.30.0",
     "crypto-browserify": "^3.12.0",
     "object.assign": "^4.1.4",
     "react": "^18.2.0",

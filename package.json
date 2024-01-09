@@ -1,5 +1,5 @@
 {
-  "name": "@usecapsule/mm-snap",
+  "name": "@usecapsule/account-snap-base",
   "version": "1.1.0",
   "private": true,
   "description": "A keyring snap that integrates with MetaMask accounts.",
@@ -9,13 +9,13 @@
     "keyring",
     "account"
   ],
-  "homepage": "https://github.com/usecapsule/mm-snap-keyring#readme",
+  "homepage": "https://github.com/usecapsule/account-snap#readme",
   "bugs": {
-    "url": "https://github.com/usecapsule/mm-snap-keyring/issues"
+    "url": "https://github.com/usecapsule/account-snap/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/capsule-org/mm-snap-keyring.git"
+    "url": "https://github.com/capsule-org/account-snap.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "author": "",
@@ -24,8 +24,8 @@
   ],
   "scripts": {
     "build": "yarn workspaces foreach --parallel --verbose --topological run build",
-    "build:dapp": "yarn workspace @usecapsule/mm-snap-keyring-site build",
-    "build:snap": "yarn workspace @usecapsule/mm-snap-keyring build",
+    "build:dapp": "yarn workspace @usecapsule/account-snap-site build",
+    "build:snap": "yarn workspace @usecapsule/account-snap build",
     "lint": "yarn workspaces foreach --parallel --verbose run lint",
     "lint:deps": "yarn workspaces foreach --parallel --verbose run depcheck",
     "lint:eslint": "yarn workspaces foreach --parallel --verbose run lint:eslint",

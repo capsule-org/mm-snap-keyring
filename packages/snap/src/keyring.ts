@@ -92,10 +92,9 @@ export class SimpleKeyring implements Keyring {
     ): Promise<void> => {
       delete this.#state.capsuleSessionStorage[key];
     };
-    // TODO: get mm specific api key
     this.#capsule = new Capsule(
-      Environment.SANDBOX,
-      '94aa050e49b9acfb8e87b3cad267acd9',
+      Environment.PROD,
+      'f959fcec60c4a3c0b96d8a1b5df169ea',
       {
         disableWorkers: true,
         useStorageOverrides: true,
@@ -137,6 +136,8 @@ export class SimpleKeyring implements Keyring {
       await this.#capsule.setLoginEncryptionKeyPair(
         JSON.parse(options.loginEncryptionKeyPair as string),
       );
+      // second init needed so encryption key pair can be used properly
+      await this.#capsule.init();
       delete options.loginEncryptionKeyPair;
 
       await this.#capsule.setEmail(options.email);
@@ -435,7 +436,6 @@ export class SimpleKeyring implements Keyring {
     }
   }
 
-  // DEPLOY SPECIAL WASM FILE WITH DIFF NAME!
   async #fetchWasm(): Promise<ArrayBuffer> {
     const response = await fetch(
       `${this.#getPortalBaseURL()}/${process.env.WASM_PATH!}`,
