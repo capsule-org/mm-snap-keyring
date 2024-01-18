@@ -320,7 +320,7 @@ export class SimpleKeyring implements Keyring {
       pending: true,
       redirect: {
         url: dappUrl,
-        message: 'Redirecting to Capsule Snap Keyring to sign transaction',
+        message: 'Redirecting to Capsule to sign transaction',
       },
     };
   }
