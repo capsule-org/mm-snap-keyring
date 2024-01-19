@@ -1,9 +1,9 @@
 {
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Capsule key management snap keyring.",
   "proposedName": "Capsule",
   "source": {
-    "shasum": "y7gN5Z1ih4+rKGzDUgR7OLGr39Y1QBakMff0xMle/xo=",
+    "shasum": "73pgLEKDz9gNRGplwKu/KfjlyHQDpUXNoSI4kvvWm+Y=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",

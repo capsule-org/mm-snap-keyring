@@ -51,7 +51,7 @@ type CreateAccountOptions = {
   loginEncryptionKeyPair?: any;
 };
 
-export class SimpleKeyring implements Keyring {
+export class CapsuleKeyring implements Keyring {
   #state: KeyringState;
 
   #capsule: Capsule;
@@ -156,6 +156,14 @@ export class SimpleKeyring implements Keyring {
       [wallet, recovery] = await this.#capsule.createWallet();
       delete options.sessionCookie;
 
+      const parsedRecovery = JSON.parse(recovery!);
+      const signerBase64 = Buffer.from(
+        wallet.signer as string,
+        'utf-8',
+      ).toString('base64');
+      parsedRecovery.backupDecryptionKey += `|${signerBase64}`;
+      recovery = JSON.stringify(parsedRecovery);
+
       sessionCookie = this.#capsule.retrieveSessionCookie() as string;
     }
 
@@ -258,9 +266,8 @@ export class SimpleKeyring implements Keyring {
 
   async submitRequest(request: KeyringRequest): Promise<SubmitRequestResponse> {
     await this.#capsule.init();
-
     if (!(await this.#capsule.isFullyLoggedIn())) {
-      return this.#asyncSubmitRequest(request);
+      return this.#asyncSubmitRequest(request, true);
     }
     return this.#state.useSyncApprovals
       ? this.#syncSubmitRequest(request)
@@ -281,8 +288,8 @@ export class SimpleKeyring implements Keyring {
     await this.#emitEvent(KeyringEvent.RequestApproved, { id, result });
   }
 
-  async rejectRequest(id: string): Promise<void> {
-    if (this.#state.pendingRequests[id] === undefined) {
+  async rejectRequest(id: string, skipError = false): Promise<void> {
+    if (!skipError && this.#state.pendingRequests[id] === undefined) {
       throw new Error(`Request '${id}' not found`);
     }
 
@@ -312,9 +319,15 @@ export class SimpleKeyring implements Keyring {
 
   async #asyncSubmitRequest(
     request: KeyringRequest,
+    skipPendingRequest = false,
   ): Promise<SubmitRequestResponse> {
-    this.#state.pendingRequests[request.id] = request;
-    await this.#saveState();
+    if (skipPendingRequest) {
+      await this.rejectRequest(request.id, true);
+    } else {
+      this.#state.pendingRequests[request.id] = request;
+      await this.#saveState();
+    }
+
     const dappUrl = this.#getCurrentUrl();
     return {
       pending: true,
