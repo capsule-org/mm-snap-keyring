@@ -16,8 +16,8 @@ const config: SnapConfig = {
     DAPP_ORIGIN_PRODUCTION: 'https://snap.app.usecapsule.com/',
     DAPP_ORIGIN_DEVELOPMENT: 'http://localhost:8000/',
     WASM_HASH_HEX:
-      '9092fb770559a79fb53ad038593609d04bc17205a4429fc6b322f0038c73bb44',
-    WASM_PATH: 'static/js/main-v0_1_0.wasm',
+      'bba36ed91e17582c23718a9183a557da1112878d4cfbbb3fdf940e65b992eb59',
+    WASM_PATH: 'static/js/main-v0_2_0.wasm',
   },
   stats: {
     builtIns: {
