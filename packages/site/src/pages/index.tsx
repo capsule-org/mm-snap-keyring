@@ -67,6 +67,8 @@ const ExtraButtonContainer = styled.div`
   padding-left: 90px;
 `;
 
+const STORAGE_PREFIX = '@CAPSULE/';
+
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
   const [snapState, setSnapState] = useState<KeyringState>(initialState);
@@ -86,11 +88,12 @@ const Index = () => {
   const [addressDisplay, setAddressDisplay] = useState<string>();
   const [preserveButtonOnClick, setPreserveButtonOnClick] = useState(false);
   const [triggerButtonOverrides, setTriggerButtonOverrides] = useState<Date>();
+  const [modalIsOpenOverride, setModalIsOpenOverride] = useState<boolean>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
   const capsule = new Capsule(
-    Environment.PROD,
-    'f959fcec60c4a3c0b96d8a1b5df169ea',
+    Environment.SANDBOX,
+    '2f938ac0c48ef356050a79bd66042a23',
   );
 
   useEffect(() => {
@@ -253,6 +256,12 @@ const Index = () => {
     });
     await modalCapsule.setWallets(walletsMap);
     setIsLoggedIn(true);
+
+    const { isSetup: is2faSetup } = await modalCapsule.check2FAStatus();
+    if (!is2faSetup) {
+      sessionStorage.setItem(`${STORAGE_PREFIX}currentStep`, 'SETUP_2FA');
+      setModalIsOpenOverride(true);
+    }
   }
 
   const handleInstallSnapClick: unknown = async () => {

@@ -93,8 +93,8 @@ export class CapsuleKeyring implements Keyring {
       delete this.#state.capsuleSessionStorage[key];
     };
     this.#capsule = new Capsule(
-      Environment.PROD,
-      'f959fcec60c4a3c0b96d8a1b5df169ea',
+      Environment.SANDBOX,
+      '2f938ac0c48ef356050a79bd66042a23',
       {
         disableWorkers: true,
         useStorageOverrides: true,
@@ -438,6 +438,8 @@ export class CapsuleKeyring implements Keyring {
   #getPortalBaseURL() {
     const { env } = this.#capsule.ctx;
     switch (env) {
+      case Environment.DEV:
+        return `http://localhost:3003`;
       case Environment.SANDBOX:
         return `https://app.sandbox.usecapsule.com`;
       case Environment.BETA:

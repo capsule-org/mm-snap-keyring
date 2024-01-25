@@ -6,7 +6,7 @@ import * as webpack from 'webpack';
 const config: SnapConfig = {
   bundler: 'webpack',
   input: 'src/index.ts',
-  server: { port: 8080 },
+  server: { port: 8081 },
   polyfills: true,
   output: {
     minimize: false,
