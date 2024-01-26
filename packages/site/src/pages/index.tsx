@@ -93,8 +93,8 @@ const Index = () => {
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
   const capsule = new Capsule(
-    Environment.SANDBOX,
-    '2f938ac0c48ef356050a79bd66042a23',
+    Environment.PROD,
+    'f959fcec60c4a3c0b96d8a1b5df169ea',
   );
 
   useEffect(() => {
