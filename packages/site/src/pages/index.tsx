@@ -67,6 +67,8 @@ const ExtraButtonContainer = styled.div`
   padding-left: 90px;
 `;
 
+const MODAL_STEP_2FA = 'SETUP_2FA';
+
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
   const [snapState, setSnapState] = useState<KeyringState>(initialState);
@@ -86,6 +88,8 @@ const Index = () => {
   const [addressDisplay, setAddressDisplay] = useState<string>();
   const [preserveButtonOnClick, setPreserveButtonOnClick] = useState(false);
   const [triggerButtonOverrides, setTriggerButtonOverrides] = useState<Date>();
+  const [modalIsOpenOverride, setModalIsOpenOverride] = useState<boolean>();
+  const [modalStepOverride, setModalStepOverride] = useState<string>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
   const capsule = new Capsule(
@@ -243,6 +247,12 @@ const Index = () => {
       updatedAccount!.options.sessionCookie as string,
     );
 
+    const { isSetup: is2faSetup } = await modalCapsule.check2FAStatus();
+    if (!is2faSetup) {
+      setModalStepOverride(MODAL_STEP_2FA);
+      setModalIsOpenOverride(true);
+    }
+
     const fetchedWallets = await modalCapsule.fetchWallets();
     const walletsMap: Record<string, any> = {};
     fetchedWallets.forEach((wallet: { id: string; address: string }) => {
@@ -285,6 +295,7 @@ const Index = () => {
     setShouldPreserveOnClick(true);
     setTriggerButtonOverrides(new Date());
     setModalJustClosed(false);
+    setModalStepOverride(undefined);
   };
 
   async function getButtonOverrides(): Promise<{
@@ -405,6 +416,11 @@ const Index = () => {
               setModalJustClosed(true);
             },
             buttonProps: buttonPropsState,
+            modalIsOpenOverride,
+            setModalIsOpenOverride: modalIsOpenOverride
+              ? setModalIsOpenOverride
+              : undefined,
+            currentStepOverride: modalStepOverride,
           }}
         />
         {extraButtonDisplayOverride ? (

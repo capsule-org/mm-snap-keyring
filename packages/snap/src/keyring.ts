@@ -438,6 +438,8 @@ export class CapsuleKeyring implements Keyring {
   #getPortalBaseURL() {
     const { env } = this.#capsule.ctx;
     switch (env) {
+      case Environment.DEV:
+        return `http://localhost:3003`;
       case Environment.SANDBOX:
         return `https://app.sandbox.usecapsule.com`;
       case Environment.BETA:
