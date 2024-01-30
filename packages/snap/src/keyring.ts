@@ -29,7 +29,7 @@ import { v4 as uuid } from 'uuid';
 
 import { saveState } from './stateManagement';
 import { isEvmChain, serializeTransaction, throwError } from './util';
-import wasmString from './wasm/main-v0_2_0.wasm';
+import wasmArrayBuffer from './wasm/main-v0_2_0.wasm';
 import packageInfo from '../package.json';
 
 export type KeyringState = {
@@ -128,7 +128,7 @@ export class CapsuleKeyring implements Keyring {
 
   async createAccount(options: CreateAccountOptions): Promise<KeyringAccount> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
+    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
 
     let wallet: any;
     let recovery: string | null = '';
@@ -396,7 +396,7 @@ export class CapsuleKeyring implements Keyring {
 
   async #signTransaction(tx: any): Promise<Json> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
+    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
 
     // Patch the transaction to make sure that the `chainId` is a hex string.
     if (!tx.chainId.startsWith('0x')) {
@@ -436,26 +436,6 @@ export class CapsuleKeyring implements Keyring {
     return serializeTransaction(signedFactoryTx.toJSON(), signedFactoryTx.type);
   }
 
-  #getPortalBaseURL() {
-    const { env } = this.#capsule.ctx;
-    switch (env) {
-      case Environment.DEV:
-        return `http://localhost:3003`;
-      case Environment.SANDBOX:
-        return `https://app.sandbox.usecapsule.com`;
-      case Environment.BETA:
-        return `https://app.beta.usecapsule.com`;
-      case Environment.PROD:
-        return `https://app.usecapsule.com`;
-      default:
-        throw new Error(`env: ${env} not supported`);
-    }
-  }
-
-  async #getWasmBuffer(): Promise<ArrayBuffer> {
-    return new Uint8Array(wasmString);
-  }
-
   async #signTypedData(
     from: string,
     data: Json,
@@ -464,7 +444,7 @@ export class CapsuleKeyring implements Keyring {
     },
   ): Promise<string> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
+    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
 
     const walletId = await this.#getWalletIdFromAddress(from);
     const hashedTypedData =
@@ -488,7 +468,7 @@ export class CapsuleKeyring implements Keyring {
 
   async #signPersonalMessage(from: string, request: string): Promise<string> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
+    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
 
     const messageBuffer = Buffer.from(stripHexPrefix(request), 'hex');
     const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
@@ -511,7 +491,7 @@ export class CapsuleKeyring implements Keyring {
 
   async #signMessage(from: string, data: string): Promise<string> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
+    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
 
     const base64Message = Buffer.from(stripHexPrefix(data), 'hex').toString(
       'base64',
