@@ -29,6 +29,7 @@ import { v4 as uuid } from 'uuid';
 
 import { saveState } from './stateManagement';
 import { isEvmChain, serializeTransaction, throwError } from './util';
+import wasmString from './wasm/main-v0_2_0.wasm';
 import packageInfo from '../package.json';
 
 export type KeyringState = {
@@ -127,7 +128,7 @@ export class CapsuleKeyring implements Keyring {
 
   async createAccount(options: CreateAccountOptions): Promise<KeyringAccount> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
+    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
 
     let wallet: any;
     let recovery: string | null = '';
@@ -395,7 +396,7 @@ export class CapsuleKeyring implements Keyring {
 
   async #signTransaction(tx: any): Promise<Json> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
+    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
 
     // Patch the transaction to make sure that the `chainId` is a hex string.
     if (!tx.chainId.startsWith('0x')) {
@@ -451,27 +452,8 @@ export class CapsuleKeyring implements Keyring {
     }
   }
 
-  async #fetchWasm(): Promise<ArrayBuffer> {
-    const response = await fetch(
-      `${this.#getPortalBaseURL()}/${process.env.WASM_PATH!}`,
-      {
-        mode: 'cors',
-      },
-    );
-    const wasmArrayBuffer = await response.arrayBuffer();
-    const byteArray = new Uint8Array(wasmArrayBuffer);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', byteArray);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
-    if (hashHex !== process.env.WASM_HASH_HEX) {
-      throw new Error(
-        `WASM hash mismatch: expected ${process.env
-          .WASM_HASH_HEX!}, got ${hashHex}`,
-      );
-    }
-    return wasmArrayBuffer;
+  async #getWasmBuffer(): Promise<ArrayBuffer> {
+    return new Uint8Array(wasmString);
   }
 
   async #signTypedData(
@@ -482,7 +464,7 @@ export class CapsuleKeyring implements Keyring {
     },
   ): Promise<string> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
+    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
 
     const walletId = await this.#getWalletIdFromAddress(from);
     const hashedTypedData =
@@ -506,7 +488,7 @@ export class CapsuleKeyring implements Keyring {
 
   async #signPersonalMessage(from: string, request: string): Promise<string> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
+    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
 
     const messageBuffer = Buffer.from(stripHexPrefix(request), 'hex');
     const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
@@ -529,7 +511,7 @@ export class CapsuleKeyring implements Keyring {
 
   async #signMessage(from: string, data: string): Promise<string> {
     await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = await this.#fetchWasm();
+    this.#capsule.ctx.wasmOverride = await this.#getWasmBuffer();
 
     const base64Message = Buffer.from(stripHexPrefix(data), 'hex').toString(
       'base64',

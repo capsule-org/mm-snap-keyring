@@ -1,6 +1,6 @@
 {
   "name": "@usecapsule/account-snap",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "main": "dist/bundle.js",
   "files": [
     "dist/",
@@ -46,7 +46,7 @@
     "@types/node": "^20.6.2",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
-    "copy-webpack-plugin": "^11.0.0",
+    "arraybuffer-loader": "^1.0.8",
     "depcheck": "^1.4.6",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.1.0",

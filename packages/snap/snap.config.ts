@@ -35,9 +35,6 @@ const config: SnapConfig = {
       ],
     },
   },
-  experimental: {
-    wasm: true,
-  },
   customizeWebpackConfig: (webpackConfig) => {
     return merge(webpackConfig, {
       module: {
@@ -58,6 +55,10 @@ const config: SnapConfig = {
             use: [
               path.resolve(__dirname, './loaders/removeCSSImportLoader.js'),
             ],
+          },
+          {
+            test: /\.wasm$/,
+            use: 'arraybuffer-loader',
           },
         ],
       },
