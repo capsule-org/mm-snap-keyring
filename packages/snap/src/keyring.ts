@@ -21,8 +21,8 @@ import {
 } from '@metamask/keyring-api';
 import { KeyringEvent } from '@metamask/keyring-api/dist/events';
 import { type Json, type JsonRpcRequest } from '@metamask/utils';
-import type { SuccessfulSignatureRes } from '@usecapsule/web-sdk';
-import Capsule, { Environment, CapsuleEthersSigner } from '@usecapsule/web-sdk';
+import type { SuccessfulSignatureRes, Environment } from '@usecapsule/web-sdk';
+import Capsule, { CapsuleEthersSigner } from '@usecapsule/web-sdk';
 import { Buffer } from 'buffer';
 import { ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';
@@ -94,8 +94,8 @@ export class CapsuleKeyring implements Keyring {
       delete this.#state.capsuleSessionStorage[key];
     };
     this.#capsule = new Capsule(
-      Environment.PROD,
-      'f959fcec60c4a3c0b96d8a1b5df169ea',
+      process.env.CAPSULE_ENV as Environment,
+      process.env.CAPSULE_API_KEY,
       {
         disableWorkers: true,
         useStorageOverrides: true,
