@@ -1,10 +1,11 @@
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
-import type { CapsuleDeprecated, CoreCapsule } from '@usecapsule/web-sdk';
-import Capsule, {
+import type {
+  CapsuleDeprecated,
+  CoreCapsule,
   Environment,
-  Button as CapsuleButton,
 } from '@usecapsule/web-sdk';
+import Capsule, { Button as CapsuleButton } from '@usecapsule/web-sdk';
 import type { MouseEventHandler, ReactNode } from 'react';
 import React, { useContext, useEffect, useState } from 'react';
 import semver from 'semver';
@@ -14,7 +15,7 @@ import snapPackageInfo from '../../../snap/package.json';
 import { ReactComponent as GreenCheckBox } from '../assets/green_circle_check.svg';
 import { ReactComponent as RedX } from '../assets/red_x.svg';
 import { ReconnectButton } from '../components';
-import { defaultSnapOrigin } from '../config';
+import { defaultSnapOrigin, capsuleApiKey, capsuleEnv } from '../config';
 import { MetaMaskContext, MetamaskActions } from '../hooks';
 import type { KeyringState } from '../utils';
 import {
@@ -92,10 +93,7 @@ const Index = () => {
   const [modalStepOverride, setModalStepOverride] = useState<string>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
-  const capsule = new Capsule(
-    Environment.PROD,
-    'f959fcec60c4a3c0b96d8a1b5df169ea',
-  );
+  const capsule = new Capsule(capsuleEnv as Environment, capsuleApiKey);
 
   useEffect(() => {
     // maybe put this in same useEffect as original below?

@@ -91,7 +91,7 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
                 <li>Log in with your Capsule Wallet below.</li>
                 <li>
                   Connect to MetaMask and accept permissions to add the{' '}
-                  <strong>Capsule</strong> Snap Account.
+                  <strong>Capsule</strong> Account Snap.
                 </li>
                 <li>
                   Sign transactions easily! Come back to this page to manage
