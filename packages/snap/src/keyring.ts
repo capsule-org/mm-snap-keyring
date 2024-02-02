@@ -29,7 +29,7 @@ import { v4 as uuid } from 'uuid';
 
 import { saveState } from './stateManagement';
 import { isEvmChain, serializeTransaction, throwError } from './util';
-import wasmArrayBuffer from './wasm/main-v0_2_0.wasm';
+import wasmArrayBuffer from './wasm/main-v0_3_0.wasm';
 import packageInfo from '../package.json';
 
 export type KeyringState = {
