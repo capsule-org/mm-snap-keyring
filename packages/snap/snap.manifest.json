@@ -3,7 +3,7 @@
   "description": "Capsule key management snap keyring.",
   "proposedName": "Capsule",
   "source": {
-    "shasum": "12vv9BFNkLcOzQ531DOmnr3EIvAljxVGcaCOiBZy4HQ=",
+    "shasum": "Vz4IeJixo4AK6bNv1rMdhWtpr4ALKEVlvWn7NJ2Bczc=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -17,12 +17,13 @@
     "snap_dialog": {},
     "endowment:keyring": {
       "allowedOrigins": [
-        "https://snap.app.usecapsule.com",
-        "http://localhost:8000"
+        "https://snap.app.usecapsule.com"
       ]
     },
     "endowment:rpc": {
-      "dapps": true
+      "allowedOrigins": [
+        "https://snap.app.usecapsule.com"
+      ]
     },
     "endowment:webassembly": {},
     "endowment:network-access": {},
