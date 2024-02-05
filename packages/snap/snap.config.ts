@@ -17,6 +17,7 @@ const config: SnapConfig = {
     DAPP_ORIGIN_DEVELOPMENT: 'http://localhost:8000/',
     CAPSULE_ENV: 'PROD',
     CAPSULE_API_KEY: 'f959fcec60c4a3c0b96d8a1b5df169ea',
+    DISABLE_WASM_FETCH: 'true',
   },
   stats: {
     builtIns: {
