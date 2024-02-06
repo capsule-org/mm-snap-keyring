@@ -24,7 +24,7 @@ import { type Json, type JsonRpcRequest } from '@metamask/utils';
 import type { SuccessfulSignatureRes, Environment } from '@usecapsule/web-sdk';
 import Capsule, { CapsuleEthersSigner } from '@usecapsule/web-sdk';
 import { Buffer } from 'buffer';
-import { ethers } from 'ethers';
+import { Signature, ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';
 
 import { saveState } from './stateManagement';
@@ -394,6 +394,16 @@ export class CapsuleKeyring implements Keyring {
     }
   }
 
+  #setRecoveryParam(signature: string): string {
+    if (signature.startsWith('0x')) {
+      signature = signature.substring(2);
+    }
+    const recoveryParam = parseInt(signature.slice(-2), 16);
+    return `0x${signature.slice(0, -2)}${Signature.getNormalizedV(
+      recoveryParam,
+    ).toString(16)}`;
+  }
+
   async #signTransaction(tx: any): Promise<Json> {
     await this.#capsule.init();
     this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
@@ -402,13 +412,11 @@ export class CapsuleKeyring implements Keyring {
     if (!tx.chainId.startsWith('0x')) {
       tx.chainId = `0x${parseInt(tx.chainId, 10).toString(16)}`;
     }
+    const isLondonHardFork = tx.maxPriorityFeePerGas || tx.maxFeePerGas;
     const common = Common.custom(
       { chainId: tx.chainId },
       {
-        hardfork:
-          tx.maxPriorityFeePerGas || tx.maxFeePerGas
-            ? Hardfork.London
-            : Hardfork.Istanbul,
+        hardfork: isLondonHardFork ? Hardfork.London : Hardfork.Istanbul,
       },
     );
     const factoryTx = TransactionFactory.fromTxData(tx, { common });
@@ -417,19 +425,24 @@ export class CapsuleKeyring implements Keyring {
     );
     ethersTx.signature = null;
 
-    const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
     const walletId = await this.#getWalletIdFromAddress(tx.from);
-    ethersSigner.setCurrentWalletId(walletId);
-    const fullSig = await ethersSigner.signTransaction(ethersTx);
+    const signMessageRes = await this.#capsule.signMessage(
+      walletId,
+      Buffer.from(stripHexPrefix(ethersTx.unsignedHash), 'hex').toString(
+        'base64',
+      ),
+    );
 
-    const signedTx = ethers.Transaction.from(fullSig);
-    const signature = signedTx.signature!;
+    const { signature: rawSignature } =
+      signMessageRes as SuccessfulSignatureRes;
+    ethersTx.signature = `0x${rawSignature}`;
+    const { signature } = ethersTx;
     const signedFactoryTx = TransactionFactory.fromTxData(
       {
         ...tx,
-        v: signature.v - 27,
-        r: signature.r,
-        s: signature.s,
+        v: isLondonHardFork ? signature!.v - 27 : signature!.v,
+        r: signature!.r,
+        s: signature!.s,
       },
       { common },
     );
@@ -463,7 +476,7 @@ export class CapsuleKeyring implements Keyring {
       Buffer.from(hashedTypedData).toString('base64'),
     );
     const { signature } = signMessageRes as SuccessfulSignatureRes;
-    return `0x${signature}`;
+    return this.#setRecoveryParam(signature);
   }
 
   async #signPersonalMessage(from: string, request: string): Promise<string> {
@@ -486,7 +499,7 @@ export class CapsuleKeyring implements Keyring {
       );
     }
 
-    return signature;
+    return this.#setRecoveryParam(signature);
   }
 
   async #signMessage(from: string, data: string): Promise<string> {
@@ -498,8 +511,12 @@ export class CapsuleKeyring implements Keyring {
     );
     const walletId = await this.#getWalletIdFromAddress(from);
 
-    const res = await this.#capsule.signMessage(walletId, base64Message);
-    return (res as SuccessfulSignatureRes).signature;
+    const signMessageRes = await this.#capsule.signMessage(
+      walletId,
+      base64Message,
+    );
+    const { signature } = signMessageRes as SuccessfulSignatureRes;
+    return this.#setRecoveryParam(signature);
   }
 
   async #saveState(): Promise<void> {
