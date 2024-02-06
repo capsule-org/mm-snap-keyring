@@ -101,7 +101,19 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
             </DescriptionListDiv>
           </DescriptionDiv>
           <DescriptionDiv>
-            To learn more, check out the{' '}
+            By continuing and creating an account, you acknowledge and agree to
+            Capsule’s{' '}
+            <a
+              target="_blank"
+              href="https://capsule-org.notion.site/Terms-and-Conditions-d4a23d32c6a64acba9cec29a11cc09e9"
+            >
+              <u>Terms of Service</u>
+            </a>{' '}
+            and{' '}
+            <a target="_blank" href="https://usecapsule.com/privacy-policy">
+              <u>Privacy Policy</u>
+            </a>
+            . To learn more, check out the{' '}
             <a target="_blank" href="https://docs.usecapsule.com/metamask">
               <u>Capsule Snap FAQ</u>
             </a>
