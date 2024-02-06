@@ -3,7 +3,7 @@
   "description": "Capsule key management snap keyring.",
   "proposedName": "Capsule",
   "source": {
-    "shasum": "ZIg7o2l5okJIbY60j3StUHCSPouneFLNmTn2kdtap3c=",
+    "shasum": "gBYlFzx+TkezEnZgVbZXqth9Lvkuc7wewIEV8qqResw=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",

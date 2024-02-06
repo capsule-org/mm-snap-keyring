@@ -425,9 +425,7 @@ export class CapsuleKeyring implements Keyring {
     );
     ethersTx.signature = null;
 
-    const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
     const walletId = await this.#getWalletIdFromAddress(tx.from);
-    ethersSigner.setCurrentWalletId(walletId);
     const signMessageRes = await this.#capsule.signMessage(
       walletId,
       Buffer.from(stripHexPrefix(ethersTx.unsignedHash), 'hex').toString(
