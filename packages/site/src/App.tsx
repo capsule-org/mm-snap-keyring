@@ -82,8 +82,8 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
             with just an email or a social login.
           </DescriptionDiv>
           <DescriptionDiv>
-            It's easy to use your Capsule wallet to sign anywhere you can use
-            MetaMask! Getting started is easy:
+            Use your Capsule wallet to transact anywhere you can use MetaMask!
+            Getting started is easy:
           </DescriptionDiv>
           <DescriptionDiv>
             <DescriptionListDiv>
@@ -103,10 +103,7 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
           <DescriptionDiv>
             By continuing and creating an account, you acknowledge and agree to
             Capsule’s{' '}
-            <a
-              target="_blank"
-              href="https://capsule-org.notion.site/Terms-and-Conditions-d4a23d32c6a64acba9cec29a11cc09e9"
-            >
+            <a target="_blank" href="https://usecapsule.com/terms">
               <u>Terms of Service</u>
             </a>{' '}
             and{' '}
