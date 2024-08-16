@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
-module.exports.onCreateWebpackConfig = ({ actions }) => {
+module.exports.onCreateWebpackConfig = ({ stage, actions }) => {
   actions.setWebpackConfig({
     plugins: [
       new webpack.NormalModuleReplacementPlugin(/node:/u, (resource) => {
@@ -18,6 +18,9 @@ module.exports.onCreateWebpackConfig = ({ actions }) => {
         resourceRegExp: /\wasm_exec.js$/,
         contextRegExp: /node_modules/,
       }),
+      stage === "build-javascript" || stage === "develop" ? new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }) : undefined,
     ],
     resolve: {
       alias: {
@@ -26,6 +29,7 @@ module.exports.onCreateWebpackConfig = ({ actions }) => {
         'object.assign/polyfill': require.resolve(
           '../../node_modules/object.assign/polyfill',
         ),
+        vm: false,
       },
       fallback: {
         crypto: require.resolve('./crypto-polyfill'),
@@ -33,6 +37,7 @@ module.exports.onCreateWebpackConfig = ({ actions }) => {
         'object.assign/polyfill': require.resolve(
           '../../node_modules/object.assign/polyfill',
         ),
+        vm: false,
       },
     },
     module: {
