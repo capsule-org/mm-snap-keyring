@@ -68,6 +68,9 @@ const config: SnapConfig = {
           resourceRegExp: /\.css$/,
           contextRegExp: /node_modules/,
         }),
+        new webpack.ProvidePlugin({
+          process: 'process/browser',
+        }),
       ],
     });
   },
