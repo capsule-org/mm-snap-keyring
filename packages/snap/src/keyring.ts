@@ -21,8 +21,8 @@ import {
 } from '@metamask/keyring-api';
 import { KeyringEvent } from '@metamask/keyring-api/dist/events';
 import { type Json, type JsonRpcRequest } from '@metamask/utils';
-import type { SuccessfulSignatureRes, Environment } from '@usecapsule/web-sdk';
-import Capsule, { CapsuleEthersSigner } from '@usecapsule/web-sdk';
+import type { SuccessfulSignatureRes, Environment } from '@getpara/web-sdk';
+import Capsule, { CapsuleEthersSigner } from '@getpara/web-sdk';
 import { Buffer } from 'buffer';
 import { Signature, ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';
@@ -334,7 +334,7 @@ export class CapsuleKeyring implements Keyring {
       pending: true,
       redirect: {
         url: dappUrl,
-        message: 'Redirecting to Capsule to sign transaction',
+        message: 'Redirecting to Para to sign transaction',
       },
     };
   }

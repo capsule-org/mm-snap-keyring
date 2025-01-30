@@ -13,7 +13,7 @@ const config: SnapConfig = {
   },
   sourceMap: false,
   environment: {
-    DAPP_ORIGIN_PRODUCTION: 'https://snap.app.usecapsule.com/',
+    DAPP_ORIGIN_PRODUCTION: 'https://snap.app.getpara.com/',
     DAPP_ORIGIN_DEVELOPMENT: 'http://localhost:8000/',
     CAPSULE_ENV: 'PROD',
     CAPSULE_API_KEY: 'f959fcec60c4a3c0b96d8a1b5df169ea',

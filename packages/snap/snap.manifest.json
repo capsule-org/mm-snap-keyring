@@ -1,14 +1,14 @@
 {
   "version": "0.20.0",
-  "description": "Capsule key management snap keyring.",
-  "proposedName": "Capsule",
+  "description": "Para key management snap keyring.",
+  "proposedName": "Para",
   "source": {
     "shasum": "ArRSPKLVCBMYp7Xi11IAC5CJgDM740qhhHxQiNS5S40=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
         "iconPath": "images/icon.svg",
-        "packageName": "@usecapsule/account-snap",
+        "packageName": "@getpara/account-snap",
         "registry": "https://registry.npmjs.org/"
       }
     }
@@ -17,12 +17,12 @@
     "snap_dialog": {},
     "endowment:keyring": {
       "allowedOrigins": [
-        "https://snap.app.usecapsule.com"
+        "https://snap.app.getpara.com"
       ]
     },
     "endowment:rpc": {
       "allowedOrigins": [
-        "https://snap.app.usecapsule.com"
+        "https://snap.app.getpara.com"
       ]
     },
     "endowment:webassembly": {},

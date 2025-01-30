@@ -402,7 +402,7 @@ const Index = () => {
           </WalletInfoContainer>
         ) : undefined}
         <CapsuleButton
-          appName="Capsule Account"
+          appName="Para Account"
           capsule={capsule}
           overrides={{
             createWalletOverride,
@@ -424,7 +424,7 @@ const Index = () => {
         {extraButtonDisplayOverride ? (
           <ExtraButtonContainer>
             <CapsuleButton
-              appName="Capsule Account"
+              appName="Para Account"
               capsule={capsule}
               overrides={{
                 createWalletOverride,

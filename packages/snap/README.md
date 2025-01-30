@@ -1,3 +1,3 @@
-# Capsule Keyring Snap
+# Para Keyring Snap
 
-This repository contains a Capsule keyring snap.
+This repository contains a Para keyring snap.

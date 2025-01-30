@@ -1,5 +1,5 @@
 {
-  "name": "@usecapsule/account-snap-base",
+  "name": "@getpara/account-snap-base",
   "version": "1.1.0",
   "private": true,
   "description": "A keyring snap that integrates with MetaMask accounts.",
@@ -9,9 +9,9 @@
     "keyring",
     "account"
   ],
-  "homepage": "https://github.com/usecapsule/account-snap#readme",
+  "homepage": "https://github.com/getpara/account-snap#readme",
   "bugs": {
-    "url": "https://github.com/usecapsule/account-snap/issues"
+    "url": "https://github.com/getpara/account-snap/issues"
   },
   "repository": {
     "type": "git",
@@ -24,8 +24,8 @@
   ],
   "scripts": {
     "build": "yarn workspaces foreach --parallel --verbose --topological run build",
-    "build:dapp": "yarn workspace @usecapsule/account-snap-site build",
-    "build:snap": "yarn workspace @usecapsule/account-snap build",
+    "build:dapp": "yarn workspace @getpara/account-snap-site build",
+    "build:snap": "yarn workspace @getpara/account-snap build",
     "lint": "yarn workspaces foreach --parallel --verbose run lint",
     "lint:deps": "yarn workspaces foreach --parallel --verbose run depcheck",
     "lint:eslint": "yarn workspaces foreach --parallel --verbose run lint:eslint",

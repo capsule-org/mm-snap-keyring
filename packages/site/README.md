@@ -1,4 +1,4 @@
-# Capsule Snap Front-end
+# Para Snap Front-end
 
 This project was bootstrapped with [Gatsby](https://www.gatsbyjs.com/).
 
