@@ -1,11 +1,11 @@
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
 import type {
-  CapsuleDeprecated,
-  CoreCapsule,
+  ParaDeprecated,
+  CorePara,
   Environment,
-} from '@usecapsule/web-sdk';
-import Capsule, { Button as CapsuleButton } from '@usecapsule/web-sdk';
+} from '@getpara/web-sdk';
+import Para, { Button as ParaButton } from '@getpara/web-sdk';
 import type { MouseEventHandler, ReactNode } from 'react';
 import React, { useContext, useEffect, useState } from 'react';
 import semver from 'semver';
@@ -15,7 +15,7 @@ import snapPackageInfo from '../../../snap/package.json';
 import { ReactComponent as GreenCheckBox } from '../assets/green_circle_check.svg';
 import { ReactComponent as RedX } from '../assets/red_x.svg';
 import { ReconnectButton } from '../components';
-import { defaultSnapOrigin, capsuleApiKey, capsuleEnv } from '../config';
+import { defaultSnapOrigin, paraApiKey, paraEnv } from '../config';
 import { MetaMaskContext, MetamaskActions } from '../hooks';
 import type { KeyringState } from '../utils';
 import {
@@ -93,7 +93,7 @@ const Index = () => {
   const [modalStepOverride, setModalStepOverride] = useState<string>();
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
-  const capsule = new Capsule(capsuleEnv as Environment, capsuleApiKey);
+  const para = new Para(paraEnv as Environment, paraApiKey);
 
   useEffect(() => {
     // maybe put this in same useEffect as original below?
@@ -102,8 +102,8 @@ const Index = () => {
         return;
       }
       const snapEmail = snapState.accounts[0]?.options?.email;
-      if (snapEmail && snapEmail !== capsule.getEmail()) {
-        await capsule.setEmail(snapEmail as string);
+      if (snapEmail && snapEmail !== para.getEmail()) {
+        await para.setEmail(snapEmail as string);
       }
 
       const {
@@ -169,19 +169,19 @@ const Index = () => {
   };
 
   async function createWalletOverride(
-    modalCapsule: CoreCapsule | CapsuleDeprecated,
+    modalPara: CorePara | ParaDeprecated,
   ): Promise<string> {
     const newAccount = await client.createAccount({
       // @ts-ignore
-      userId: modalCapsule.getUserId(),
-      email: modalCapsule.getEmail() as string,
-      sessionCookie: modalCapsule.retrieveSessionCookie() as string,
+      userId: modalPara.getUserId(),
+      email: modalPara.getEmail() as string,
+      sessionCookie: modalPara.retrieveSessionCookie() as string,
     });
     const { recovery, sessionCookie } = newAccount.options;
     delete newAccount.options.recovery;
-    modalCapsule.persistSessionCookie(sessionCookie as string);
+    modalPara.persistSessionCookie(sessionCookie as string);
 
-    const fetchedWallets = await modalCapsule.fetchWallets();
+    const fetchedWallets = await modalPara.fetchWallets();
     const walletsMap: Record<string, any> = {};
     fetchedWallets.forEach((wallet) => {
       walletsMap[wallet.id] = {
@@ -189,7 +189,7 @@ const Index = () => {
         address: wallet.address,
       };
     });
-    await modalCapsule.setWallets(walletsMap);
+    await modalPara.setWallets(walletsMap);
 
     await syncAccounts();
     setIsLoggedIn(true);
@@ -197,11 +197,11 @@ const Index = () => {
   }
 
   async function loginTransitionOverride(
-    modalCapsule: CoreCapsule | CapsuleDeprecated,
+    modalPara: CorePara | ParaDeprecated,
   ): Promise<void> {
     const allAccounts = snapState.accounts || (await client.listAccounts());
     let currentAccount = allAccounts.find(
-      (account) => account.options.email === modalCapsule.getEmail(),
+      (account) => account.options.email === modalPara.getEmail(),
     );
     if (currentAccount) {
       await client.updateAccount({
@@ -209,28 +209,28 @@ const Index = () => {
         options: {
           ...currentAccount.options,
           // @ts-ignore
-          userId: modalCapsule.userId,
-          email: modalCapsule.getEmail()!,
-          sessionCookie: modalCapsule.retrieveSessionCookie()!,
+          userId: modalPara.userId,
+          email: modalPara.getEmail()!,
+          sessionCookie: modalPara.retrieveSessionCookie()!,
           loginEncryptionKeyPair: JSON.stringify(
-            modalCapsule.loginEncryptionKeyPair,
+            modalPara.loginEncryptionKeyPair,
           ),
         },
       });
     } else {
       for (let i = 0; i < 10; i++) {
-        if (capsule.loginEncryptionKeyPair) {
+        if (para.loginEncryptionKeyPair) {
           break;
         }
         await new Promise((resolve) => setTimeout(resolve, 500));
       }
       // eslint-disable-next-line require-atomic-updates
       currentAccount = await client.createAccount({
-        email: modalCapsule.getEmail() as string,
-        sessionCookie: modalCapsule.retrieveSessionCookie() as string,
+        email: modalPara.getEmail() as string,
+        sessionCookie: modalPara.retrieveSessionCookie() as string,
         isExistingUser: true,
         loginEncryptionKeyPair: JSON.stringify(
-          modalCapsule.loginEncryptionKeyPair,
+          modalPara.loginEncryptionKeyPair,
         ),
       });
       await syncAccounts();
@@ -240,18 +240,18 @@ const Index = () => {
     const updatedAccount = accounts.find(
       (account) => account.id === currentAccount.id,
     );
-    await modalCapsule.setUserId(updatedAccount!.options.userId as string);
-    modalCapsule.persistSessionCookie(
+    await modalPara.setUserId(updatedAccount!.options.userId as string);
+    modalPara.persistSessionCookie(
       updatedAccount!.options.sessionCookie as string,
     );
 
-    const { isSetup: is2faSetup } = await modalCapsule.check2FAStatus();
+    const { isSetup: is2faSetup } = await modalPara.check2FAStatus();
     if (!is2faSetup) {
       setModalStepOverride(MODAL_STEP_2FA);
       setModalIsOpenOverride(true);
     }
 
-    const fetchedWallets = await modalCapsule.fetchWallets();
+    const fetchedWallets = await modalPara.fetchWallets();
     const walletsMap: Record<string, any> = {};
     fetchedWallets.forEach((wallet: { id: string; address: string }) => {
       walletsMap[wallet.id] = {
@@ -259,7 +259,7 @@ const Index = () => {
         address: wallet.address,
       };
     });
-    await modalCapsule.setWallets(walletsMap);
+    await modalPara.setWallets(walletsMap);
     setIsLoggedIn(true);
   }
 
@@ -279,7 +279,7 @@ const Index = () => {
   };
 
   const handleLogoutClick = async () => {
-    await capsule.logout();
+    await para.logout();
 
     setIsLoggedIn(false);
     setTriggerButtonOverrides(new Date());
@@ -287,9 +287,9 @@ const Index = () => {
   };
 
   const handleConnectClick: unknown = async () => {
-    const loginUrl = await capsule.initiateUserLogin(capsule.getEmail()!);
+    const loginUrl = await para.initiateUserLogin(para.getEmail()!);
     window.open(loginUrl, 'popup', 'popup=true,width=400,height=500');
-    await loginTransitionOverride(capsule);
+    await loginTransitionOverride(para);
     setShouldPreserveOnClick(true);
     setTriggerButtonOverrides(new Date());
     setModalJustClosed(false);
@@ -339,7 +339,7 @@ const Index = () => {
       };
     }
 
-    if (await capsule.isFullyLoggedIn()) {
+    if (await para.isFullyLoggedIn()) {
       setIsLoggedIn(true);
       return {
         displayOverride: 'Logout',
@@ -353,7 +353,7 @@ const Index = () => {
     if (snapState.accounts[0]?.address) {
       return {
         displayOverride: 'Connect',
-        onClickOverride: capsule.getEmail()
+        onClickOverride: para.getEmail()
           ? (handleConnectClick as MouseEventHandler<HTMLButtonElement>)
           : undefined,
       };
@@ -401,9 +401,9 @@ const Index = () => {
             </SessionStatusContainer>
           </WalletInfoContainer>
         ) : undefined}
-        <CapsuleButton
+        <ParaButton
           appName="Para Account"
-          capsule={capsule}
+          para={para}
           overrides={{
             createWalletOverride,
             loginTransitionOverride,
@@ -423,9 +423,9 @@ const Index = () => {
         />
         {extraButtonDisplayOverride ? (
           <ExtraButtonContainer>
-            <CapsuleButton
+            <ParaButton
               appName="Para Account"
-              capsule={capsule}
+              para={para}
               overrides={{
                 createWalletOverride,
                 loginTransitionOverride,

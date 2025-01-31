@@ -1,1 +1,1 @@
-export { defaultSnapOrigin, capsuleApiKey, capsuleEnv } from './snap';
+export { defaultSnapOrigin, paraApiKey, paraEnv } from './snap';

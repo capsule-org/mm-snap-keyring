@@ -9,21 +9,21 @@ import type {
   OnRpcRequestHandler,
 } from '@metamask/snaps-types';
 
-import { CapsuleKeyring } from './keyring';
+import { ParaKeyring } from './keyring';
 import { logger } from './logger';
 import { InternalMethod, originPermissions } from './permissions';
 import { getState } from './stateManagement';
 
-let keyring: CapsuleKeyring;
+let keyring: ParaKeyring;
 
 /**
  * Return the keyring instance. If it doesn't exist, create it.
  */
-async function getKeyring(): Promise<CapsuleKeyring> {
+async function getKeyring(): Promise<ParaKeyring> {
   if (!keyring) {
     const state = await getState();
     if (!keyring) {
-      keyring = new CapsuleKeyring(state);
+      keyring = new ParaKeyring(state);
     }
   }
   return keyring;
