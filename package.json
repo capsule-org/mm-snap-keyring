@@ -24,8 +24,8 @@
   ],
   "scripts": {
     "build": "yarn workspaces foreach --parallel --verbose --topological run build",
-    "build:dapp": "yarn workspace @getpara/account-snap-site build",
-    "build:snap": "yarn workspace @getpara/account-snap build",
+    "build:dapp": "yarn workspace @usecapsule/account-snap-site build",
+    "build:snap": "yarn workspace @usecapsule/account-snap build",
     "lint": "yarn workspaces foreach --parallel --verbose run lint",
     "lint:deps": "yarn workspaces foreach --parallel --verbose run depcheck",
     "lint:eslint": "yarn workspaces foreach --parallel --verbose run lint:eslint",

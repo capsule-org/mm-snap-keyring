@@ -1,5 +1,5 @@
 {
-  "version": "0.20.0",
+  "version": "1.0.0",
   "description": "Para key management snap keyring.",
   "proposedName": "Para",
   "source": {
@@ -8,7 +8,7 @@
       "npm": {
         "filePath": "dist/bundle.js",
         "iconPath": "images/icon.svg",
-        "packageName": "@getpara/account-snap",
+        "packageName": "@usecapsule/account-snap",
         "registry": "https://registry.npmjs.org/"
       }
     }
