@@ -3,7 +3,7 @@
   "description": "Para key management snap keyring.",
   "proposedName": "Para",
   "source": {
-    "shasum": "ArRSPKLVCBMYp7Xi11IAC5CJgDM740qhhHxQiNS5S40=",
+    "shasum": "NBe4J6WWS6WaQdccpar0thMIWVtHDEwS6TGXfIFK9hY=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",

@@ -1,6 +1,9 @@
 import { Common, Hardfork } from '@ethereumjs/common';
 import { TransactionFactory } from '@ethereumjs/tx';
 import { stripHexPrefix } from '@ethereumjs/util';
+import { ParaEthersSigner } from '@getpara/ethers-v6-integration';
+import type { SuccessfulSignatureRes, Environment } from '@getpara/web-sdk';
+import Para from '@getpara/web-sdk';
 import type { TypedDataV1, TypedMessage } from '@metamask/eth-sig-util';
 import {
   SignTypedDataVersion,
@@ -21,8 +24,6 @@ import {
 } from '@metamask/keyring-api';
 import { KeyringEvent } from '@metamask/keyring-api/dist/events';
 import { type Json, type JsonRpcRequest } from '@metamask/utils';
-import type { SuccessfulSignatureRes, Environment } from '@getpara/web-sdk';
-import Para, { ParaEthersSigner } from '@getpara/web-sdk';
 import { Buffer } from 'buffer';
 import { Signature, ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';

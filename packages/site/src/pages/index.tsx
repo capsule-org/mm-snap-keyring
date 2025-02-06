@@ -1,15 +1,12 @@
+import type { Environment } from '@getpara/react-sdk';
+import Para, { ParaModal } from '@getpara/react-sdk';
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
-import type {
-  ParaDeprecated,
-  CorePara,
-  Environment,
-} from '@getpara/web-sdk';
-import Para, { Button as ParaButton } from '@getpara/web-sdk';
 import type { MouseEventHandler, ReactNode } from 'react';
 import React, { useContext, useEffect, useState } from 'react';
 import semver from 'semver';
 import styled from 'styled-components';
+import '@getpara/react-sdk/styles.css';
 
 import snapPackageInfo from '../../../snap/package.json';
 import { ReactComponent as GreenCheckBox } from '../assets/green_circle_check.svg';
@@ -91,6 +88,7 @@ const Index = () => {
   const [triggerButtonOverrides, setTriggerButtonOverrides] = useState<Date>();
   const [modalIsOpenOverride, setModalIsOpenOverride] = useState<boolean>();
   const [modalStepOverride, setModalStepOverride] = useState<string>();
+  const [isOpen, setIsOpen] = useState(false);
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
 
   const para = new Para(paraEnv as Environment, paraApiKey);
@@ -168,9 +166,7 @@ const Index = () => {
     });
   };
 
-  async function createWalletOverride(
-    modalPara: CorePara | ParaDeprecated,
-  ): Promise<string> {
+  async function createWalletOverride(modalPara: Para): Promise<string> {
     const newAccount = await client.createAccount({
       // @ts-ignore
       userId: modalPara.getUserId(),
@@ -401,7 +397,8 @@ const Index = () => {
             </SessionStatusContainer>
           </WalletInfoContainer>
         ) : undefined}
-        <ParaButton
+        <button onClick={() => setIsOpen(true)}>Sign in with Para</button>
+        <ParaModal
           appName="Para Account"
           para={para}
           overrides={{
@@ -420,10 +417,12 @@ const Index = () => {
               : undefined,
             currentStepOverride: modalStepOverride,
           }}
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
         />
         {extraButtonDisplayOverride ? (
           <ExtraButtonContainer>
-            <ParaButton
+            <ParaModal
               appName="Para Account"
               para={para}
               overrides={{
