@@ -1,5 +1,10 @@
-import type { Environment } from '@getpara/react-sdk';
-import Para, { ParaModal } from '@getpara/react-sdk';
+import type {
+  CurrentWalletIds,
+  Environment,
+  ModalStep,
+  WalletType,
+} from '@getpara/react-sdk';
+import Para, { openPopup, ParaModal } from '@getpara/react-sdk';
 import type { KeyringAccount, KeyringRequest } from '@metamask/keyring-api';
 import { KeyringSnapRpcClient } from '@metamask/keyring-api';
 import type { MouseEventHandler, ReactNode } from 'react';
@@ -67,6 +72,32 @@ const ExtraButtonContainer = styled.div`
 
 const MODAL_STEP_2FA = 'SETUP_2FA';
 
+const ExpandableButton = ({
+  text,
+  onClick,
+}: {
+  text: ReactNode;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        backgroundColor: '#000000',
+        color: '#FFFFFF',
+        padding: '20px 20px',
+        border: 'none',
+        borderRadius: '8px',
+        fontSize: '16px',
+        cursor: 'pointer',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {text}
+    </button>
+  );
+};
+
 const Index = () => {
   const [state, dispatch] = useContext(MetaMaskContext);
   const [snapState, setSnapState] = useState<KeyringState>(initialState);
@@ -81,12 +112,9 @@ const Index = () => {
   const [buttonOnClickOverride, setButtonOnClickOverride] = useState<{
     func: React.MouseEventHandler<HTMLButtonElement> | undefined;
   }>();
-  const [buttonPropsState, setButtonPropsState] =
-    useState<Record<string, any>>();
   const [addressDisplay, setAddressDisplay] = useState<string>();
   const [preserveButtonOnClick, setPreserveButtonOnClick] = useState(false);
   const [triggerButtonOverrides, setTriggerButtonOverrides] = useState<Date>();
-  const [modalIsOpenOverride, setModalIsOpenOverride] = useState<boolean>();
   const [modalStepOverride, setModalStepOverride] = useState<string>();
   const [isOpen, setIsOpen] = useState(false);
   const client = new KeyringSnapRpcClient(snapId, window.ethereum);
@@ -109,7 +137,6 @@ const Index = () => {
         onClickOverride,
         extraDisplayOverride,
         preserveOnClickFunctionality,
-        buttonProps,
       } = await getButtonOverrides();
 
       const address = snapState.accounts[0]?.address;
@@ -125,7 +152,6 @@ const Index = () => {
       setButtonOnClickOverride({ func: onClickOverride });
       setExtraButtonDisplayOverride(extraDisplayOverride);
       setButtonDisplayOverride(displayOverride);
-      setButtonPropsState(buttonProps);
     }
     setButtonOverrides().catch((error) => console.error(error));
   }, [modalJustClosed, state, triggerButtonOverrides]);
@@ -166,16 +192,21 @@ const Index = () => {
     });
   };
 
-  async function createWalletOverride(modalPara: Para): Promise<string> {
+  async function createWalletOverride(
+    modalPara: Para,
+  ): Promise<{ recoverySecret: string; walletIds: CurrentWalletIds }> {
     const newAccount = await client.createAccount({
       // @ts-ignore
       userId: modalPara.getUserId(),
       email: modalPara.getEmail() as string,
       sessionCookie: modalPara.retrieveSessionCookie() as string,
     });
-    const { recovery, sessionCookie } = newAccount.options;
+    const { recovery, sessionCookie, currentWalletIds } = newAccount.options;
     delete newAccount.options.recovery;
     modalPara.persistSessionCookie(sessionCookie as string);
+    await modalPara.setCurrentWalletIds(
+      currentWalletIds as Partial<Record<WalletType, string[]>>,
+    );
 
     const fetchedWallets = await modalPara.fetchWallets();
     const walletsMap: Record<string, any> = {};
@@ -183,18 +214,21 @@ const Index = () => {
       walletsMap[wallet.id] = {
         id: wallet.id,
         address: wallet.address,
+        scheme: wallet.scheme,
+        type: wallet.type,
       };
     });
     await modalPara.setWallets(walletsMap);
 
     await syncAccounts();
     setIsLoggedIn(true);
-    return recovery as string;
+    return {
+      recoverySecret: recovery as string,
+      walletIds: { EVM: [fetchedWallets[0]!.id] },
+    };
   }
 
-  async function loginTransitionOverride(
-    modalPara: CorePara | ParaDeprecated,
-  ): Promise<void> {
+  async function loginTransitionOverride(modalPara: Para): Promise<void> {
     const allAccounts = snapState.accounts || (await client.listAccounts());
     let currentAccount = allAccounts.find(
       (account) => account.options.email === modalPara.getEmail(),
@@ -240,21 +274,34 @@ const Index = () => {
     modalPara.persistSessionCookie(
       updatedAccount!.options.sessionCookie as string,
     );
+    await modalPara.setCurrentWalletIds(
+      updatedAccount!.options.currentWalletIds as Partial<
+        Record<WalletType, string[]>
+      >,
+    );
 
     const { isSetup: is2faSetup } = await modalPara.check2FAStatus();
     if (!is2faSetup) {
       setModalStepOverride(MODAL_STEP_2FA);
-      setModalIsOpenOverride(true);
     }
 
     const fetchedWallets = await modalPara.fetchWallets();
     const walletsMap: Record<string, any> = {};
-    fetchedWallets.forEach((wallet: { id: string; address: string }) => {
-      walletsMap[wallet.id] = {
-        id: wallet.id,
-        address: wallet.address,
-      };
-    });
+    fetchedWallets.forEach(
+      (wallet: {
+        id: string;
+        address: string | null;
+        scheme: string;
+        type: string;
+      }) => {
+        walletsMap[wallet.id] = {
+          id: wallet.id,
+          address: wallet.address,
+          scheme: wallet.scheme,
+          type: wallet.type,
+        };
+      },
+    );
     await modalPara.setWallets(walletsMap);
     setIsLoggedIn(true);
   }
@@ -283,8 +330,8 @@ const Index = () => {
   };
 
   const handleConnectClick: unknown = async () => {
-    const loginUrl = await para.initiateUserLogin(para.getEmail()!);
-    window.open(loginUrl, 'popup', 'popup=true,width=400,height=500');
+    const loginUrl = await para.initiateUserLogin({ email: para.getEmail()! });
+    openPopup(loginUrl, 'popup', 'LOGIN_PASSKEY');
     await loginTransitionOverride(para);
     setShouldPreserveOnClick(true);
     setTriggerButtonOverrides(new Date());
@@ -368,6 +415,23 @@ const Index = () => {
     };
   }
 
+  async function onClick(
+    event: React.MouseEvent<HTMLButtonElement>,
+  ): Promise<void> {
+    if (buttonOnClickOverride?.func) {
+      buttonOnClickOverride.func(event);
+      if (!preserveButtonOnClick) {
+        return;
+      }
+    }
+
+    if (isLoggedIn && addressDisplay) {
+      await para.logout();
+    } else {
+      setIsOpen(true);
+    }
+  }
+
   return buttonDisplayOverride ? (
     <>
       {shouldDisplayReconnectButton(state.installedSnap) ? (
@@ -397,45 +461,29 @@ const Index = () => {
             </SessionStatusContainer>
           </WalletInfoContainer>
         ) : undefined}
-        <button onClick={() => setIsOpen(true)}>Sign in with Para</button>
+        <ExpandableButton
+          text={buttonDisplayOverride}
+          onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+        ></ExpandableButton>
+
         <ParaModal
           appName="Para Account"
           para={para}
-          overrides={{
-            createWalletOverride,
-            loginTransitionOverride,
-            displayOverride: buttonDisplayOverride,
-            onClickOverride: buttonOnClickOverride?.func,
-            preserveOnClickFunctionality: preserveButtonOnClick,
-            onCloseOverride: () => {
-              setModalJustClosed(true);
-            },
-            buttonProps: buttonPropsState,
-            modalIsOpenOverride,
-            setModalIsOpenOverride: modalIsOpenOverride
-              ? setModalIsOpenOverride
-              : undefined,
-            currentStepOverride: modalStepOverride,
+          createWalletOverride={createWalletOverride}
+          loginTransitionOverride={loginTransitionOverride}
+          onClose={() => {
+            setModalJustClosed(true);
+            setIsOpen(false);
           }}
+          currentStepOverride={modalStepOverride as ModalStep}
           isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
         />
         {extraButtonDisplayOverride ? (
           <ExtraButtonContainer>
-            <ParaModal
-              appName="Para Account"
-              para={para}
-              overrides={{
-                createWalletOverride,
-                loginTransitionOverride,
-                displayOverride: extraButtonDisplayOverride,
-                onCloseOverride: () => {
-                  setModalJustClosed(true);
-                },
-                onClickOverride: buttonOnClickOverride?.func,
-                preserveOnClickFunctionality: preserveButtonOnClick,
-              }}
-            />
+            <ExpandableButton
+              text={extraButtonDisplayOverride}
+              onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+            ></ExpandableButton>
           </ExtraButtonContainer>
         ) : undefined}
       </Container>

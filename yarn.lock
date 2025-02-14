@@ -2573,7 +2573,7 @@ __metadata:
   dependencies:
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
-    "@getpara/react-sdk": 1.0.1
+    "@getpara/react-sdk": 1.1.0
     "@metamask/auto-changelog": ^3.3.0
     "@metamask/eslint-config": ^12.2.0
     "@metamask/eslint-config-jest": ^12.1.0
@@ -2623,9 +2623,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@getpara/core-components@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@getpara/core-components@npm:1.0.1"
+"@getpara/core-components@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@getpara/core-components@npm:1.1.0"
   dependencies:
     "@stencil/core": ^4.7.0
     color-blend: ^4.0.0
@@ -2633,17 +2633,17 @@ __metadata:
     gsap: ^3.12.5
     inputmask: 5.0.9
     qrcode-with-logos: 1.1.1
-  checksum: 21083822ad5122ffe7dacf29c1e9937953ac3d2f7fba8bd814dae5fa8ac23b13fb73d1a333062e909787b05cfd889d63b419b009ab3ae5e5f5d139023a356cec
+  checksum: 4b43ee284ea75b10806cba58fd126e1bc0a9dfee04af408dbb957e48fbf9ac50d683d4c670a71cdb24a28f9a8a65c600953db4dd407a243d56b716d29ba16d3a
   languageName: node
   linkType: hard
 
-"@getpara/core-sdk@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@getpara/core-sdk@npm:1.0.1"
+"@getpara/core-sdk@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@getpara/core-sdk@npm:1.1.0"
   dependencies:
     "@celo/utils": ^8.0.0
     "@cosmjs/encoding": ^0.32.4
-    "@getpara/user-management-client": 1.0.1
+    "@getpara/user-management-client": 1.1.0
     "@noble/hashes": ^1.5.0
     base64url: ^3.0.1
     buffer: 6.0.3
@@ -2651,27 +2651,27 @@ __metadata:
     libphonenumber-js: 1.11.2
     node-forge: ^1.3.1
     qs: ^6.12.0
-  checksum: ccaec4739b97b8bb740931fe53bc2c38572eeb7464b86a4c158f694161c0b9f576fb99c013ae016ca9552c69027d527e05fc993195dcd0377cfed3f6ff3269e2
+  checksum: 81c26524f7969b5567b76fb1957c6031ed37c38e5338f531de93261b3d1aad1d9160cbd27c292593aa7606055d8104770986b2c64f61d8bddb92303a31b05692
   languageName: node
   linkType: hard
 
-"@getpara/ethers-v6-integration@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@getpara/ethers-v6-integration@npm:1.0.1"
+"@getpara/ethers-v6-integration@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@getpara/ethers-v6-integration@npm:1.1.0"
   dependencies:
-    "@getpara/core-sdk": 1.0.1
+    "@getpara/core-sdk": 1.1.0
   peerDependencies:
     ethers: 6.x
-  checksum: d1f098124d453fdbdb63a5f5eee7a15862f2ee924c0f9f84d15110766e35d5064070b4843ab107b7f599f7d1155b9f5f86ce768550908e1b9305267c61f6a834
+  checksum: 864a35cc0fa0212dc493204d56eb0e3c9fe6c418bee4b98e0a149b9585f771bf53a9fdfcdcd8cd99abda15f177b9f762178e0fb47715463c4dfbd6a68065746c
   languageName: node
   linkType: hard
 
-"@getpara/react-common@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@getpara/react-common@npm:1.0.1"
+"@getpara/react-common@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@getpara/react-common@npm:1.1.0"
   dependencies:
-    "@getpara/react-components": 1.0.1
-    "@getpara/web-sdk": 1.0.1
+    "@getpara/react-components": 1.1.0
+    "@getpara/web-sdk": 1.1.0
     "@moonpay/moonpay-react": ^1.8.3
     "@ramp-network/ramp-instant-sdk": ^4.0.5
     "@stripe/crypto": ^0.0.4
@@ -2681,26 +2681,26 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: ec66bb69218c611cc05a47d457720d5964c5e2cc510d4cf64075095feeea912152919ce04966e0b367a285373cb836f2e2bd0605b7821029f761404c9773196d
+  checksum: 33637bcf1606c0fa3c7fedbce8904fd540c71c807326134d25b3c6526d38d45d933e98b55f3ecb7c8f911905063677d3e1f1046381cd59690752a27b45afb57e
   languageName: node
   linkType: hard
 
-"@getpara/react-components@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@getpara/react-components@npm:1.0.1"
+"@getpara/react-components@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@getpara/react-components@npm:1.1.0"
   dependencies:
-    "@getpara/core-components": 1.0.1
-  checksum: 1aa2c876639bb4b4a8a38eac7e85d1bb2b05b216ef956908764bf954a6869345285ee9bba1a4cb851de25249f3ce0e8f88e720889c83adbe54fb072d65fe647d
+    "@getpara/core-components": 1.1.0
+  checksum: 437758d58823ef7500741c0dcaa39894319f5568167e756417079883fe215b531b7bd9f2ca4451c979ceb9c7d1378aeff21d6a5e172761439a1d15cde2d72ae7
   languageName: node
   linkType: hard
 
-"@getpara/react-sdk@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@getpara/react-sdk@npm:1.0.1"
+"@getpara/react-sdk@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@getpara/react-sdk@npm:1.1.0"
   dependencies:
-    "@getpara/react-common": 1.0.1
-    "@getpara/react-components": 1.0.1
-    "@getpara/web-sdk": 1.0.1
+    "@getpara/react-common": 1.1.0
+    "@getpara/react-components": 1.1.0
+    "@getpara/web-sdk": 1.1.0
     "@tanstack/react-query": ^5.0.0
     date-fns: ^3.6.0
     detect-browser: ^5.3.0
@@ -2711,34 +2711,34 @@ __metadata:
   peerDependencies:
     react: "*"
     react-dom: "*"
-  checksum: 9053c5ac9e03b05dbf4056e44c2553eb46a1acf4a5a930e320bfa1f3165a1ae7804d80fe4585a159cca966144ddc25e08fc33428b04ca94adaaf44ac6eb09c92
+  checksum: 1f268c7da3b372102e723b1478bfb9bdceb9c42195542b37bb612ac9731d88508891d4b1c3ad7d9202b444f497d8bc2fad23224eb4b70a86deb94ebb43be11ca
   languageName: node
   linkType: hard
 
-"@getpara/user-management-client@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@getpara/user-management-client@npm:1.0.1"
+"@getpara/user-management-client@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@getpara/user-management-client@npm:1.1.0"
   dependencies:
     axios: ^1.6.3
     libphonenumber-js: 1.11.2
     qs: ^6.12.0
-  checksum: aa00f80c9e33e2377bcb4455bdef5cd68240c0d7113d398f3913e7bec52e8b0e2e071665df991907db0e728dd777bf8b4006392ec00a5c6d425ff4a1744cbfbb
+  checksum: 418b6e13b5aa8aba2af8dda031afa81bcd704a3aca3cc3ebe62de006822ce107046ecc91c893f255b47bba86c0ec020a120e18237288bc044cfbc19cb0d70eee
   languageName: node
   linkType: hard
 
-"@getpara/web-sdk@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@getpara/web-sdk@npm:1.0.1"
+"@getpara/web-sdk@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@getpara/web-sdk@npm:1.1.0"
   dependencies:
-    "@getpara/core-sdk": 1.0.1
-    "@getpara/user-management-client": 1.0.1
+    "@getpara/core-sdk": 1.1.0
+    "@getpara/user-management-client": 1.1.0
     assert: ^2.1.0
     base64url: 3.0.1
     buffer: 6.0.3
     cbor-web: 8.1.0
     node-forge: 1.3.1
     ua-parser-js: 1.0.39
-  checksum: 7dc10e2151adf4a53ab722490c4796e3ed6b707344d98d4e01d1af47a961f94e4e601a56caa3bdb3665b96ed0ea19e0a5426c5fd3929e601e16acf7fee00fa30
+  checksum: bf74617fd4b11bef6fb0d846882a5b29c8925da444e81ef30ff8f7ab64bdb9f871fc29daf856f2f2cbd31c7d4062ccd70507b628e114891d24a00a0b90ee6e1c
   languageName: node
   linkType: hard
 
@@ -6921,8 +6921,8 @@ __metadata:
     "@ethereumjs/common": ^3.1.2
     "@ethereumjs/tx": ^4.1.2
     "@ethereumjs/util": ^8.0.5
-    "@getpara/ethers-v6-integration": 1.0.1
-    "@getpara/web-sdk": 1.0.1
+    "@getpara/ethers-v6-integration": 1.1.0
+    "@getpara/web-sdk": 1.1.0
     "@lavamoat/allow-scripts": ^2.0.3
     "@metamask/auto-changelog": ^3.3.0
     "@metamask/eslint-config": ^12.2.0

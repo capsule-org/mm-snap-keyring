@@ -2,7 +2,11 @@ import { Common, Hardfork } from '@ethereumjs/common';
 import { TransactionFactory } from '@ethereumjs/tx';
 import { stripHexPrefix } from '@ethereumjs/util';
 import { ParaEthersSigner } from '@getpara/ethers-v6-integration';
-import type { SuccessfulSignatureRes, Environment } from '@getpara/web-sdk';
+import type {
+  SuccessfulSignatureRes,
+  Environment,
+  WalletType,
+} from '@getpara/web-sdk';
 import Para from '@getpara/web-sdk';
 import type { TypedDataV1, TypedMessage } from '@metamask/eth-sig-util';
 import {
@@ -51,6 +55,7 @@ type CreateAccountOptions = {
   sessionCookie?: string;
   isExistingUser?: boolean;
   loginEncryptionKeyPair?: any;
+  currentWalletIds?: Partial<Record<WalletType, string[]>>;
 };
 
 export class ParaKeyring implements Keyring {
@@ -133,7 +138,6 @@ export class ParaKeyring implements Keyring {
 
     let wallet: any;
     let recovery: string | null = '';
-    let sessionCookie: string;
     if (options.isExistingUser) {
       await this.#para.setLoginEncryptionKeyPair(
         JSON.parse(options.loginEncryptionKeyPair as string),
@@ -145,12 +149,13 @@ export class ParaKeyring implements Keyring {
       await this.#para.setEmail(options.email);
       this.#para.persistSessionCookie(options.sessionCookie!);
 
-      await this.#para.waitForLoginAndSetup(true);
-      // eslint-disable-next-line require-atomic-updates
-      sessionCookie = this.#para.retrieveSessionCookie()!;
+      await this.#para.waitForLoginAndSetup({});
       wallet = Object.values(this.#para.getWallets())[0];
-      // eslint-disable-next-line require-atomic-updates
+      /* eslint-disable require-atomic-updates */
+      options.sessionCookie = this.#para.retrieveSessionCookie()!;
       options.userId = this.#para.getUserId()!;
+      options.currentWalletIds = this.#para.currentWalletIds;
+      /* eslint-enable require-atomic-updates */
     } else {
       await this.#para.setUserId(options.userId!);
       await this.#para.setEmail(options.email);
@@ -166,13 +171,14 @@ export class ParaKeyring implements Keyring {
       parsedRecovery.backupDecryptionKey += `|${signerBase64}`;
       recovery = JSON.stringify(parsedRecovery);
 
-      sessionCookie = this.#para.retrieveSessionCookie() as string;
+      options.sessionCookie = this.#para.retrieveSessionCookie() as string;
     }
 
+    const hydratedWallet = this.#para.wallets[wallet.id];
     const account: KeyringAccount = {
       id: uuid(),
       options,
-      address: wallet.address as string,
+      address: hydratedWallet!.address as string,
       methods: [
         EthMethod.PersonalSign,
         EthMethod.Sign,
@@ -192,7 +198,6 @@ export class ParaKeyring implements Keyring {
       options: {
         ...account.options,
         recovery,
-        sessionCookie,
       },
     };
     return accountToReturn;
@@ -216,8 +221,9 @@ export class ParaKeyring implements Keyring {
       await this.#para.setEmail(options.email as string);
       this.#para.persistSessionCookie(options.sessionCookie as string);
 
-      await this.#para.waitForLoginAndSetup(true);
+      await this.#para.waitForLoginAndSetup({});
       options.sessionCookie = this.#para.retrieveSessionCookie() as string;
+      options.currentWalletIds = this.#para.currentWalletIds;
     }
 
     const wallet =
@@ -427,12 +433,13 @@ export class ParaKeyring implements Keyring {
     ethersTx.signature = null;
 
     const walletId = await this.#getWalletIdFromAddress(tx.from);
-    const signMessageRes = await this.#para.signMessage(
+    const signMessageRes = await this.#para.signMessage({
       walletId,
-      Buffer.from(stripHexPrefix(ethersTx.unsignedHash), 'hex').toString(
-        'base64',
-      ),
-    );
+      messageBase64: Buffer.from(
+        stripHexPrefix(ethersTx.unsignedHash),
+        'hex',
+      ).toString('base64'),
+    });
 
     const { signature: rawSignature } =
       signMessageRes as SuccessfulSignatureRes;
@@ -472,10 +479,10 @@ export class ParaKeyring implements Keyring {
             opts.version,
           );
 
-    const signMessageRes = await this.#para.signMessage(
+    const signMessageRes = await this.#para.signMessage({
       walletId,
-      Buffer.from(hashedTypedData).toString('base64'),
-    );
+      messageBase64: Buffer.from(hashedTypedData).toString('base64'),
+    });
     const { signature } = signMessageRes as SuccessfulSignatureRes;
     return this.#setRecoveryParam(signature);
   }
@@ -485,9 +492,8 @@ export class ParaKeyring implements Keyring {
     this.#para.ctx.wasmOverride = wasmArrayBuffer;
 
     const messageBuffer = Buffer.from(stripHexPrefix(request), 'hex');
-    const ethersSigner = new ParaEthersSigner(this.#para, null);
     const walletId = await this.#getWalletIdFromAddress(from);
-    ethersSigner.setCurrentWalletId(walletId);
+    const ethersSigner = new ParaEthersSigner(this.#para, null, walletId);
     const signature = await ethersSigner.signMessage(messageBuffer);
 
     const recoveredAddress = recoverPersonalSignature({
@@ -507,15 +513,15 @@ export class ParaKeyring implements Keyring {
     await this.#para.init();
     this.#para.ctx.wasmOverride = wasmArrayBuffer;
 
-    const base64Message = Buffer.from(stripHexPrefix(data), 'hex').toString(
+    const messageBase64 = Buffer.from(stripHexPrefix(data), 'hex').toString(
       'base64',
     );
     const walletId = await this.#getWalletIdFromAddress(from);
 
-    const signMessageRes = await this.#para.signMessage(
+    const signMessageRes = await this.#para.signMessage({
       walletId,
-      base64Message,
-    );
+      messageBase64,
+    });
     const { signature } = signMessageRes as SuccessfulSignatureRes;
     return this.#setRecoveryParam(signature);
   }

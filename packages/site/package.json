@@ -33,7 +33,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@getpara/react-sdk": "1.0.1",
+    "@getpara/react-sdk": "1.1.0",
     "@metamask/keyring-api": "^1.0.0-rc.1",
     "@metamask/providers": "^13.0.0",
     "@mui/icons-material": "^5.14.0",
