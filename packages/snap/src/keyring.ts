@@ -138,6 +138,7 @@ export class ParaKeyring implements Keyring {
 
     let wallet: any;
     let recovery: string | null = '';
+    let sessionCookie = '';
     if (options.isExistingUser) {
       await this.#para.setLoginEncryptionKeyPair(
         JSON.parse(options.loginEncryptionKeyPair as string),
@@ -148,11 +149,12 @@ export class ParaKeyring implements Keyring {
 
       await this.#para.setEmail(options.email);
       this.#para.persistSessionCookie(options.sessionCookie!);
+      delete options.sessionCookie;
 
       await this.#para.waitForLoginAndSetup({});
       wallet = Object.values(this.#para.getWallets())[0];
+      sessionCookie = this.#para.retrieveSessionCookie()!;
       /* eslint-disable require-atomic-updates */
-      options.sessionCookie = this.#para.retrieveSessionCookie()!;
       options.userId = this.#para.getUserId()!;
       options.currentWalletIds = this.#para.currentWalletIds;
       /* eslint-enable require-atomic-updates */
@@ -171,7 +173,7 @@ export class ParaKeyring implements Keyring {
       parsedRecovery.backupDecryptionKey += `|${signerBase64}`;
       recovery = JSON.stringify(parsedRecovery);
 
-      options.sessionCookie = this.#para.retrieveSessionCookie() as string;
+      sessionCookie = this.#para.retrieveSessionCookie()!;
     }
 
     const hydratedWallet = this.#para.wallets[wallet.id];
@@ -198,6 +200,7 @@ export class ParaKeyring implements Keyring {
       options: {
         ...account.options,
         recovery,
+        sessionCookie,
       },
     };
     return accountToReturn;
