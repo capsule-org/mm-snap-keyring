@@ -1,5 +1,5 @@
 {
-  "name": "@usecapsule/account-snap-base",
+  "name": "@getpara/account-snap-base",
   "version": "1.1.0",
   "private": true,
   "description": "A keyring snap that integrates with MetaMask accounts.",
@@ -9,13 +9,13 @@
     "keyring",
     "account"
   ],
-  "homepage": "https://github.com/usecapsule/account-snap#readme",
+  "homepage": "https://github.com/getpara/mm-snap-keyring#readme",
   "bugs": {
-    "url": "https://github.com/usecapsule/account-snap/issues"
+    "url": "https://github.com/getpara/mm-snap-keyring/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/capsule-org/account-snap.git"
+    "url": "https://github.com/getpara/mm-snap-keyring.git"
   },
   "license": "(MIT-0 OR Apache-2.0)",
   "author": "",

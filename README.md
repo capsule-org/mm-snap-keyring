@@ -1,1 +1,1 @@
-# Capsule Keyring Snap
+# Para Keyring Snap

@@ -1,6 +1,6 @@
 {
-  "name": "@usecapsule/account-snap-site",
-  "version": "1.1.0",
+  "name": "@getpara/account-snap-site",
+  "version": "1.0.0",
   "private": true,
   "license": "(MIT-0 OR Apache-2.0)",
   "scripts": {
@@ -33,12 +33,13 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@getpara/react-sdk": "1.1.0",
     "@metamask/keyring-api": "^1.0.0-rc.1",
     "@metamask/providers": "^13.0.0",
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.14.0",
+    "@tanstack/react-query": "^5.0.0",
     "@types/react-helmet": "^6.1.6",
-    "@usecapsule/web-sdk": "0.31.0",
     "crypto-browserify": "^3.12.0",
     "object.assign": "^4.1.4",
     "react": "^18.2.0",

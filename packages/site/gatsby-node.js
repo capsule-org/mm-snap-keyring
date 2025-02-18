@@ -15,12 +15,14 @@ module.exports.onCreateWebpackConfig = ({ stage, actions }) => {
         }
       }),
       new webpack.IgnorePlugin({
-        resourceRegExp: /\wasm_exec.js$/,
+        resourceRegExp: /wasm_exec\.js$/,
         contextRegExp: /node_modules/,
       }),
-      stage === "build-javascript" || stage === "develop" ? new webpack.ProvidePlugin({
-        process: 'process/browser',
-      }) : undefined,
+      stage === 'build-javascript' || stage === 'develop'
+        ? new webpack.ProvidePlugin({
+            process: 'process/browser',
+          })
+        : undefined,
     ],
     resolve: {
       alias: {

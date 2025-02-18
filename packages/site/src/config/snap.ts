@@ -7,6 +7,6 @@ export const defaultSnapOrigin =
 
 export const hideReconnectButton = process.env.GATSBY_HIDE_RECONNECT === 'true';
 
-export const capsuleApiKey = process.env.CAPSULE_API_KEY;
+export const paraApiKey = process.env.PARA_API_KEY;
 
-export const capsuleEnv = process.env.CAPSULE_ENV;
+export const paraEnv = process.env.PARA_ENV;

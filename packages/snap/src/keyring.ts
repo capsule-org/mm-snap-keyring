@@ -1,6 +1,13 @@
 import { Common, Hardfork } from '@ethereumjs/common';
 import { TransactionFactory } from '@ethereumjs/tx';
 import { stripHexPrefix } from '@ethereumjs/util';
+import { ParaEthersSigner } from '@getpara/ethers-v6-integration';
+import type {
+  SuccessfulSignatureRes,
+  Environment,
+  WalletType,
+} from '@getpara/web-sdk';
+import Para from '@getpara/web-sdk';
 import type { TypedDataV1, TypedMessage } from '@metamask/eth-sig-util';
 import {
   SignTypedDataVersion,
@@ -21,8 +28,6 @@ import {
 } from '@metamask/keyring-api';
 import { KeyringEvent } from '@metamask/keyring-api/dist/events';
 import { type Json, type JsonRpcRequest } from '@metamask/utils';
-import type { SuccessfulSignatureRes, Environment } from '@usecapsule/web-sdk';
-import Capsule, { CapsuleEthersSigner } from '@usecapsule/web-sdk';
 import { Buffer } from 'buffer';
 import { Signature, ethers } from 'ethers';
 import { v4 as uuid } from 'uuid';
@@ -36,8 +41,8 @@ export type KeyringState = {
   wallets: Record<string, Wallet>;
   pendingRequests: Record<string, KeyringRequest>;
   useSyncApprovals: boolean;
-  capsuleSessionStorage: Record<string, any>;
-  capsuleLocalStorage: Record<string, any>;
+  paraSessionStorage: Record<string, any>;
+  paraLocalStorage: Record<string, any>;
 };
 
 export type Wallet = {
@@ -50,52 +55,53 @@ type CreateAccountOptions = {
   sessionCookie?: string;
   isExistingUser?: boolean;
   loginEncryptionKeyPair?: any;
+  currentWalletIds?: Partial<Record<WalletType, string[]>>;
 };
 
-export class CapsuleKeyring implements Keyring {
+export class ParaKeyring implements Keyring {
   #state: KeyringState;
 
-  #capsule: Capsule;
+  #para: Para;
 
   constructor(state: KeyringState) {
     this.#state = state;
-    if (!this.#state.capsuleLocalStorage) {
-      this.#state.capsuleLocalStorage = {};
+    if (!this.#state.paraLocalStorage) {
+      this.#state.paraLocalStorage = {};
     }
-    if (!this.#state.capsuleSessionStorage) {
-      this.#state.capsuleSessionStorage = {};
+    if (!this.#state.paraSessionStorage) {
+      this.#state.paraSessionStorage = {};
     }
 
     const localStorageGetItemOverride = async (
       key: string,
     ): Promise<string | null> => {
-      return this.#state.capsuleLocalStorage[key] ?? null;
+      return this.#state.paraLocalStorage[key] ?? null;
     };
     const localStorageSetItemOverride = async (
       key: string,
       value: string,
     ): Promise<void> => {
-      this.#state.capsuleLocalStorage[key] = value;
+      this.#state.paraLocalStorage[key] = value;
     };
     const sessionStorageGetItemOverride = async (
       key: string,
     ): Promise<string | null> => {
-      return this.#state.capsuleSessionStorage[key] ?? null;
+      return this.#state.paraSessionStorage[key] ?? null;
     };
     const sessionStorageSetItemOverride = async (
       key: string,
       value: string,
     ): Promise<void> => {
-      this.#state.capsuleSessionStorage[key] = value;
+      this.#state.paraSessionStorage[key] = value;
     };
     const sessionStorageRemoveItemOverride = async (
       key: string,
     ): Promise<void> => {
-      delete this.#state.capsuleSessionStorage[key];
+      delete this.#state.paraSessionStorage[key];
     };
-    this.#capsule = new Capsule(
-      process.env.CAPSULE_ENV as Environment,
-      process.env.CAPSULE_API_KEY,
+    this.#para = new Para(
+      process.env.PARA_ENV as Environment,
+      process.env.PARA_API_KEY,
       {
         disableWorkers: true,
         useStorageOverrides: true,
@@ -110,8 +116,8 @@ export class CapsuleKeyring implements Keyring {
   }
 
   async #getWalletIdFromAddress(address: string): Promise<string> {
-    await this.#capsule.init();
-    const wallets = this.#capsule.getWallets();
+    await this.#para.init();
+    const wallets = this.#para.getWallets();
     const currentWallet = Object.values(wallets).find(
       (wallet) => wallet.address === address,
     );
@@ -127,34 +133,36 @@ export class CapsuleKeyring implements Keyring {
   }
 
   async createAccount(options: CreateAccountOptions): Promise<KeyringAccount> {
-    await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
+    await this.#para.init();
+    this.#para.ctx.wasmOverride = wasmArrayBuffer;
 
     let wallet: any;
     let recovery: string | null = '';
-    let sessionCookie: string;
+    let sessionCookie = '';
     if (options.isExistingUser) {
-      await this.#capsule.setLoginEncryptionKeyPair(
+      await this.#para.setLoginEncryptionKeyPair(
         JSON.parse(options.loginEncryptionKeyPair as string),
       );
       // second init needed so encryption key pair can be used properly
-      await this.#capsule.init();
+      await this.#para.init();
       delete options.loginEncryptionKeyPair;
 
-      await this.#capsule.setEmail(options.email);
-      this.#capsule.persistSessionCookie(options.sessionCookie!);
+      await this.#para.setEmail(options.email);
+      this.#para.persistSessionCookie(options.sessionCookie!);
+      delete options.sessionCookie;
 
-      await this.#capsule.waitForLoginAndSetup(true);
-      // eslint-disable-next-line require-atomic-updates
-      sessionCookie = this.#capsule.retrieveSessionCookie()!;
-      wallet = Object.values(this.#capsule.getWallets())[0];
-      // eslint-disable-next-line require-atomic-updates
-      options.userId = this.#capsule.getUserId()!;
+      await this.#para.waitForLoginAndSetup({});
+      wallet = Object.values(this.#para.getWallets())[0];
+      sessionCookie = this.#para.retrieveSessionCookie()!;
+      /* eslint-disable require-atomic-updates */
+      options.userId = this.#para.getUserId()!;
+      options.currentWalletIds = this.#para.currentWalletIds;
+      /* eslint-enable require-atomic-updates */
     } else {
-      await this.#capsule.setUserId(options.userId!);
-      await this.#capsule.setEmail(options.email);
-      this.#capsule.persistSessionCookie(options.sessionCookie!);
-      [wallet, recovery] = await this.#capsule.createWallet();
+      await this.#para.setUserId(options.userId!);
+      await this.#para.setEmail(options.email);
+      this.#para.persistSessionCookie(options.sessionCookie!);
+      [wallet, recovery] = await this.#para.createWallet();
       delete options.sessionCookie;
 
       const parsedRecovery = JSON.parse(recovery!);
@@ -165,13 +173,14 @@ export class CapsuleKeyring implements Keyring {
       parsedRecovery.backupDecryptionKey += `|${signerBase64}`;
       recovery = JSON.stringify(parsedRecovery);
 
-      sessionCookie = this.#capsule.retrieveSessionCookie() as string;
+      sessionCookie = this.#para.retrieveSessionCookie()!;
     }
 
+    const hydratedWallet = this.#para.wallets[wallet.id];
     const account: KeyringAccount = {
       id: uuid(),
       options,
-      address: wallet.address as string,
+      address: hydratedWallet!.address as string,
       methods: [
         EthMethod.PersonalSign,
         EthMethod.Sign,
@@ -206,17 +215,18 @@ export class CapsuleKeyring implements Keyring {
   async updateAccount(account: KeyringAccount): Promise<void> {
     const { options } = account;
     if (options.sessionCookie) {
-      await this.#capsule.setLoginEncryptionKeyPair(
+      await this.#para.setLoginEncryptionKeyPair(
         JSON.parse(options.loginEncryptionKeyPair as string),
       );
       delete options.loginEncryptionKeyPair;
-      await this.#capsule.init();
+      await this.#para.init();
 
-      await this.#capsule.setEmail(options.email as string);
-      this.#capsule.persistSessionCookie(options.sessionCookie as string);
+      await this.#para.setEmail(options.email as string);
+      this.#para.persistSessionCookie(options.sessionCookie as string);
 
-      await this.#capsule.waitForLoginAndSetup(true);
-      options.sessionCookie = this.#capsule.retrieveSessionCookie() as string;
+      await this.#para.waitForLoginAndSetup({});
+      options.sessionCookie = this.#para.retrieveSessionCookie() as string;
+      options.currentWalletIds = this.#para.currentWalletIds;
     }
 
     const wallet =
@@ -266,8 +276,8 @@ export class CapsuleKeyring implements Keyring {
   }
 
   async submitRequest(request: KeyringRequest): Promise<SubmitRequestResponse> {
-    await this.#capsule.init();
-    if (!(await this.#capsule.isFullyLoggedIn())) {
+    await this.#para.init();
+    if (!(await this.#para.isFullyLoggedIn())) {
       return this.#asyncSubmitRequest(request, true);
     }
     return this.#state.useSyncApprovals
@@ -334,7 +344,7 @@ export class CapsuleKeyring implements Keyring {
       pending: true,
       redirect: {
         url: dappUrl,
-        message: 'Redirecting to Capsule to sign transaction',
+        message: 'Redirecting to Para to sign transaction',
       },
     };
   }
@@ -405,8 +415,8 @@ export class CapsuleKeyring implements Keyring {
   }
 
   async #signTransaction(tx: any): Promise<Json> {
-    await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
+    await this.#para.init();
+    this.#para.ctx.wasmOverride = wasmArrayBuffer;
 
     // Patch the transaction to make sure that the `chainId` is a hex string.
     if (!tx.chainId.startsWith('0x')) {
@@ -426,12 +436,13 @@ export class CapsuleKeyring implements Keyring {
     ethersTx.signature = null;
 
     const walletId = await this.#getWalletIdFromAddress(tx.from);
-    const signMessageRes = await this.#capsule.signMessage(
+    const signMessageRes = await this.#para.signMessage({
       walletId,
-      Buffer.from(stripHexPrefix(ethersTx.unsignedHash), 'hex').toString(
-        'base64',
-      ),
-    );
+      messageBase64: Buffer.from(
+        stripHexPrefix(ethersTx.unsignedHash),
+        'hex',
+      ).toString('base64'),
+    });
 
     const { signature: rawSignature } =
       signMessageRes as SuccessfulSignatureRes;
@@ -456,8 +467,8 @@ export class CapsuleKeyring implements Keyring {
       version: SignTypedDataVersion.V1,
     },
   ): Promise<string> {
-    await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
+    await this.#para.init();
+    this.#para.ctx.wasmOverride = wasmArrayBuffer;
 
     const walletId = await this.#getWalletIdFromAddress(from);
     const hashedTypedData =
@@ -471,22 +482,21 @@ export class CapsuleKeyring implements Keyring {
             opts.version,
           );
 
-    const signMessageRes = await this.#capsule.signMessage(
+    const signMessageRes = await this.#para.signMessage({
       walletId,
-      Buffer.from(hashedTypedData).toString('base64'),
-    );
+      messageBase64: Buffer.from(hashedTypedData).toString('base64'),
+    });
     const { signature } = signMessageRes as SuccessfulSignatureRes;
     return this.#setRecoveryParam(signature);
   }
 
   async #signPersonalMessage(from: string, request: string): Promise<string> {
-    await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
+    await this.#para.init();
+    this.#para.ctx.wasmOverride = wasmArrayBuffer;
 
     const messageBuffer = Buffer.from(stripHexPrefix(request), 'hex');
-    const ethersSigner = new CapsuleEthersSigner(this.#capsule, null);
     const walletId = await this.#getWalletIdFromAddress(from);
-    ethersSigner.setCurrentWalletId(walletId);
+    const ethersSigner = new ParaEthersSigner(this.#para, null, walletId);
     const signature = await ethersSigner.signMessage(messageBuffer);
 
     const recoveredAddress = recoverPersonalSignature({
@@ -503,18 +513,18 @@ export class CapsuleKeyring implements Keyring {
   }
 
   async #signMessage(from: string, data: string): Promise<string> {
-    await this.#capsule.init();
-    this.#capsule.ctx.wasmOverride = wasmArrayBuffer;
+    await this.#para.init();
+    this.#para.ctx.wasmOverride = wasmArrayBuffer;
 
-    const base64Message = Buffer.from(stripHexPrefix(data), 'hex').toString(
+    const messageBase64 = Buffer.from(stripHexPrefix(data), 'hex').toString(
       'base64',
     );
     const walletId = await this.#getWalletIdFromAddress(from);
 
-    const signMessageRes = await this.#capsule.signMessage(
+    const signMessageRes = await this.#para.signMessage({
       walletId,
-      base64Message,
-    );
+      messageBase64,
+    });
     const { signature } = signMessageRes as SuccessfulSignatureRes;
     return this.#setRecoveryParam(signature);
   }

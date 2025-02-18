@@ -62,36 +62,36 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Capsule</title>
+        <title>Para</title>
       </Helmet>
       <Container>
         <LeftColumnContainer>
           <SubjectDiv>
             Welcome to the <br />
-            Capsule Account Snap!
+            Para Account Snap!
           </SubjectDiv>
           <DescriptionDiv>
             <br />
-            <a target="_blank" href="https://usecapsule.com">
-              <u>Capsule</u>
+            <a target="_blank" href="https://getpara.com">
+              <u>Para</u>
             </a>{' '}
             is a signing solution that you can use to create secure, embedded{' '}
-            <a target="_blank" href="https://blog.usecapsule.com/what-is-mpc">
+            <a target="_blank" href="https://blog.getpara.com/what-is-mpc">
               <u>MPC wallets</u>
             </a>{' '}
             with just an email or a social login.
           </DescriptionDiv>
           <DescriptionDiv>
-            Use your Capsule wallet to transact anywhere you can use MetaMask!
+            Use your Para wallet to transact anywhere you can use MetaMask!
             Getting started is easy:
           </DescriptionDiv>
           <DescriptionDiv>
             <DescriptionListDiv>
               <ol>
-                <li>Log in with your Capsule Wallet below.</li>
+                <li>Log in with your Para Wallet below.</li>
                 <li>
                   Connect to MetaMask and accept permissions to add the{' '}
-                  <strong>Capsule</strong> Account Snap.
+                  <strong>Para</strong> Account Snap.
                 </li>
                 <li>
                   Sign transactions easily! Come back to this page to manage
@@ -102,17 +102,17 @@ export const App: FunctionComponent<AppProps> = ({ children }) => {
           </DescriptionDiv>
           <DescriptionDiv>
             By continuing and creating an account, you acknowledge and agree to
-            Capsule’s{' '}
-            <a target="_blank" href="https://usecapsule.com/terms">
+            Para's{' '}
+            <a target="_blank" href="https://getpara.com/terms">
               <u>Terms of Service</u>
             </a>{' '}
             and{' '}
-            <a target="_blank" href="https://usecapsule.com/privacy-policy">
+            <a target="_blank" href="https://getpara.com/privacy-policy">
               <u>Privacy Policy</u>
             </a>
             . To learn more, check out the{' '}
-            <a target="_blank" href="https://docs.usecapsule.com/metamask">
-              <u>Capsule Snap FAQ</u>
+            <a target="_blank" href="https://docs.getpara.com/metamask">
+              <u>Para Snap FAQ</u>
             </a>
           </DescriptionDiv>
           <ChildrenDiv>{children}</ChildrenDiv>
